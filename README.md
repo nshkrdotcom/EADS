@@ -63,7 +63,7 @@ At its heart, EADS is not just another development tool&#x2014;it's an intellige
 
 ## &#x1F6E0;&#xFE0F; Technology Stack
 
-- **AI/ML**: 
+- **AI/ML**:
   - TensorFlow
   - PyTorch
   - Scikit-learn
@@ -113,7 +113,7 @@ To create a self-healing, continuously improving software ecosystem that autonom
    ```bash
    # Set permissions
    chmod +x ./*.sh
-   
+
    # Run setup script to create virtual environment
    ./setup.sh
 
@@ -170,6 +170,90 @@ To create a self-healing, continuously improving software ecosystem that autonom
    docker-compose down  # Stop Docker services
    deactivate          # Exit virtual environment
    ```
+
+### Development Tools
+
+The project includes several development tools to maintain code quality.
+
+#### Initial Setup
+
+1. **Install System Packages** (Ubuntu/Debian)
+   ```bash
+   # Install pre-commit
+   sudo apt install pre-commit
+
+   # Install Python development tools
+   sudo apt install python3-dev
+   ```
+
+2. **Install Python Development Requirements**
+   ```bash
+   # Make sure your virtual environment is active
+   source .venv/bin/activate
+
+   # Install requirements
+   pip install -r requirements.txt
+   ```
+
+3. **Set Up Pre-commit Hooks**
+   ```bash
+   # Install the pre-commit hooks
+   pre-commit install
+
+   # Run all hooks initially
+   pre-commit run --all-files
+   ```
+
+#### Using Development Tools
+
+1. **Code Formatting**
+   ```bash
+   # Format code with black
+   black .
+
+   # Sort imports
+   isort .
+   ```
+
+2. **Code Quality Checks**
+   ```bash
+   # Run flake8
+   flake8 .
+
+   # Run mypy type checking
+   mypy .
+   ```
+
+3. **Testing**
+   ```bash
+   # Run tests with coverage
+   pytest
+
+   # View coverage report
+   open htmlcov/index.html
+   ```
+
+4. **Pre-commit Hooks**
+   ```bash
+   # Install pre-commit hooks
+   pre-commit install
+
+   # Run hooks manually
+   pre-commit run --all-files
+   ```
+
+These tools are automatically installed with the development requirements. The pre-commit hooks will run automatically on git commit to ensure code quality.
+
+### Code Organization
+
+- `main.py`: Main entry point
+- `code_generation.py`: Code generation module
+- `genetic_programming.py`: GP engine implementation
+- `robustness_enhancements.py`: Code robustness tools
+- `deployment.py`: Deployment utilities
+- `gp_engine/`: Genetic Programming engine components
+- `nlp/`: Natural Language Processing services
+- `tests/`: Test cases
 
 ### Available Services
 
@@ -300,30 +384,30 @@ flowchart TB
         A[Decentralized AI Engine] --> B[Genetic Programming Engine]
         B --> C[Code Generation Module]
         B --> D[Robustness Enhancement Module]
-        
+
         subgraph "Knowledge Management"
             E[Neo4j Knowledge Graph]
             F[Pinecone Semantic Embeddings]
             E <--> F
         end
-        
+
         C --> G[Testing & Evaluation]
         D --> G
         E & F --> A
-        
+
         G --> H[Version Control]
         H --> I[Deployment Orchestration]
-        
+
         subgraph "Monitoring & Analysis"
             J[Performance Metrics]
             K[Continuous Improvement Feedback]
         end
-        
+
         I --> J
         G --> K
         K --> B
     end
-    
+
     M[Human-in-the-Loop Interface] --> A
     J --> M
 ```
@@ -333,31 +417,31 @@ flowchart TB
 ```mermaid
 flowchart TD
     A[Problem Definition] --> B[Initial Code Generation]
-    
+
     subgraph "Genetic Programming Cycle"
         B --> C{Fitness Evaluation}
         C -->|Pass Criteria| D[Code Refinement]
         C -->|Fail Criteria| E[Variation & Mutation]
         E --> B
     end
-    
+
     D --> F[Comprehensive Testing]
-    
+
     subgraph "Robustness Enhancement"
         F --> G[Static Analysis]
         F --> H[Dynamic Analysis]
         F --> I[Security Scanning]
         G & H & I --> J{Meets Robustness Criteria}
     end
-    
+
     J -->|Yes| K[Code Optimization]
     J -->|No| L[Targeted Improvement]
     L --> B
-    
+
     K --> M[Deployment Preparation]
     M --> N[Containerization]
     N --> O[Kubernetes Deployment]
-    
+
     subgraph "Continuous Monitoring"
         O --> P[Performance Tracking]
         P --> Q[Adaptive Learning]
@@ -365,7 +449,7 @@ flowchart TD
         R -->|Yes| B
         R -->|No| S[Maintain & Scale]
     end
-    
+
     T[Human Oversight] --> P
 ```
 
@@ -409,7 +493,7 @@ graph TD
         end
 
         DEAP --> Deployment
-		
+
     end
     Knowledge --> DEAP & AI
     Robustness --> DEAP
@@ -466,7 +550,7 @@ graph LR
             EvaluationMetrics["Evaluation<br>Metrics (e.g.,<br>Learning<br>Progress,<br>Diversity)"]
             GameEvaluations["Game<br>Evaluations"]
         end
-        
+
         subgraph GameLibrary["Language Game Library"]
             Game1["Game 1"]
             Game2["Game 2"]
@@ -499,11 +583,11 @@ graph LR
         subgraph Evaluator["Evaluator"]
             Score["Score/Feedback"]
         end
-        
+
         subgraph LearningAlgorithm["Learning&nbsp;Algo"]
             UpdateRule["Update<br>Rule"]
         end
-		
+
         LLM --> AgentActions
         AgentActions --> GameEnvironment
         GameEnvironment --> Evaluator
@@ -520,15 +604,15 @@ graph LR
 ```mermaid
 stateDiagram-v2
     direction TB
-    
+
     [*] --> Agent : Initiate
-    
+
     state Agent {
         direction TB
         Code_Generator --> Knowledge_Base : Draws_From
         Code_Generator --> Language_Games : Interacts_With
     }
-    
+
     state Language_Games {
         direction LR
         Unit_Test_Generation
@@ -537,10 +621,10 @@ stateDiagram-v2
         Refactoring
         API_Design
     }
-    
+
     Agent --> Critic : Generated_Code
     Critic --> Agent : Feedback
-    
+
     state Critic {
         direction LR
         Static_Analysis
@@ -548,27 +632,27 @@ stateDiagram-v2
         Formal_Verification
         Diversity_Assessment
     }
-    
+
     Meta_Critic --> Agent : Oversight
     Meta_Critic --> Language_Games : Adjust_Scoring
-    
+
     state Meta_Critic {
         direction TB
         Human_Review
         Automated_Metrics
     }
-    
+
     Environment --> Agent : Secure_Sandbox
-    
+
     state Environment {
         ASKA
         IES_Instances
         DTMS
         HESE_DAR
     }
-    
+
     Knowledge_Base --> CodeBERT : Enhanced_By
-    
+
     [*] --> Continuous_Improvement
 ```
 
@@ -590,7 +674,6 @@ graph LR
             GameLibrary["Language<br>Game<br>Library"]
             GameScheduler["Game<br>Scheduler"] --> GameLibrary
             GameGenerator["Game<br>Generator"] --> GameLibrary
-            GameDescriptions["Game<br>Description<br>Generator"] --> GameLibrary
 
             GameInstance["Game<br>Instance"]
             GameRules["Game<br>Rules"] --> GameInstance
@@ -773,96 +856,96 @@ The Boundless Socratic Learning System represents a paradigm shift in software d
 ## Tech Exploration
 
 ### **Ontologies and Knowledge Graphs**
-1. **Description Logics (DLs)**  
+1. **Description Logics (DLs)**
    - Overview: [https://en.wikipedia.org/wiki/Description_logic](https://en.wikipedia.org/wiki/Description_logic)
 
-2. **Web Ontology Language (OWL)**  
+2. **Web Ontology Language (OWL)**
    - Website: [https://www.w3.org/OWL/](https://www.w3.org/OWL/)
 
-3. **Pellet (OWL Reasoner)**  
+3. **Pellet (OWL Reasoner)**
    - Website: [https://github.com/stardog-union/pellet](https://github.com/stardog-union/pellet)
 
-4. **HermiT (OWL Reasoner)**  
+4. **HermiT (OWL Reasoner)**
    - Website: [http://www.hermit-reasoner.com/](http://www.hermit-reasoner.com/)
 
-5. **FaCT++ (OWL Reasoner)**  
+5. **FaCT++ (OWL Reasoner)**
    - Website: [https://github.com/owlcs/factplusplus](https://github.com/owlcs/factplusplus)
 
-6. **Resource Description Framework (RDF)**  
+6. **Resource Description Framework (RDF)**
    - Website: [https://www.w3.org/RDF/](https://www.w3.org/RDF/)
 
-7. **SPARQL (Query Language for RDF)**  
+7. **SPARQL (Query Language for RDF)**
    - Website: [https://www.w3.org/TR/sparql11-query/](https://www.w3.org/TR/sparql11-query/)
 
-8. **RDF Schema (RDFS)**  
+8. **RDF Schema (RDFS)**
    - Website: [https://www.w3.org/TR/rdf-schema/](https://www.w3.org/TR/rdf-schema/)
 
-9. **Neo4j (Graph Database)**  
+9. **Neo4j (Graph Database)**
    - Website: [https://neo4j.com/](https://neo4j.com/)
 
-10. **JanusGraph (Graph Database)**  
+10. **JanusGraph (Graph Database)**
     - Website: [https://janusgraph.org/](https://janusgraph.org/)
 
-11. **Amazon Neptune**  
+11. **Amazon Neptune**
     - Website: [https://aws.amazon.com/neptune/](https://aws.amazon.com/neptune/)
 
 ---
 
 ### **Formal Methods**
-12. **Z Notation**  
-    - Overview: [https://en.wikipedia.org/wiki/Z_notation](https://en.wikipedia.org/wiki/Z_notation)  
+12. **Z Notation**
+    - Overview: [https://en.wikipedia.org/wiki/Z_notation](https://en.wikipedia.org/wiki/Z_notation)
     - Z/EVES Tool: [https://www.oracle.com/technetwork/systems/z-eves-index-098299.html](https://www.oracle.com/technetwork/systems/z-eves-index-098299.html)
 
-13. **Alloy (Formal Specification Language)**  
+13. **Alloy (Formal Specification Language)**
     - Website: [http://alloytools.org/](http://alloytools.org/)
 
-14. **Event-B (System-Level Modeling)**  
+14. **Event-B (System-Level Modeling)**
     - Website: [https://www.event-b.org/](https://www.event-b.org/)
 
-15. **Rodin (Event-B Tool)**  
+15. **Rodin (Event-B Tool)**
     - Website: [https://www.event-b.org/tools/](https://www.event-b.org/tools/)
 
 ---
 
 ### **Program Analysis and Transformation**
-16. **Abstract Syntax Trees (ASTs)**  
-    - TreeSitter: [https://tree-sitter.github.io/tree-sitter/](https://tree-sitter.github.io/tree-sitter/)  
+16. **Abstract Syntax Trees (ASTs)**
+    - TreeSitter: [https://tree-sitter.github.io/tree-sitter/](https://tree-sitter.github.io/tree-sitter/)
     - ANTLR: [https://www.antlr.org/](https://www.antlr.org/)
 
-17. **Symbolic Execution**  
+17. **Symbolic Execution**
     - Overview: [https://en.wikipedia.org/wiki/Symbolic_execution](https://en.wikipedia.org/wiki/Symbolic_execution)
 
 ---
 
 ### **Knowledge Representation and Reasoning**
-18. **Prolog**  
+18. **Prolog**
     - Website: [https://www.swi-prolog.org/](https://www.swi-prolog.org/)
 
-19. **Drools (Rule Engine)**  
+19. **Drools (Rule Engine)**
     - Website: [https://www.drools.org/](https://www.drools.org/)
 
-20. **Jess (Rule Engine)**  
+20. **Jess (Rule Engine)**
     - Website: [https://www.jessrules.com/jess/](https://www.jessrules.com/jess/)
 
 ---
 
-### **Knowledge Representation and Reasoning (KRR) Systems and Logic Programming**  
-21. **NLTK (Natural Language Toolkit)**  
+### **Knowledge Representation and Reasoning (KRR) Systems and Logic Programming**
+21. **NLTK (Natural Language Toolkit)**
     - Website: [https://www.nltk.org/](https://www.nltk.org/)
 
-22. **Stanford CoreNLP**  
+22. **Stanford CoreNLP**
     - Website: [https://stanfordnlp.github.io/CoreNLP/](https://stanfordnlp.github.io/CoreNLP/)
 
-23. **Stanza**  
+23. **Stanza**
     - Website: [https://stanfordnlp.github.io/stanza/](https://stanfordnlp.github.io/stanza/)
 
-24. **Gensim**  
+24. **Gensim**
     - Website: [https://radimrehurek.com/gensim/](https://radimrehurek.com/gensim/)
 
-25. **AllenNLP**  
+25. **AllenNLP**
     - Website: [https://allennlp.org/](https://allennlp.org/)
 
-26. **Transformers (Hugging Face)**  
+26. **Transformers (Hugging Face)**
     - Website: [https://huggingface.co/transformers/](https://huggingface.co/transformers/)
 
 ## &#x1F4DC; License

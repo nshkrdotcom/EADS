@@ -1,9 +1,11 @@
 import os
 import sys
+
 from code_generation import generate_initial_code
+from deployment import prepare_deployment
 from genetic_programming import run_genetic_programming
 from robustness_enhancements import enhance_robustness
-from deployment import prepare_deployment
+
 
 def main(input_file, output_file):
     # Step 1: Load input PDF
@@ -28,11 +30,12 @@ def main(input_file, output_file):
 
     print("Pipeline execution completed.")
 
+
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: python run_pipeline.py <input_file> <output_file>")
         sys.exit(1)
-    
+
     input_file = sys.argv[1]
     output_file = sys.argv[2]
     main(input_file, output_file)

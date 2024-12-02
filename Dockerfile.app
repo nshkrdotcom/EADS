@@ -22,9 +22,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Run your application
 CMD ["python", "run_pipeline.py", "input.pdf", "output.tex"]  # Replace with your actual command. Pass in PDF and output filenames or make them configurable.
-# CMD ["python", "run_pipeline.py", "/app/input/your_input.pdf", "/app/output/output.tex"]  #  Example - 
+# CMD ["python", "run_pipeline.py", "/app/input/your_input.pdf", "/app/output/output.tex"]  #  Example -
 
-## OR 
+## OR
 
 ENTRYPOINT ["python", "run_pipeline.py"]
 CMD ["/app/input/your_input.pdf", "/app/output/output.tex"] # Example – now you can override the command at runtime

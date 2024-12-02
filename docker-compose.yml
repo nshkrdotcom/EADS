@@ -25,12 +25,12 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-eads}
 
   nlp_service:
-    build: 
+    build:
       context: ./nlp
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    volumes: 
+    volumes:
       - ./nlp:/app
     environment:
       - NEO4J_URI=bolt://localhost:7687
@@ -40,7 +40,7 @@ services:
       - neo4j
 
   gp_engine:
-    build: 
+    build:
       context: ./gp_engine
       dockerfile: Dockerfile
     ports:

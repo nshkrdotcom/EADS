@@ -7,7 +7,7 @@ set -e
 manage_docker_services() {
     local action=$1
     echo "🐳 $action Docker services..."
-    
+
     case $action in
         "stop")
             echo "🛑 Stopping all services..."
@@ -16,12 +16,12 @@ manage_docker_services() {
         "start")
             echo "🚀 Starting services..."
             docker-compose up -d
-            
+
             echo "⏳ Waiting for services to initialize..."
             echo "  - This may take up to a minute"
             echo "  - Neo4j needs time to start and set up the database"
             sleep 45
-            
+
             # Verify services are running
             if ! docker-compose ps | grep -q "Up"; then
                 echo "❌ Services failed to start properly"
