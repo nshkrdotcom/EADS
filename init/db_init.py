@@ -3,6 +3,7 @@ import psycopg2
 from pinecone import Pinecone
 import os
 import logging
+import time
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -10,16 +11,51 @@ logger = logging.getLogger(__name__)
 class DatabaseInitializer:
     def __init__(self):
         # Initialize connection parameters from environment variables
-        self.neo4j_uri = os.getenv('NEO4J_URI', 'bolt://neo4j:7687')
+        # Use localhost for local development
+        self.neo4j_uri = os.getenv('NEO4J_URI', 'bolt://localhost:7687')
         self.neo4j_user = os.getenv('NEO4J_USER', 'neo4j')
         self.neo4j_password = os.getenv('NEO4J_PASSWORD', 'password')
         
-        self.pg_host = os.getenv('POSTGRES_HOST', 'postgres')
+        self.pg_host = os.getenv('POSTGRES_HOST', 'localhost')
         self.pg_user = os.getenv('POSTGRES_USER', 'postgres')
         self.pg_password = os.getenv('POSTGRES_PASSWORD', 'password')
         self.pg_db = os.getenv('POSTGRES_DB', 'eads')
 
         self.pinecone_api_key = os.getenv('PINECONE_API_KEY')
+        
+    def wait_for_neo4j(self, max_retries=5, delay=5):
+        """Wait for Neo4j to become available"""
+        for attempt in range(max_retries):
+            try:
+                driver = GraphDatabase.driver(
+                    self.neo4j_uri,
+                    auth=(self.neo4j_user, self.neo4j_password)
+                )
+                with driver.session() as session:
+                    session.run("RETURN 1")
+                driver.close()
+                return True
+            except Exception as e:
+                logger.warning(f"Waiting for Neo4j (attempt {attempt + 1}/{max_retries}): {str(e)}")
+                time.sleep(delay)
+        return False
+
+    def wait_for_postgres(self, max_retries=5, delay=5):
+        """Wait for PostgreSQL to become available"""
+        for attempt in range(max_retries):
+            try:
+                conn = psycopg2.connect(
+                    host=self.pg_host,
+                    database=self.pg_db,
+                    user=self.pg_user,
+                    password=self.pg_password
+                )
+                conn.close()
+                return True
+            except Exception as e:
+                logger.warning(f"Waiting for PostgreSQL (attempt {attempt + 1}/{max_retries}): {str(e)}")
+                time.sleep(delay)
+        return False
 
     def init_neo4j(self):
         """Initialize Neo4j with base schema for knowledge graph"""
@@ -137,15 +173,32 @@ class DatabaseInitializer:
 def main():
     initializer = DatabaseInitializer()
     
+    # Wait for services to be ready
+    logger.info("Waiting for services to be ready...")
+    if not initializer.wait_for_neo4j():
+        logger.error("Neo4j is not available after maximum retries")
+        return
+    if not initializer.wait_for_postgres():
+        logger.error("PostgreSQL is not available after maximum retries")
+        return
+    
     # Initialize all databases
     neo4j_success = initializer.init_neo4j()
     postgres_success = initializer.init_postgres()
-    pinecone_success = initializer.init_pinecone()
     
-    if all([neo4j_success, postgres_success, pinecone_success]):
-        logger.info("All database initializations completed successfully")
+    # Make Pinecone optional
+    if initializer.pinecone_api_key and initializer.pinecone_api_key != 'your_pinecone_api_key':
+        pinecone_success = initializer.init_pinecone()
     else:
-        logger.warning("Some database initializations failed. Check logs for details")
+        logger.info("Skipping Pinecone initialization (API key not configured)")
+        pinecone_success = True  # Don't count it as a failure
+    
+    # Only check Neo4j and PostgreSQL for required success
+    if all([neo4j_success, postgres_success]):
+        logger.info("Required database initializations completed successfully")
+    else:
+        logger.error("Required database initializations failed. Check logs for details")
+        exit(1)
 
 if __name__ == "__main__":
     main()

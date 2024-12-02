@@ -158,6 +158,24 @@ sudo chmod 666 /var/run/docker.sock
 # Log out and log back in for changes to take effect
 ```
 
+## Configuration
+
+The system uses environment variables for configuration. Copy the `.env.example` file to `.env` and adjust the values:
+
+```bash
+cp .env.example .env
+```
+
+Required settings:
+- Neo4j: Database for knowledge graph (`NEO4J_*` variables)
+- PostgreSQL: Database for metadata (`POSTGRES_*` variables)
+
+Optional settings:
+- Pinecone: Vector database for code embeddings
+  - Set `PINECONE_API_KEY` if you want to use vector similarity search
+  - Get your API key from [Pinecone](https://www.pinecone.io/)
+  - The system will work without Pinecone, but some advanced features may be limited
+
 ## &#x1F063; System Architecture
 
 EADS employs a modular architecture, integrating several key components:

@@ -3,6 +3,41 @@
 # Exit on error
 set -e
 
+# Function to manage Docker services
+manage_docker_services() {
+    local action=$1
+    echo "🐳 $action Docker services..."
+    
+    case $action in
+        "stop")
+            echo "🛑 Stopping all services..."
+            docker-compose down -v
+            ;;
+        "start")
+            echo "🚀 Starting services..."
+            docker-compose up -d
+            
+            echo "⏳ Waiting for services to initialize..."
+            echo "  - This may take up to a minute"
+            echo "  - Neo4j needs time to start and set up the database"
+            sleep 45
+            
+            # Verify services are running
+            if ! docker-compose ps | grep -q "Up"; then
+                echo "❌ Services failed to start properly"
+                echo "📋 Service logs:"
+                docker-compose logs
+                exit 1
+            fi
+            echo "✅ All services are running"
+            ;;
+        *)
+            echo "❌ Invalid action: $action"
+            exit 1
+            ;;
+    esac
+}
+
 # Check if running in virtual environment
 if [[ "$VIRTUAL_ENV" == "" ]]; then
     echo "❌ Virtual environment not activated!"
@@ -13,35 +48,28 @@ fi
 
 echo "🚀 Initializing EADS (Evolutionary Autonomous Development System)"
 
-# Check if Docker is installed
+# Docker setup
+echo "🐳 Setting up Docker environment..."
+
+# Install Docker if not present
 if ! command -v docker &> /dev/null; then
-    echo "❌ Docker is not installed. Installing Docker..."
+    echo "Installing Docker..."
     sudo apt-get update
     sudo apt-get install -y docker.io docker-compose
 fi
 
-# Check Docker permissions
+# Add user to docker group
 if ! groups | grep -q docker; then
-    echo "⚠️ Adding user to docker group..."
+    echo "Adding user to docker group..."
     sudo usermod -aG docker $USER
-    echo "✨ Please log out and log back in for the changes to take effect."
-    echo "Then run this script again."
-    exit 1
+    echo "⚠️ You may need to log out and log back in for group changes to take effect"
 fi
 
-# Check if Docker daemon is running
-if ! docker info &> /dev/null; then
-    echo "🔄 Starting Docker daemon..."
-    sudo service docker start
-    sleep 5
-fi
+# Fix Docker socket permissions
+sudo chmod 666 /var/run/docker.sock
 
-# Check for python3-venv
-if ! dpkg -l | grep -q python3-venv; then
-    echo "📦 Installing python3-venv..."
-    sudo apt-get update
-    sudo apt-get install -y python3-venv python3-pip
-fi
+# Start Docker service
+sudo service docker start
 
 # Check if .env file exists
 if [ ! -f .env ]; then
@@ -84,18 +112,15 @@ pip install deap pygad
 echo "Installing PDF processing requirements..."
 pip install PyPDF2
 
-# Start Docker services
-echo "🐳 Starting Docker services..."
-if ! docker-compose up -d; then
-    echo "❌ Failed to start Docker services. Please check the error messages above."
-    echo "You might need to run: sudo chmod 666 /var/run/docker.sock"
-    echo "Then try running this script again."
-    exit 1
-fi
+# Stop any existing services
+manage_docker_services "stop"
 
-# Wait for services to be ready
-echo "⏳ Waiting for services to be ready..."
-sleep 30
+# Pull latest images
+echo "📥 Pulling latest Docker images..."
+docker-compose pull
+
+# Start services with proper initialization
+manage_docker_services "start"
 
 # Initialize databases
 echo "🗄️ Initializing databases..."
@@ -112,14 +137,13 @@ echo "✨ EADS initialization completed!"
 echo "
 Available services:
 - Neo4j Browser: http://localhost:7474
-- Airflow UI: http://localhost:8080
+- NLP Service: http://localhost:8000
+- GP Engine: http://localhost:8001
 - PostgreSQL: localhost:5432
 
-Next steps:
-1. Access Neo4j browser and verify the knowledge graph
-2. Check Airflow UI for workflow status
-3. Start developing with EADS!
-
-To activate the virtual environment in the future, run:
-source .venv/bin/activate
+Commands:
+- Stop all services:    docker-compose down
+- Remove all data:      docker-compose down -v
+- View service logs:    docker-compose logs
+- Check service status: docker-compose ps
 "
