@@ -242,18 +242,6 @@ Passionate about autonomous systems? We're always looking for brilliant minds to
    docker-compose exec app python run_deployment.py
    ```
 
-## &#x1F4DC; License
-
-MIT License
-
-## &#x1F4E7; Contact
-
-Reach out if you're as excited about autonomous software evolution as we are!
-
----
-
-*Inspired by the boundless potential of artificial intelligence and the art of software craftsmanship.*
-
 ## &#x1F4BB; Project Diagrams
 
 ### EADS System Architecture Diagram
@@ -478,3 +466,15 @@ graph TD
 
 26. **Transformers (Hugging Face)**  
     - Website: [https://huggingface.co/transformers/](https://huggingface.co/transformers/)
+
+## &#x1F4DC; License
+
+MIT License
+
+## &#x1F4E7; Contact
+
+Reach out if you're as excited about autonomous software evolution as we are!
+
+---
+
+*Inspired by the boundless potential of artificial intelligence and the art of software craftsmanship.*
