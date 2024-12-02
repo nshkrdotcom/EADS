@@ -108,7 +108,7 @@ Reach out if you're as excited about autonomous software evolution as we are!
 
 ```mermaid
 flowchart TB
-    subgraph "EADS: Evolutionary Autonomous Development System"
+    subgraph "EADS:&nbsp;Evolutionary&nbsp;Autonomous&nbsp;Development&nbsp;System"
         A[Decentralized AI Engine] --> B[Genetic Programming Engine]
         B --> C[Code Generation Module]
         B --> D[Robustness Enhancement Module]
