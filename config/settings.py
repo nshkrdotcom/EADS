@@ -1,68 +1,33 @@
-"""Configuration settings for EADS.
-
-This module contains all configuration settings for the EADS system,
-including database connections, API settings, and various parameters
-for different components.
-"""
+"""Configuration settings for EADS."""
 
 import os
-from typing import Any, Dict
+from typing import Optional, Type
 
 # Database Settings
-DB_CONFIG: Dict[str, Any] = {
-    "neo4j": {
-        "uri": os.getenv("NEO4J_URI", "bolt://localhost:7687"),
-        "user": os.getenv("NEO4J_USER", "neo4j"),
-        "password": os.getenv("NEO4J_PASSWORD", "password"),
-        "max_connection_lifetime": 30,  # seconds
-        "max_connection_pool_size": 50,
-    },
-    "postgres": {
-        "host": os.getenv("PG_HOST", "localhost"),
-        "port": int(os.getenv("PG_PORT", "5432")),
-        "user": os.getenv("PG_USER", "postgres"),
-        "password": os.getenv("PG_PASSWORD", "postgres"),
-        "database": os.getenv("PG_DB", "eads"),
-        "min_connections": 1,
-        "max_connections": 10,
-    },
-}
+NEO4J_URI = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+NEO4J_USER = os.getenv("NEO4J_USER", "neo4j")
+NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "password")
 
-# API Settings
-API_CONFIG: Dict[str, Any] = {
-    "nlp_service": {
-        "host": "0.0.0.0",
-        "port": 8000,
-        "workers": 4,
-        "timeout": 60,
-    },
-    "gp_service": {
-        "host": "0.0.0.0",
-        "port": 8001,
-        "workers": 4,
-        "timeout": 120,
-    },
-}
+PG_HOST = os.getenv("PG_HOST", "localhost")
+PG_PORT = int(os.getenv("PG_PORT", "5432"))
+PG_USER = os.getenv("PG_USER", "postgres")
+PG_PASSWORD = os.getenv("PG_PASSWORD", "postgres")
+PG_DB = os.getenv("PG_DB", "eads")
 
-# Genetic Programming Settings
-GP_CONFIG: Dict[str, Any] = {
+# Model Settings
+MODEL_NAME = "microsoft/codebert-base"
+MODEL_MAX_LENGTH = 512
+
+# Genetic Programming settings
+GP_CONFIG = {
     "population_size": 100,
     "generations": 50,
     "mutation_rate": 0.2,
-    "crossover_rate": 0.8,
-    "tournament_size": 3,
-}
-
-# NLP Service Settings
-NLP_CONFIG: Dict[str, Any] = {
-    "model_name": "gpt-3.5-turbo",
-    "max_tokens": 1000,
-    "temperature": 0.7,
-    "batch_size": 32,
+    "crossover_rate": 0.7,
 }
 
 # Logging Configuration
-LOGGING_CONFIG: Dict[str, Any] = {
+LOGGING_CONFIG = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
@@ -75,19 +40,55 @@ LOGGING_CONFIG: Dict[str, Any] = {
             "class": "logging.StreamHandler",
             "stream": "ext://sys.stdout",
         },
-        "file": {
-            "level": "INFO",
-            "formatter": "standard",
-            "class": "logging.FileHandler",
-            "filename": "eads.log",
-            "mode": "a",
-        },
     },
     "loggers": {
-        "": {  # root logger
-            "handlers": ["default", "file"],
-            "level": "INFO",
-            "propagate": True,
-        },
+        "": {"handlers": ["default"], "level": "INFO", "propagate": True},
     },
 }
+
+
+class Settings:
+    """Application settings."""
+
+    _instance: Optional["Settings"] = None
+
+    def __init__(self) -> None:
+        """Initialize settings."""
+        self.neo4j_uri = NEO4J_URI
+        self.neo4j_user = NEO4J_USER
+        self.neo4j_password = NEO4J_PASSWORD
+        self.pg_host = PG_HOST
+        self.pg_port = PG_PORT
+        self.pg_user = PG_USER
+        self.pg_password = PG_PASSWORD
+        self.pg_db = PG_DB
+        self.model_name = MODEL_NAME
+        self.model_max_length = MODEL_MAX_LENGTH
+        self.gp_config = GP_CONFIG
+
+    @classmethod
+    def get_instance(cls: Type["Settings"]) -> "Settings":
+        """Get singleton instance."""
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
+
+
+settings = Settings.get_instance()
+
+__all__ = [
+    "settings",
+    "Settings",
+    "NEO4J_URI",
+    "NEO4J_USER",
+    "NEO4J_PASSWORD",
+    "PG_HOST",
+    "PG_PORT",
+    "PG_USER",
+    "PG_PASSWORD",
+    "PG_DB",
+    "MODEL_NAME",
+    "MODEL_MAX_LENGTH",
+    "GP_CONFIG",
+    "LOGGING_CONFIG",
+]

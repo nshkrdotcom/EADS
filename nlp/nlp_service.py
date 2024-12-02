@@ -1,29 +1,27 @@
-"""Natural Language Processing Service for Code Analysis.
-
-This module provides a FastAPI service for encoding and analyzing code patterns.
-It uses the CodeBERT model for generating embeddings and provides REST API
-endpoints for various NLP operations.
-"""
+"""NLP service module."""
 
 import logging
 import sys
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 import torch
 import uvicorn
-from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, status
-from neo4j import GraphDatabase, Neo4jDriver
+from neo4j import GraphDatabase
 from transformers import AutoModel, AutoTokenizer
 
-from config.settings import API_CONFIG, DB_CONFIG, LOGGING_CONFIG, NLP_CONFIG
+from config.settings import (
+    LOGGING_CONFIG,
+    MODEL_NAME,
+    NEO4J_PASSWORD,
+    NEO4J_URI,
+    NEO4J_USER,
+)
+from error_handling.error_handler import handle_exception
 
 # Configure logging
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
-
-# Load environment variables
-load_dotenv()
 
 app = FastAPI(
     title="NLP Service",
@@ -33,71 +31,56 @@ app = FastAPI(
 
 # Initialize tokenizer and model
 try:
-    MODEL_NAME = NLP_CONFIG["model_name"]
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
     model = AutoModel.from_pretrained(MODEL_NAME)
     logger.info(f"Successfully loaded {MODEL_NAME} model and tokenizer")
 except Exception as e:
     logger.error(f"Failed to load model: {str(e)}")
-    logger.error(f"Exiting due to error: {str(e)}")
     sys.exit(1)
 
 # Neo4j connection configuration
-neo4j_config = DB_CONFIG["neo4j"]
-neo4j_driver: Optional[Neo4jDriver] = None
+neo4j_driver: Optional[GraphDatabase.driver] = None
 
 try:
     neo4j_driver = GraphDatabase.driver(
-        neo4j_config["uri"],
-        auth=(neo4j_config["user"], neo4j_config["password"]),
-        max_connection_lifetime=neo4j_config["max_connection_lifetime"],
+        NEO4J_URI,
+        auth=(NEO4J_USER, NEO4J_PASSWORD),
     )
     neo4j_driver.verify_connectivity()
     logger.info("Successfully connected to Neo4j database")
 except Exception as e:
     logger.error(f"Failed to connect to Neo4j: {str(e)}")
-    logger.error(f"Exiting due to error: {str(e)}")
     sys.exit(1)
 
 
 @app.on_event("shutdown")
-async def shutdown_event():
+async def shutdown_event() -> None:
     """Clean up resources when shutting down."""
     if neo4j_driver:
         neo4j_driver.close()
         logger.info("Closed Neo4j connection")
 
 
-@app.get("/")
-def read_root() -> Dict[str, str]:
-    """Check if the NLP service is running.
-
-    Returns:
-        Dict[str, str]: A dictionary containing the service status
-    """
-    return {"status": "NLP Service is running"}
+@app.on_event("shutdown")
+async def shutdown() -> None:
+    """Shutdown event handler."""
+    logger.info("Shutting down NLP service")
 
 
-@app.post("/encode")
-async def encode_text(text: str) -> Dict[str, Union[List[float], str]]:
-    """Encode text using the CodeBERT model.
+@app.get("/", response_model=Dict[str, str])
+async def read_root() -> Dict[str, str]:
+    """Root endpoint."""
+    return {"message": "NLP Service is running"}
 
-    Args:
-        text: The text to encode
 
-    Returns:
-        Dict containing the encoded vector and status
-
-    Raises:
-        HTTPException: If encoding fails
-    """
+@app.post("/encode", response_model=Dict[str, List[float]])
+async def encode_text(text: str) -> Dict[str, List[float]]:
+    """Encode text using the model."""
     try:
-        # Tokenize and encode
         inputs = tokenizer(
             text,
             padding=True,
             truncation=True,
-            max_length=NLP_CONFIG["max_tokens"],
             return_tensors="pt",
         )
 
@@ -105,37 +88,19 @@ async def encode_text(text: str) -> Dict[str, Union[List[float], str]]:
             outputs = model(**inputs)
             embeddings = outputs.last_hidden_state.mean(dim=1)
 
-        return {"vector": embeddings[0].tolist(), "status": "success"}
-
+        return {"vector": embeddings[0].tolist()}
     except Exception as e:
-        logger.error(f"Error encoding text: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to encode text: {str(e)}",
-        )
+        logger.error(f"Failed to encode text: {str(e)}")
+        return handle_exception(e)
 
 
-@app.post("/analyze")
-async def analyze_pattern(
-    code: str,
-) -> Dict[str, Union[List[Dict[str, str]], List[float]]]:
-    """Analyze code patterns by comparing with stored patterns in Neo4j.
-
-    Args:
-        code: The code snippet to analyze
-
-    Returns:
-        Dict containing similar patterns and embeddings
-
-    Raises:
-        HTTPException: If pattern analysis fails
-    """
+@app.post("/analyze", response_model=Dict[str, Any])
+async def analyze_pattern(code: str) -> Dict[str, Any]:
+    """Analyze code patterns by comparing with stored patterns in Neo4j."""
     try:
-        # Get embeddings for the input code
         encoded = await encode_text(code)
         embeddings = encoded["vector"]
 
-        # Query Neo4j for similar patterns
         if not neo4j_driver:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -146,41 +111,29 @@ async def analyze_pattern(
             result = session.run(
                 """
                 MATCH (p:Pattern)
-                WITH p, gds.similarity.cosine($embeddings, p.embeddings) AS similarity
-                WHERE similarity > 0.7
-                RETURN p.name AS name, p.description AS description, similarity
+                WITH p, gds.similarity.cosine($embedding, p.embedding) as similarity
+                WHERE similarity > 0.8
+                RETURN p.name, p.description, similarity
                 ORDER BY similarity DESC
                 LIMIT 5
                 """,
-                embeddings=embeddings,
+                embedding=embeddings,
             )
+            patterns = [dict(record) for record in result]
 
-            patterns = [
-                {
-                    "name": record["name"],
-                    "description": record["description"],
-                    "similarity": record["similarity"],
-                }
-                for record in result
-            ]
-
-        return {"patterns": patterns, "embeddings": embeddings}
-
-    except HTTPException:
-        raise
+        return {
+            "status": "success",
+            "patterns": patterns,
+        }
     except Exception as e:
-        logger.error(f"Error analyzing pattern: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to analyze pattern: {str(e)}",
-        )
+        logger.error(f"Failed to analyze pattern: {str(e)}")
+        return handle_exception(e)
 
 
 if __name__ == "__main__":
-    nlp_config = API_CONFIG["nlp_service"]
     uvicorn.run(
         app,
-        host=nlp_config["host"],
-        port=nlp_config["port"],
-        workers=nlp_config["workers"],
+        host="0.0.0.0",
+        port=8000,
+        workers=1,
     )

@@ -1,23 +1,21 @@
-"""Error handling package for EADS."""
+"""Error handling package."""
 
-from .error_handler import (
-    ConfigurationError,
+from error_handling.error_handler import (
     DatabaseError,
     EADSBaseException,
     ModelError,
     ValidationError,
+    eads_exception_handler,
     handle_exception,
-    safe_exit,
-    setup_exception_handlers,
+    register_exception_handlers,
 )
 
 __all__ = [
-    "EADSBaseException",
     "DatabaseError",
+    "EADSBaseException",
     "ModelError",
-    "ConfigurationError",
     "ValidationError",
+    "eads_exception_handler",
     "handle_exception",
-    "setup_exception_handlers",
-    "safe_exit",
+    "register_exception_handlers",
 ]

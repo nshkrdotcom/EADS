@@ -5,7 +5,7 @@ code implementations through successive generations.
 """
 
 import random
-from typing import Tuple
+from typing import List, Tuple
 
 from deap import algorithms, base, creator, tools
 
@@ -37,7 +37,7 @@ def run_genetic_programming() -> bool:
         )
         toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
-        def eval_function(individual) -> Tuple[float]:
+        def eval_function(individual: List[float]) -> Tuple[float]:
             """Evaluate the fitness of an individual.
 
             Args:
