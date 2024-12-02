@@ -372,7 +372,7 @@ graph TD
     Deployment --> Monitoring &  EADS["EADS Output"]
 ```
 
-### State Diagram (Boundless Socratic Learning
+### State Diagram (Boundless Socratic Learning)
 
 ```mermaid
 stateDiagram-v2
@@ -428,6 +428,8 @@ stateDiagram-v2
     
     [*] --> Continuous_Improvement
 ```
+
+### Architectural Diagram (Boundless Socratic Learning)
 
 ```mermaid
 graph LR
