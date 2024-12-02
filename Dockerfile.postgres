@@ -1,0 +1,13 @@
+# Dockerfile.postgres
+
+FROM postgres:15  # Use a suitable PostgreSQL version
+
+# Set up database name, user, and password
+ENV POSTGRES_DB pdf_to_latex_db
+ENV POSTGRES_USER your_postgres_user  # Replace with your desired username
+ENV POSTGRES_PASSWORD your_postgres_password # Replace with a strong password
+
+# Copy the PostgreSQL schema file into the container
+COPY database_schemas/postgresql_schema.sql /docker-entrypoint-initdb.d/
+
+# The SQL script will be executed when the container starts

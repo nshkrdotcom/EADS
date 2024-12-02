@@ -92,7 +92,7 @@ Passionate about autonomous systems? We're always looking for brilliant minds to
 
 ## &#x1F4DC; License
 
-[To be determined - Open-source, collaborative spirit encouraged!]
+MIT License
 
 ## &#x1F4E7; Contact
 

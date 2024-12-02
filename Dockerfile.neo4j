@@ -1,0 +1,12 @@
+# Dockerfile.neo4j
+
+FROM neo4j:latest  # Use the latest Neo4j version
+
+# Set environment variables for authentication (replace with your credentials)
+ENV NEO4J_AUTH your_neo4j_user/your_neo4j_password # Replace with credentials
+
+# Copy the Neo4j schema file (constraints) into the container. This doesn't create the database, but having the file there helps with project management
+COPY database_schemas/neo4j_schema.cypher /var/lib/neo4j/import/
+
+# Constraints will need to be applied manually or via an initialization script after the container starts
+# You could mount a volume for the Neo4j data directory for persistence.
