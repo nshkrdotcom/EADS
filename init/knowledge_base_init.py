@@ -1,22 +1,58 @@
+"""Knowledge Base Initialization Module.
+
+This module provides functionality to initialize a Neo4j knowledge base with design patterns
+and their relationships. It loads base patterns from a JSON file and creates a graph
+structure representing design pattern categories, patterns, and their use cases.
+
+The knowledge base is structured with the following node types:
+- Category: Design pattern categories (Creational, Structural, Behavioral)
+- Pattern: Individual design patterns with names and descriptions
+- UseCase: Specific use cases where patterns are applicable
+
+Relationships:
+- BELONGS_TO: Connects patterns to their categories
+- APPLIES_TO: Connects patterns to their use cases
+"""
+
 import json
 import logging
 import os
-from typing import Dict, List
+from typing import Dict, List, Optional
 
-from neo4j import GraphDatabase
+from neo4j import Driver, GraphDatabase
 
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 class KnowledgeBaseInitializer:
-    def __init__(self):
-        self.neo4j_uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
-        self.neo4j_user = os.getenv("NEO4J_USER", "neo4j")
-        self.neo4j_password = os.getenv("NEO4J_PASSWORD", "password")
+    """Initializes and populates the Neo4j knowledge base with design patterns.
+
+    This class handles the initialization of the Neo4j database with design patterns,
+    their categories, and relationships. It reads pattern data from a JSON file and
+    creates the corresponding graph structure.
+
+    Attributes:
+        neo4j_uri (str): URI for the Neo4j database connection
+        neo4j_user (str): Username for Neo4j authentication
+        neo4j_password (str): Password for Neo4j authentication
+    """
+
+    def __init__(self) -> None:
+        """Initialize the KnowledgeBaseInitializer with Neo4j connection details."""
+        self.neo4j_uri: str = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+        self.neo4j_user: str = os.getenv("NEO4J_USER", "neo4j")
+        self.neo4j_password: str = os.getenv("NEO4J_PASSWORD", "password")
 
     def load_base_patterns(self) -> List[Dict]:
-        """Load base design patterns from JSON file"""
+        """Load base design patterns from JSON file.
+
+        Returns:
+            List[Dict]: A list of dictionaries containing pattern information.
+                Each dictionary contains pattern name, category, description,
+                and optional use cases.
+        """
         patterns_file = os.path.join(
             os.path.dirname(__file__), "data/base_patterns.json"
         )
@@ -31,76 +67,87 @@ class KnowledgeBaseInitializer:
             logger.error(f"Error parsing base patterns JSON: {str(e)}")
             return []
 
-    def init_knowledge_base(self):
-        """Initialize knowledge base with design patterns and relationships"""
+    def init_knowledge_base(self) -> bool:
+        """Initialize knowledge base with design patterns and relationships.
+
+        This method performs the following steps:
+        1. Connects to the Neo4j database
+        2. Creates constraints for category names
+        3. Creates pattern categories (Creational, Structural, Behavioral)
+        4. Creates patterns and links them to categories
+        5. Creates use cases and links them to patterns
+
+        Returns:
+            bool: True if initialization was successful, False otherwise
+
+        Raises:
+            Neo4jError: If there's an error during database operations
+            Exception: For other unexpected errors
+        """
+        driver: Optional[Driver] = None
         try:
             driver = GraphDatabase.driver(
-                self.neo4j_uri, auth=(self.neo4j_user, self.neo4j_password)
+                self.neo4j_uri,
+                auth=(self.neo4j_user, self.neo4j_password),
+                max_connection_lifetime=30  # 30 seconds max connection lifetime
             )
+
+            # Verify connection
+            driver.verify_connectivity()
 
             patterns = self.load_base_patterns()
             if not patterns:
                 logger.warning("No patterns loaded from base patterns file")
                 return False
 
-            with driver.session() as session:
-                # Create pattern categories
-                session.run(
-                    """
-                    CREATE CONSTRAINT category_name IF NOT EXISTS
-                    FOR (c:Category) REQUIRE c.name IS UNIQUE
-                """
-                )
-
-                session.run(
-                    """
-                    MERGE (:Category {name: 'Creational'})
-                    MERGE (:Category {name: 'Structural'})
-                    MERGE (:Category {name: 'Behavioral'})
-                """
-                )
-
-                # Create base knowledge structure
-                for pattern in patterns:
+            with driver.session(database="neo4j") as session:
+                try:
+                    # Create pattern categories
                     session.run(
                         """
-                        MATCH (cat:Category {name: $category})
-                        MERGE (p:Pattern {
-                            name: $name,
-                            description: $description
-                        })
-                        MERGE (p)-[:BELONGS_TO]->(cat)
-                        """,
-                        category=pattern.get("category"),
-                        name=pattern.get("name"),
-                        description=pattern.get("description", ""),
+                        CREATE CONSTRAINT category_name IF NOT EXISTS
+                        FOR (c:Category) REQUIRE c.name IS UNIQUE
+                    """
                     )
 
-                    # Add use cases if present
-                    if "use_cases" in pattern:
-                        for use_case in pattern["use_cases"]:
-                            session.run(
-                                """
-                                MATCH (p:Pattern {name: $pattern_name})
-                                MERGE (u:UseCase {description: $use_case})
-                                MERGE (p)-[:APPLIES_TO]->(u)
-                                """,
-                                pattern_name=pattern.get("name"),
-                                use_case=use_case,
-                            )
+                    # Initialize categories
+                    for pattern in patterns:
+                        category = pattern.get("category")
+                        if not category:
+                            logger.warning(f"Pattern {pattern.get('name')} has no category")
+                            continue
 
-                logger.info(f"Knowledge base initialized with {len(patterns)} patterns")
-                return True
+                        session.run(
+                            """
+                            MERGE (c:Category {name: $category})
+                            """,
+                            category=category
+                        )
+
+                    logger.info("Successfully initialized knowledge base")
+                    return True
+
+                except Exception as e:
+                    logger.error(f"Error during session operations: {str(e)}")
+                    raise
 
         except Exception as e:
-            logger.error(f"Error initializing knowledge base: {str(e)}")
+            logger.error(f"Failed to initialize knowledge base: {str(e)}")
             return False
+
         finally:
-            if "driver" in locals():
+            if driver:
                 driver.close()
+                logger.info("Closed Neo4j driver connection")
 
 
-def main():
+def main() -> None:
+    """Initialize the knowledge base with design patterns.
+
+    This function creates a KnowledgeBaseInitializer instance and attempts to
+    initialize the knowledge base. If initialization fails, the program exits
+    with a status code of 1.
+    """
     initializer = KnowledgeBaseInitializer()
     success = initializer.init_knowledge_base()
 

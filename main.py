@@ -1,10 +1,22 @@
+"""Main entry point for the EADS (Evolutionary Autonomous Development System).
+
+This module orchestrates the entire EADS pipeline, from initial code generation
+through genetic programming optimization to final deployment.
+"""
+
 from code_generation import generate_initial_code
 from deployment import prepare_deployment
 from genetic_programming import run_genetic_programming
 from robustness_enhancements import enhance_robustness
 
 
-def main(input_file, output_file):
+def main(input_file: str, output_file: str) -> None:
+    """Execute the complete EADS pipeline.
+
+    Args:
+        input_file: Path to the input file containing project specifications.
+        output_file: Path where the final generated code will be saved.
+    """
     # Step 1: Load input PDF
     print(f"Loading input file: {input_file}")
     # ...code to load and process input PDF...
