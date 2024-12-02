@@ -82,7 +82,91 @@ At its heart, EADS is not just another development tool&#x2014;it's an intellige
 
 To create a self-healing, continuously improving software ecosystem that autonomously adapts to emerging technological landscapes.
 
-## System Architecture
+## &#x1F527; Setup & Installation
+
+### Prerequisites
+- Docker and Docker Compose installed on your system
+- Git for version control
+- Sufficient disk space for Docker images and volumes
+
+### Quick Start
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/nshkrdotcom/EADS.git
+   cd EADS
+   ```
+
+2. **Configure Environment Variables**
+   ```bash
+   touch .env
+   ```
+   Add the following environment variables to your `.env` file:
+   ```env
+   # Neo4j Configuration
+   NEO4J_AUTH=neo4j/your_password
+
+   # PostgreSQL Configuration
+   POSTGRES_USER=postgres
+   POSTGRES_PASSWORD=your_password
+
+   # Add other service-specific environment variables as needed
+   ```
+
+3. **Build and Start Services**
+   ```bash
+   chmod +x build.sh
+   ./build.sh
+   ```
+
+### Accessing Services
+
+Once the system is running, you can access various services:
+
+- **Neo4j Browser**: http://localhost:7474
+  - Default credentials: neo4j/your_password
+- **Airflow UI**: http://localhost:8080
+- **PostgreSQL**: localhost:5432
+
+### Docker Services Overview
+
+The system consists of the following services:
+
+- `neo4j`: Graph database for knowledge storage (ports: 7474, 7687)
+- `pinecone`: Vector database for semantic embeddings
+- `postgres`: Relational database for metadata (port: 5432)
+- `nlp_service`: Natural Language Processing service
+- `gp_engine`: Genetic Programming engine
+- `robustness_module`: Code analysis and enhancement
+- `static_analysis`: Static code analysis
+- `dynamic_analysis`: Dynamic code analysis
+- `airflow`: Workflow orchestration (port: 8080)
+
+### Development
+
+For development purposes, the system supports hot-reloading through volume mounts. Any changes made to the source code will be reflected in the running containers without requiring a rebuild.
+
+### Troubleshooting
+
+If you encounter any issues:
+
+1. Check Docker logs:
+   ```bash
+   docker-compose logs [service_name]
+   ```
+
+2. Restart services:
+   ```bash
+   docker-compose restart [service_name]
+   ```
+
+3. Clean rebuild:
+   ```bash
+   docker-compose down -v
+   docker-compose up -d --build
+   ```
+
+## &#x1F063; System Architecture
 
 EADS employs a modular architecture, integrating several key components:
 
