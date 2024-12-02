@@ -1,0 +1,11 @@
+tensorflow
+torch
+scikit-learn
+deap
+pygad
+neo4j
+pinecone-client
+psycopg2
+pandas
+numpy
+# ...other dependencies...

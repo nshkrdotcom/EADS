@@ -141,6 +141,10 @@ Passionate about autonomous systems? We're always looking for brilliant minds to
 3. **Build Docker Images:**  `./build.sh`  (This script will handle building all Docker images using `docker-compose`).
 4. **Start Containers:** `docker-compose up -d`  (Starts all containers in detached mode).
 5. **Access Services:** Access databases and APIs via the ports specified in `docker-compose.yml`.
+6. **Run Main Code:** Execute the main pipeline script:
+   ```bash
+   docker-compose exec app python run_pipeline.py input.pdf output.tex
+   ```
 
 ## &#x1F4DC; License
 

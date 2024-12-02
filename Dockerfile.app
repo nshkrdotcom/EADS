@@ -26,6 +26,5 @@ CMD ["python", "run_pipeline.py", "input.pdf", "output.tex"]  # Replace with you
 
 ## OR 
 
-
 ENTRYPOINT ["python", "run_pipeline.py"]
 CMD ["/app/input/your_input.pdf", "/app/output/output.tex"] # Example – now you can override the command at runtime

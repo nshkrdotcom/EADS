@@ -1,0 +1,3 @@
+def prepare_deployment(output_file):
+    print(f"Preparing output file: {output_file}")
+    # ...code to prepare and save output...
