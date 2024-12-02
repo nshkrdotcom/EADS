@@ -145,6 +145,18 @@ Passionate about autonomous systems? We're always looking for brilliant minds to
    ```bash
    docker-compose exec app python run_pipeline.py input.pdf output.tex
    ```
+7. **Run Robustness Enhancement Module:** Execute the robustness enhancement script:
+   ```bash
+   docker-compose exec app python run_robustness.py
+   ```
+8. **Run Genetic Programming Module:** Execute the genetic programming script:
+   ```bash
+   docker-compose exec app python run_gp.py
+   ```
+9. **Run Deployment Module:** Execute the deployment script:
+   ```bash
+   docker-compose exec app python run_deployment.py
+   ```
 
 ## &#x1F4DC; License
 

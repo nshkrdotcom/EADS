@@ -1,5 +1,8 @@
 import os
 import sys
+from code_generation import generate_initial_code
+from genetic_programming import run_genetic_programming
+from robustness_enhancements import enhance_robustness
 
 def main(input_file, output_file):
     # Step 1: Load input PDF
@@ -7,15 +10,15 @@ def main(input_file, output_file):
     # ...code to load and process input PDF...
 
     # Step 2: Generate initial code
-    print("Generating initial code...")
+    generate_initial_code(input_file)
     # ...code for initial code generation...
 
     # Step 3: Run genetic programming cycle
-    print("Running genetic programming cycle...")
+    run_genetic_programming()
     # ...code for genetic programming...
 
     # Step 4: Perform robustness enhancement
-    print("Enhancing robustness...")
+    enhance_robustness()
     # ...code for robustness enhancement...
 
     # Step 5: Prepare for deployment
