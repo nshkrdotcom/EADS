@@ -980,8 +980,7 @@ Reach out if you're as excited about autonomous software evolution as we are!
 *** vector: check out "timescale vector"
 
 *** build an embedding service for myself
- 
+
 ---
 
 *Inspired by the boundless potential of artificial intelligence and the art of software craftsmanship.*
-

@@ -1,17 +1,17 @@
 """Knowledge Base Initialization Module.
 
-This module provides functionality to initialize a Neo4j knowledge base with design patterns
-and their relationships. It loads base patterns from a JSON file and creates a graph
-structure representing design pattern categories, patterns, and their use cases.
+This module provides functionality to initialize a Neo4j knowledge base with design
+patterns and their relationships. It loads base patterns from a JSON file and creates
+a graph structure representing design pattern categories, patterns, and their use cases.
 
 The knowledge base is structured with the following node types:
-- Category: Design pattern categories (Creational, Structural, Behavioral)
-- Pattern: Individual design patterns with names and descriptions
-- UseCase: Specific use cases where patterns are applicable
+  - Category: Design pattern categories (Creational, Structural, Behavioral)
+  - Pattern: Individual design patterns with names and descriptions
+  - UseCase: Specific use cases where patterns are applicable
 
 Relationships:
-- BELONGS_TO: Connects patterns to their categories
-- APPLIES_TO: Connects patterns to their use cases
+  - BELONGS_TO: Connects patterns to their categories
+  - APPLIES_TO: Connects patterns to their use cases
 """
 
 import json

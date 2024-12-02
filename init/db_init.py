@@ -1,17 +1,12 @@
-"""Database initialization module for EADS.
-
-This module handles the initialization and setup of database connections,
-including PostgreSQL and Neo4j databases.
-"""
+"""Database initialization module."""
 
 import logging
 import os
 import time
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import pinecone
 import psycopg2
-from neo4j import Driver, GraphDatabase
 from psycopg2.extensions import connection as PGConnection
 
 # Configure logging
