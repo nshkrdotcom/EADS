@@ -3,6 +3,7 @@ import sys
 from code_generation import generate_initial_code
 from genetic_programming import run_genetic_programming
 from robustness_enhancements import enhance_robustness
+from deployment import prepare_deployment
 
 def main(input_file, output_file):
     # Step 1: Load input PDF
@@ -22,7 +23,7 @@ def main(input_file, output_file):
     # ...code for robustness enhancement...
 
     # Step 5: Prepare for deployment
-    print(f"Preparing output file: {output_file}")
+    prepare_deployment(output_file)
     # ...code to prepare and save output...
 
     print("Pipeline execution completed.")
