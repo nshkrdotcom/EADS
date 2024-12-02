@@ -236,41 +236,40 @@ flowchart TD
 ### System Diagram
 
 ```mermaid
-graph LR
+graph TD
     subgraph EADS
-        direction LR
         subgraph Knowledge
-            Neo4j["Knowledge Graph<br>(Neo4j)"]
-            Pinecone["Semantic Embeddings<br>(Pinecone)"]
-            CodeBERT["Code Understanding<br>(CodeBERT)"] --> Neo4j & Pinecone
+            Neo4j["Knowledge<br>Graph<br>(Neo4j)"]
+            Pinecone["Semantic<br>Embeddings<br>(Pinecone)"]
+            CodeBERT["Code<br>Understanding<br>(CodeBERT)"] --> Neo4j & Pinecone
         end
 
-        subgraph "Genetic Programming"
-            DEAP["GP Engine<br>(DEAP/PyGAD)"]
-            AI["Decentralized AI Engine<br>(TensorFlow/PyTorch/Scikit-learn)"] --> DEAP
+        subgraph "Genetic&nbsp;Programming"
+            DEAP["GP<br>Engine<br>(DEAP/PyGAD)"]
+            AI["Decentralized<br>AI<br>Engine<br>(TensorFlow/PyTorch/Scikit-learn)"] --> DEAP
             CodeBERT --> AI & DEAP
             HCI["Human-in-the-Loop<br>Interface"] --> AI & DEAP & Robustness
         end
 
         subgraph Robustness
             direction TB
-            SA["Static Analysis"] --> REM
-            DA["Dynamic Analysis"] --> REM
-            FV["Formal Verification"] --> REM
+            SA["Static<br>Analysis"] --> REM
+            DA["Dynamic<br>Analysis"] --> REM
+            FV["Formal<br>Verification"] --> REM
             CodeBERT --> REM
             Pinecone --> REM
-            REM["Robustness Enhancement<br>Module"] --> DEAP & AI
+            REM["Robustness<br>Enhancement<br>Module"] --> DEAP & AI
 
         end
 
 
         subgraph Deployment
-            Airflow["Workflow<br>Orchestration<br>(Apache Airflow)"] --> Docker["Containerization (Docker)"]
-            Docker --> Kubernetes["Orchestration (Kubernetes)"]
+            Airflow["Workflow<br>Orchestration<br>(Apache<br>Airflow)"] --> Docker["Containerization<br>(Docker)"]
+            Docker --> Kubernetes["Orchestration<br>(Kubernetes)"]
         end
 
         subgraph Monitoring
-           MD["Metadata Database (Postgres)"]
+           MD["Metadata<br>Database<br>(Postgres)"]
            MD --> DEAP & AI & REM & HCI
         end
 
@@ -283,5 +282,4 @@ graph LR
     Robustness --> DEAP
     Monitoring --> Airflow
     Deployment --> Monitoring &  EADS["EADS Output"]
-
 ```
