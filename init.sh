@@ -9,7 +9,7 @@ echo "🚀 Initializing EADS (Evolutionary Autonomous Development System)"
 if ! dpkg -l | grep -q python3-venv; then
     echo "📦 Installing python3-venv..."
     sudo apt-get update
-    sudo apt-get install -y python3-venv
+    sudo apt-get install -y python3-venv python3-pip
 fi
 
 # Check if .env file exists
@@ -30,10 +30,28 @@ echo "🐍 Creating Python virtual environment..."
 python3 -m venv .venv
 source .venv/bin/activate
 
-# Install dependencies
+# Install dependencies in batches
 echo "📦 Installing Python dependencies..."
 pip install --upgrade pip
-pip install -r requirements.txt
+
+echo "Installing base requirements..."
+pip install python-dotenv pytest black flake8
+
+echo "Installing database requirements..."
+pip install psycopg2-binary neo4j pinecone-client
+
+echo "Installing data science requirements..."
+pip install numpy pandas scikit-learn
+
+echo "Installing ML requirements..."
+pip install torch
+pip install tensorflow
+
+echo "Installing genetic programming requirements..."
+pip install deap pygad
+
+echo "Installing PDF processing requirements..."
+pip install PyPDF2
 
 # Start Docker services
 echo "🐳 Starting Docker services..."

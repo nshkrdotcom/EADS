@@ -372,6 +372,137 @@ graph TD
     Deployment --> Monitoring &  EADS["EADS Output"]
 ```
 
+### Language Game Example
+
+```mermaid
+graph LR
+    subgraph LanguageGame["Language&nbsp;Game&nbsp;Example"]
+        subgraph Agent1["Agent 1"]
+            LLM1["LLM(Core)"]
+            style LLM1 fill:#f0f0f0,stroke:#333,stroke-width:2px
+        end
+        subgraph Agent2["Agent&nbsp;2"]
+            LLM2["LLM(Core)"]
+            style LLM2 fill:#f0f0f0,stroke:#333,stroke-width:2px
+        end
+
+        subgraph GameMechanics["Game&nbsp;Mechanics"]
+            Rules["Game<br>Rules"]
+            ScoringFunction["Scoring<br>Function"]
+            style Rules fill:#e0ffff,stroke:#87ceeb
+            style ScoringFunction fill:#c0d6e4,stroke:#4682b4
+        end
+
+        subgraph Evaluator["Game#8209;Specific&nbsp;Evaluator"]
+            EvaluationProcess["Evaluation<br>Process"]
+            ScoreOutput["Score Output"] --> GameScheduler
+            style EvaluationProcess fill:#c0d6e4,stroke:#4682b4
+            style ScoreOutput fill:#ffa500,stroke:#b70
+        end
+
+
+        Agent1 --> Rules
+        Agent2 --> Rules
+        Agent1 --> ScoringFunction
+        Agent2 --> ScoringFunction
+        Agent1 --> EvaluationProcess
+        Agent2 --> EvaluationProcess
+        GameMechanics --> EvaluationProcess
+        
+
+        style Agent1 fill:#a0e0a0,stroke:#080
+        style Agent2 fill:#a0e0a0,stroke:#080
+
+
+    end
+
+    subgraph GameScheduler["Game&nbsp;Scheduler"]
+        style GameScheduler fill:#d8bfd8,stroke:#da70d6
+    end
+```
+
+### Meta Game Dynamics
+
+
+```mermaid
+graph LR
+    subgraph MetaGameDynamics["Meta Game Dynamics"]
+
+        subgraph GameScheduler["Game Scheduler"]
+            SchedulingLogic["Scheduling<br>Logic"]
+            SelectedGame["Selected<br>Game"]
+            style SchedulingLogic fill:#d8bfd8,stroke:#da70d6
+            style SelectedGame fill:#e0ffff,stroke:#87ceeb
+        end
+
+        subgraph MetaCritic["Meta Critic"]
+            EvaluationMetrics["Evaluation<br>Metrics (e.g.,<br>Learning<br>Progress,<br>Diversity)"]
+            GameEvaluations["Game<br>Evaluations"]
+            style EvaluationMetrics fill:#add8e6,stroke:#00bfff
+            style GameEvaluations fill:#ffa500,stroke:#b70
+        end
+        
+        subgraph GameLibrary["Language Game Library"]
+            Game1["Game 1"]
+            Game2["Game 2"]
+            Game3["Game 3"]
+            style Game1 fill:#fffacd,stroke:#daa520
+            style Game2 fill:#fffacd,stroke:#daa520
+            style Game3 fill:#fffacd,stroke:#daa520
+        end
+
+        EvaluationMetrics --> GameEvaluations
+        GameEvaluations --> SchedulingLogic
+        GameLibrary ----> SchedulingLogic
+        SchedulingLogic --> SelectedGame
+
+
+
+    end
+```
+
+### Agent Learning Process
+
+```mermaid
+graph LR
+    subgraph AgentLearning["Agent&nbsp;Learning&nbsp;Process"]
+
+        subgraph Agent["Agent"]
+            LLM["LLM<br>(Core)"]
+            LearnedElements["Learned<br>Elements"]
+            style LLM fill:#f0f0f0,stroke:#333,stroke-width:2px
+            style LearnedElements fill:#a0e0a0,stroke:#080
+        end
+
+        subgraph Game["Game&nbsp;Interaction"]
+            AgentActions["Agent<br>Actions<br>(Outputs)"]
+            GameEnvironment["Game<br>Environment"]
+            style AgentActions fill:#ccf,stroke:#00f
+            style GameEnvironment fill:#e0ffff,stroke:#87ceeb
+        end
+
+        subgraph Evaluator["Evaluator"]
+            Score["Score/Feedback"]
+            style Score fill:#ffa500,stroke:#b70
+        end
+        
+        subgraph LearningAlgorithm["Learning&nbsp;Algo"]
+            UpdateRule["Update<br>Rule"]
+            style UpdateRule fill:#f00080,stroke:#40f
+        end
+        LLM --> AgentActions
+        AgentActions --> GameEnvironment
+        GameEnvironment --> Evaluator
+        Evaluator --> Score
+        Score --> LearningAlgorithm
+        LearningAlgorithm --> UpdateRule
+        UpdateRule --> LearnedElements
+        LearnedElements --> LLM
+
+
+    end
+```
+
 ### State Diagram (Boundless Socratic Learning)
 
 ```mermaid
