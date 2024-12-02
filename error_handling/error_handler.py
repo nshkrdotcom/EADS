@@ -7,7 +7,7 @@ including custom exceptions, error logging, and error response formatting.
 import logging
 import sys
 import traceback
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, Optional
 
 from fastapi import HTTPException, status
 
@@ -35,21 +35,25 @@ class EADSBaseException(Exception):
 
 class DatabaseError(EADSBaseException):
     """Exception for database-related errors."""
+
     pass
 
 
 class ModelError(EADSBaseException):
     """Exception for ML model-related errors."""
+
     pass
 
 
 class ConfigurationError(EADSBaseException):
     """Exception for configuration-related errors."""
+
     pass
 
 
 class ValidationError(EADSBaseException):
     """Exception for data validation errors."""
+
     pass
 
 
@@ -57,7 +61,7 @@ def handle_exception(
     exc: Exception,
     log_error: bool = True,
     raise_http: bool = True,
-    status_code: int = status.HTTP_500_INTERNAL_SERVER_ERROR
+    status_code: int = status.HTTP_500_INTERNAL_SERVER_ERROR,
 ) -> Dict[str, Any]:
     """Handle exceptions in a standardized way.
 
@@ -78,20 +82,16 @@ def handle_exception(
         "error_type": error_type,
         "message": str(exc),
         "error_code": getattr(exc, "error_code", None),
-        "traceback": traceback.format_exc() if log_error else None
+        "traceback": traceback.format_exc() if log_error else None,
     }
 
     if log_error:
         logger.error(
-            f"Error occurred: {error_type}",
-            extra={"error_details": error_details}
+            f"Error occurred: {error_type}", extra={"error_details": error_details}
         )
 
     if raise_http:
-        raise HTTPException(
-            status_code=status_code,
-            detail=error_details
-        )
+        raise HTTPException(status_code=status_code, detail=error_details)
 
     return error_details
 
@@ -102,6 +102,7 @@ def setup_exception_handlers(app: Any) -> None:
     Args:
         app: FastAPI application instance
     """
+
     @app.exception_handler(EADSBaseException)
     async def eads_exception_handler(request: Any, exc: EADSBaseException):
         """Handle EADS-specific exceptions."""
@@ -110,26 +111,17 @@ def setup_exception_handlers(app: Any) -> None:
     @app.exception_handler(DatabaseError)
     async def database_exception_handler(request: Any, exc: DatabaseError):
         """Handle database-related exceptions."""
-        return handle_exception(
-            exc,
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE
-        )
+        return handle_exception(exc, status_code=status.HTTP_503_SERVICE_UNAVAILABLE)
 
     @app.exception_handler(ModelError)
     async def model_exception_handler(request: Any, exc: ModelError):
         """Handle ML model-related exceptions."""
-        return handle_exception(
-            exc,
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY
-        )
+        return handle_exception(exc, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
     @app.exception_handler(ValidationError)
     async def validation_exception_handler(request: Any, exc: ValidationError):
         """Handle validation-related exceptions."""
-        return handle_exception(
-            exc,
-            status_code=status.HTTP_400_BAD_REQUEST
-        )
+        return handle_exception(exc, status_code=status.HTTP_400_BAD_REQUEST)
 
 
 def safe_exit(error: Optional[Exception] = None, exit_code: int = 1) -> None:

@@ -248,10 +248,11 @@ class GPService:
                 "generations_completed": generations,
             }
 
-        except ValueError as e:
+        except ValueError:
+            logger.error("Invalid value provided for evolution parameters")
             raise
-        except Exception as e:
-            logger.error(f"Error during evolution: {str(e)}")
+        except Exception:
+            logger.error("Error during evolution")
             raise ModelError("Evolution process failed", "GP_EVOL_001")
 
 
@@ -288,9 +289,9 @@ async def evolve_code(code: str, generations: Optional[int] = None) -> Dict[str,
     except ModelError as me:
         logger.error(f"Evolution failed: {str(me)}")
         return handle_exception(me)
-    except Exception as e:
-        logger.error(f"Evolution failed: {str(e)}")
-        return handle_exception(e)
+    except Exception:
+        logger.error("Evolution failed")
+        return handle_exception()
 
 
 @app.on_event("shutdown")

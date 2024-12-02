@@ -6,7 +6,7 @@ for different components.
 """
 
 import os
-from typing import Dict, Any
+from typing import Any, Dict
 
 # Database Settings
 DB_CONFIG: Dict[str, Any] = {
@@ -25,7 +25,7 @@ DB_CONFIG: Dict[str, Any] = {
         "database": os.getenv("PG_DB", "eads"),
         "min_connections": 1,
         "max_connections": 10,
-    }
+    },
 }
 
 # API Settings
@@ -41,7 +41,7 @@ API_CONFIG: Dict[str, Any] = {
         "port": 8001,
         "workers": 4,
         "timeout": 120,
-    }
+    },
 }
 
 # Genetic Programming Settings
@@ -66,9 +66,7 @@ LOGGING_CONFIG: Dict[str, Any] = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "standard": {
-            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
-        },
+        "standard": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"},
     },
     "handlers": {
         "default": {
@@ -89,7 +87,7 @@ LOGGING_CONFIG: Dict[str, Any] = {
         "": {  # root logger
             "handlers": ["default", "file"],
             "level": "INFO",
-            "propagate": True
+            "propagate": True,
         },
     },
 }

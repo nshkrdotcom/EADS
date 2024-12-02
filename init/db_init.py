@@ -3,10 +3,11 @@
 import logging
 import os
 import time
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple
 
 import pinecone
 import psycopg2
+from neo4j import Driver, GraphDatabase
 from psycopg2.extensions import connection as PGConnection
 
 # Configure logging
