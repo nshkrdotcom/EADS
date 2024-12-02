@@ -3,9 +3,9 @@
 This module handles the initial code generation phase, transforming input
 specifications into initial code implementations using LLM-based techniques.
 """
+from typing import Optional
 
-
-def generate_initial_code(input_file: str) -> bool:
+def generate_code(input_file: str) -> bool:
     """Generate initial code implementation from input specifications.
 
     Args:
