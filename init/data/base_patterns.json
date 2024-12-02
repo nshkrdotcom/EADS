@@ -1,0 +1,54 @@
+{
+    "patterns": [
+        {
+            "name": "Singleton",
+            "category": "Creational",
+            "description": "Ensures a class has only one instance and provides a global point of access to it",
+            "use_cases": [
+                "Database connections",
+                "Configuration management",
+                "Logging services"
+            ]
+        },
+        {
+            "name": "Factory Method",
+            "category": "Creational",
+            "description": "Defines an interface for creating objects but lets subclasses decide which class to instantiate",
+            "use_cases": [
+                "Plugin architectures",
+                "Framework development",
+                "Object creation based on conditions"
+            ]
+        },
+        {
+            "name": "Observer",
+            "category": "Behavioral",
+            "description": "Defines a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically",
+            "use_cases": [
+                "Event handling systems",
+                "User interface design",
+                "Real-time data monitoring"
+            ]
+        },
+        {
+            "name": "Strategy",
+            "category": "Behavioral",
+            "description": "Defines a family of algorithms, encapsulates each one, and makes them interchangeable",
+            "use_cases": [
+                "Payment processing systems",
+                "Compression algorithms",
+                "Sorting implementations"
+            ]
+        },
+        {
+            "name": "Adapter",
+            "category": "Structural",
+            "description": "Converts the interface of a class into another interface clients expect",
+            "use_cases": [
+                "Legacy system integration",
+                "Third-party library integration",
+                "API compatibility layers"
+            ]
+        }
+    ]
+}
