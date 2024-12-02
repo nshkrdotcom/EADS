@@ -1,13 +1,4 @@
-version: "3.9"  # Specify Docker Compose version
-
-
-## Clarifications and Minor Additions:
-
-## docker-compose.yml - Mounting Input/Output: The volumes section in the docker-compose.yml file should mount volumes for both input and output, making it easier to access input PDFs and retrieve generated LaTeX files. The previous response showed this, but it's very important:
-
-## volumes:
-##      - ./input:/app/input:ro  # Mount input directory (read-only)
-##      - ./output:/app/output # Mount output directory
+version: "3.9"
 
 services:
   neo4j:
@@ -16,16 +7,10 @@ services:
       - "7474:7474"  # Browser access
       - "7687:7687"  # Bolt protocol
     volumes:
-      - neo4j_data:/data  # Persistent data storage
+      - neo4j_data:/data
     environment:
-      NEO4J_AUTH: neo4j/password  # Set Neo4j credentials
-
-  pinecone:
-    image: pinecone/pinecone:latest #  (Placeholder - Pinecone typically deployed in the cloud)
-    ports:
-      - "9000:9000" # Example port, may differ
-    # ... (Pinecone configuration - environment variables, etc.) ...
-
+      NEO4J_AUTH: ${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-password}
+      NEO4J_dbms_memory_heap_max__size: 2G
 
   postgres:
     image: postgres:latest
@@ -34,99 +19,41 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-eads}
 
-  nlp_service:  # Example NLP service - can be split further into sub-services if needed
-    build: ./nlp  # Path to Dockerfile for NLP service
+  nlp_service:
+    build: 
+      context: ./nlp
+      dockerfile: Dockerfile
     ports:
-      - "8000:8000" # Example - can be omitted if internal only
+      - "8000:8000"
     volumes: 
-       - ./nlp:/app
+      - ./nlp:/app
+    environment:
+      - NEO4J_URI=${NEO4J_URI:-bolt://neo4j:7687}
+      - NEO4J_USER=${NEO4J_USER:-neo4j}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-password}
     depends_on:
-      - neo4j # Ensure Neo4j is running first for NLP to connect
+      - neo4j
 
   gp_engine:
-    build: ./gp_engine
+    build: 
+      context: ./gp_engine
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
     volumes:
       - ./gp_engine:/app
-    depends_on:
-      - neo4j
-      - pinecone
-      - postgres
-      - nlp_service
-
-
-  robustness_module:
-    build: ./robustness_module
-    volumes:
-      - ./robustness_module:/app
-    depends_on:
-      - neo4j
-      - pinecone
-      - postgres
-      - gp_engine
-      - static_analysis
-      - dynamic_analysis
-
-  static_analysis:
-    build: ./static_analysis
-    volumes: 
-       - ./static_analysis:/app
-
-  dynamic_analysis:
-    build: ./dynamic_analysis
-    volumes: 
-       - ./dynamic_analysis:/app
-
-  airflow:
-    image: apache/airflow:latest
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./dags:/opt/airflow/dags  # For Airflow workflows
-      - airflow_db:/var/lib/airflow
-    depends_on: 
-       - postgres # Airflow metadata database
-       - gp_engine
-       - robustness_module
-
-  postgres:
-    build:
-      context: .
-      dockerfile: Dockerfile.postgres
-    ports:
-      - "5432:5432"  # Map PostgreSQL port
-    volumes:
-      - pgdata:/var/lib/postgresql/data  # For data persistence
-
-  neo4j:
-    build:
-      context: .
-      dockerfile: Dockerfile.neo4j
-    ports:
-      - "7474:7474"  # Map Neo4j HTTP port
-      - "7687:7687"  # Map Neo4j Bolt port
-    volumes: 
-       - neo4j_data:/data # For data persistence.  remove or comment this out if you don't need persistance (e.g. for testing)
-
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile.app
-    depends_on:  # Ensure databases are running first
-      - postgres
-      - neo4j
     environment:
-      - PG_CONN_STR=postgresql://your_postgres_user:your_postgres_password@postgres:5432/pdf_to_latex_db # Inject DB creds
-      - NEO4J_URI=bolt://your_neo4j_user:your_neo4j_password@neo4j:7687 # Inject Neo4j creds
-    volumes:  # Mount a volume for input and output files
-      - ./input:/app/input:ro # ro = read only mount
-      - ./output:/app/output
+      - NEO4J_URI=${NEO4J_URI:-bolt://neo4j:7687}
+      - NEO4J_USER=${NEO4J_USER:-neo4j}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-password}
+    depends_on:
+      - neo4j
+      - postgres
 
 volumes:
   neo4j_data:
   postgres_data:
-  airflow_db:
-  pgdata:
-  neo4j_data:
