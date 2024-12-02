@@ -4,9 +4,9 @@ This module provides the core genetic programming functionality, including
 population management, fitness evaluation, and evolution operations.
 """
 
+import logging
 import os
 from typing import List, Tuple
-import logging
 
 import numpy as np
 import uvicorn

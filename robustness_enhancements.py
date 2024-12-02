@@ -54,10 +54,7 @@ def run_static_analysis() -> bool:
     try:
         print("Running static analysis...")
         result = subprocess.run(
-            ["pylint", "your_code.py"],
-            capture_output=True,
-            text=True,
-            check=True
+            ["pylint", "your_code.py"], capture_output=True, text=True, check=True
         )
         print(result.stdout)
         return True

@@ -11,7 +11,7 @@ from typing import Any, Dict, Optional, Tuple, Union
 
 import pinecone
 import psycopg2
-from neo4j import GraphDatabase, Driver
+from neo4j import Driver, GraphDatabase
 from psycopg2.extensions import connection as PGConnection
 
 # Configure logging
@@ -91,9 +91,7 @@ class DatabaseInitializer:
         """
         for attempt in range(max_attempts):
             try:
-                driver = GraphDatabase.driver(
-                    self.neo4j_uri, auth=self.neo4j_auth
-                )
+                driver = GraphDatabase.driver(self.neo4j_uri, auth=self.neo4j_auth)
                 driver.verify_connectivity()
                 return True, driver
             except Exception as e:

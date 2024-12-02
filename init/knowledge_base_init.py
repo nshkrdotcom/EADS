@@ -89,7 +89,7 @@ class KnowledgeBaseInitializer:
             driver = GraphDatabase.driver(
                 self.neo4j_uri,
                 auth=(self.neo4j_user, self.neo4j_password),
-                max_connection_lifetime=30  # 30 seconds max connection lifetime
+                max_connection_lifetime=30,  # 30 seconds max connection lifetime
             )
 
             # Verify connection
@@ -114,14 +114,16 @@ class KnowledgeBaseInitializer:
                     for pattern in patterns:
                         category = pattern.get("category")
                         if not category:
-                            logger.warning(f"Pattern {pattern.get('name')} has no category")
+                            logger.warning(
+                                f"Pattern {pattern.get('name')} has no category"
+                            )
                             continue
 
                         session.run(
                             """
                             MERGE (c:Category {name: $category})
                             """,
-                            category=category
+                            category=category,
                         )
 
                     logger.info("Successfully initialized knowledge base")

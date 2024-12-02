@@ -956,6 +956,32 @@ MIT License
 
 Reach out if you're as excited about autonomous software evolution as we are!
 
+
+# Discussion
+
+** Use a multi agent framework
+
+*** Use each agent to comprehend part of it
+
+*** define policy for each Agent, keep track of entire state of the System
+
+*** use an observer LLM to keep track of variables
+
+*** smartest model should be observing
+
+*** andrej karpethi talks about this
+
+*** LEARN HOW DOES A MODEL INFER WITH THAT LIBRARY - how can i run an LLM without any exter
+
+*** experiment with microsoft phi 2 - ecosystems
+
+*** cosine similarity search, set up the vector store
+
+*** vector: check out "timescale vector"
+
+*** build an embedding service for myself
+ 
 ---
 
 *Inspired by the boundless potential of artificial intelligence and the art of software craftsmanship.*
+

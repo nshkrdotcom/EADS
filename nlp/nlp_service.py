@@ -21,7 +21,7 @@ load_dotenv()
 app = FastAPI(
     title="NLP Service",
     description="A service for code analysis using NLP techniques",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # Initialize tokenizer and model
@@ -34,10 +34,7 @@ NEO4J_URI = os.getenv("NEO4J_URI", "bolt://neo4j:7687")
 NEO4J_USER = os.getenv("NEO4J_USER", "neo4j")
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "password")
 
-neo4j_driver = GraphDatabase.driver(
-    NEO4J_URI,
-    auth=(NEO4J_USER, NEO4J_PASSWORD)
-)
+neo4j_driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
 
 
 @app.get("/")
@@ -66,12 +63,7 @@ async def encode_text(text: str) -> Dict[str, Union[List[float], str]]:
     """
     try:
         # Tokenize and encode text
-        inputs = tokenizer(
-            text,
-            return_tensors="pt",
-            truncation=True,
-            max_length=512
-        )
+        inputs = tokenizer(text, return_tensors="pt", truncation=True, max_length=512)
         with torch.no_grad():
             outputs = model(**inputs)
 
@@ -85,7 +77,7 @@ async def encode_text(text: str) -> Dict[str, Union[List[float], str]]:
 
 @app.post("/analyze_pattern")
 async def analyze_pattern(
-    code: str
+    code: str,
 ) -> Dict[str, Union[List[Dict[str, str]], List[float]]]:
     """Analyze code patterns by comparing with stored patterns in Neo4j.
 
@@ -101,12 +93,7 @@ async def analyze_pattern(
     """
     try:
         # Encode the code
-        inputs = tokenizer(
-            code,
-            return_tensors="pt",
-            truncation=True,
-            max_length=512
-        )
+        inputs = tokenizer(code, return_tensors="pt", truncation=True, max_length=512)
         with torch.no_grad():
             outputs = model(**inputs)
 
