@@ -299,3 +299,98 @@ graph TD
     Monitoring --> Airflow
     Deployment --> Monitoring &  EADS["EADS Output"]
 ```
+
+## Tech Exploration
+
+### **Ontologies and Knowledge Graphs**
+1. **Description Logics (DLs)**  
+   - Overview: [https://en.wikipedia.org/wiki/Description_logic](https://en.wikipedia.org/wiki/Description_logic)
+
+2. **Web Ontology Language (OWL)**  
+   - Website: [https://www.w3.org/OWL/](https://www.w3.org/OWL/)
+
+3. **Pellet (OWL Reasoner)**  
+   - Website: [https://github.com/stardog-union/pellet](https://github.com/stardog-union/pellet)
+
+4. **HermiT (OWL Reasoner)**  
+   - Website: [http://www.hermit-reasoner.com/](http://www.hermit-reasoner.com/)
+
+5. **FaCT++ (OWL Reasoner)**  
+   - Website: [https://github.com/owlcs/factplusplus](https://github.com/owlcs/factplusplus)
+
+6. **Resource Description Framework (RDF)**  
+   - Website: [https://www.w3.org/RDF/](https://www.w3.org/RDF/)
+
+7. **SPARQL (Query Language for RDF)**  
+   - Website: [https://www.w3.org/TR/sparql11-query/](https://www.w3.org/TR/sparql11-query/)
+
+8. **RDF Schema (RDFS)**  
+   - Website: [https://www.w3.org/TR/rdf-schema/](https://www.w3.org/TR/rdf-schema/)
+
+9. **Neo4j (Graph Database)**  
+   - Website: [https://neo4j.com/](https://neo4j.com/)
+
+10. **JanusGraph (Graph Database)**  
+    - Website: [https://janusgraph.org/](https://janusgraph.org/)
+
+11. **Amazon Neptune**  
+    - Website: [https://aws.amazon.com/neptune/](https://aws.amazon.com/neptune/)
+
+---
+
+### **Formal Methods**
+12. **Z Notation**  
+    - Overview: [https://en.wikipedia.org/wiki/Z_notation](https://en.wikipedia.org/wiki/Z_notation)  
+    - Z/EVES Tool: [https://www.oracle.com/technetwork/systems/z-eves-index-098299.html](https://www.oracle.com/technetwork/systems/z-eves-index-098299.html)
+
+13. **Alloy (Formal Specification Language)**  
+    - Website: [http://alloytools.org/](http://alloytools.org/)
+
+14. **Event-B (System-Level Modeling)**  
+    - Website: [https://www.event-b.org/](https://www.event-b.org/)
+
+15. **Rodin (Event-B Tool)**  
+    - Website: [https://www.event-b.org/tools/](https://www.event-b.org/tools/)
+
+---
+
+### **Program Analysis and Transformation**
+16. **Abstract Syntax Trees (ASTs)**  
+    - TreeSitter: [https://tree-sitter.github.io/tree-sitter/](https://tree-sitter.github.io/tree-sitter/)  
+    - ANTLR: [https://www.antlr.org/](https://www.antlr.org/)
+
+17. **Symbolic Execution**  
+    - Overview: [https://en.wikipedia.org/wiki/Symbolic_execution](https://en.wikipedia.org/wiki/Symbolic_execution)
+
+---
+
+### **Knowledge Representation and Reasoning**
+18. **Prolog**  
+    - Website: [https://www.swi-prolog.org/](https://www.swi-prolog.org/)
+
+19. **Drools (Rule Engine)**  
+    - Website: [https://www.drools.org/](https://www.drools.org/)
+
+20. **Jess (Rule Engine)**  
+    - Website: [https://www.jessrules.com/jess/](https://www.jessrules.com/jess/)
+
+---
+
+### **Knowledge Representation and Reasoning (KRR) Systems and Logic Programming**  
+21. **NLTK (Natural Language Toolkit)**  
+    - Website: [https://www.nltk.org/](https://www.nltk.org/)
+
+22. **Stanford CoreNLP**  
+    - Website: [https://stanfordnlp.github.io/CoreNLP/](https://stanfordnlp.github.io/CoreNLP/)
+
+23. **Stanza**  
+    - Website: [https://stanfordnlp.github.io/stanza/](https://stanfordnlp.github.io/stanza/)
+
+24. **Gensim**  
+    - Website: [https://radimrehurek.com/gensim/](https://radimrehurek.com/gensim/)
+
+25. **AllenNLP**  
+    - Website: [https://allennlp.org/](https://allennlp.org/)
+
+26. **Transformers (Hugging Face)**  
+    - Website: [https://huggingface.co/transformers/](https://huggingface.co/transformers/)
