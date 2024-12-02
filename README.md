@@ -88,6 +88,7 @@ To create a self-healing, continuously improving software ecosystem that autonom
 - Docker and Docker Compose installed on your system
 - Git for version control
 - Sufficient disk space for Docker images and volumes
+- Python 3.12 or higher
 
 ### Quick Start
 
@@ -97,26 +98,31 @@ To create a self-healing, continuously improving software ecosystem that autonom
    cd EADS
    ```
 
-2. **Configure Environment Variables**
+2. **Run Setup Script**
    ```bash
-   touch .env
-   ```
-   Add the following environment variables to your `.env` file:
-   ```env
-   # Neo4j Configuration
-   NEO4J_AUTH=neo4j/your_password
-
-   # PostgreSQL Configuration
-   POSTGRES_USER=postgres
-   POSTGRES_PASSWORD=your_password
-
-   # Add other service-specific environment variables as needed
+   chmod +x setup.sh
+   ./setup.sh
    ```
 
-3. **Build and Start Services**
+3. **Configure Environment**
    ```bash
-   chmod +x build.sh
-   ./build.sh
+   cp .env.example .env
+   # Edit .env with your credentials
+   ```
+
+4. **Activate Virtual Environment**
+   ```bash
+   source .venv/bin/activate
+   ```
+
+5. **Initialize EADS**
+   ```bash
+   ./init.sh
+   ```
+
+6. **When Done**
+   ```bash
+   deactivate
    ```
 
 ### Accessing Services
@@ -125,46 +131,32 @@ Once the system is running, you can access various services:
 
 - **Neo4j Browser**: http://localhost:7474
   - Default credentials: neo4j/your_password
-- **Airflow UI**: http://localhost:8080
+- **NLP Service**: http://localhost:8000
+- **GP Engine**: http://localhost:8001
 - **PostgreSQL**: localhost:5432
 
-### Docker Services Overview
+### Development Workflow
 
-The system consists of the following services:
+1. **Start Development Session**
+   ```bash
+   source .venv/bin/activate
+   docker-compose up -d
+   ```
 
-- `neo4j`: Graph database for knowledge storage (ports: 7474, 7687)
-- `pinecone`: Vector database for semantic embeddings
-- `postgres`: Relational database for metadata (port: 5432)
-- `nlp_service`: Natural Language Processing service
-- `gp_engine`: Genetic Programming engine
-- `robustness_module`: Code analysis and enhancement
-- `static_analysis`: Static code analysis
-- `dynamic_analysis`: Dynamic code analysis
-- `airflow`: Workflow orchestration (port: 8080)
-
-### Development
-
-For development purposes, the system supports hot-reloading through volume mounts. Any changes made to the source code will be reflected in the running containers without requiring a rebuild.
+2. **Stop Development Session**
+   ```bash
+   docker-compose down
+   deactivate
+   ```
 
 ### Troubleshooting
 
-If you encounter any issues:
-
-1. Check Docker logs:
-   ```bash
-   docker-compose logs [service_name]
-   ```
-
-2. Restart services:
-   ```bash
-   docker-compose restart [service_name]
-   ```
-
-3. Clean rebuild:
-   ```bash
-   docker-compose down -v
-   docker-compose up -d --build
-   ```
+If you encounter Docker permission issues:
+```bash
+sudo usermod -aG docker $USER
+sudo chmod 666 /var/run/docker.sock
+# Log out and log back in for changes to take effect
+```
 
 ## &#x1F063; System Architecture
 
@@ -417,8 +409,6 @@ graph LR
         subgraph MetaCritic["Meta Critic"]
             EvaluationMetrics["Evaluation<br>Metrics (e.g.,<br>Learning<br>Progress,<br>Diversity)"]
             GameEvaluations["Game<br>Evaluations"]
-            style EvaluationMetrics fill:#add8e6,stroke:#00bfff
-            style GameEvaluations fill:#ffa500,stroke:#b70
         end
         
         subgraph GameLibrary["Language Game Library"]

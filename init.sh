@@ -3,7 +3,38 @@
 # Exit on error
 set -e
 
+# Check if running in virtual environment
+if [[ "$VIRTUAL_ENV" == "" ]]; then
+    echo "❌ Virtual environment not activated!"
+    echo "Please run: source .venv/bin/activate"
+    echo "Or use setup.sh to handle everything automatically"
+    exit 1
+fi
+
 echo "🚀 Initializing EADS (Evolutionary Autonomous Development System)"
+
+# Check if Docker is installed
+if ! command -v docker &> /dev/null; then
+    echo "❌ Docker is not installed. Installing Docker..."
+    sudo apt-get update
+    sudo apt-get install -y docker.io docker-compose
+fi
+
+# Check Docker permissions
+if ! groups | grep -q docker; then
+    echo "⚠️ Adding user to docker group..."
+    sudo usermod -aG docker $USER
+    echo "✨ Please log out and log back in for the changes to take effect."
+    echo "Then run this script again."
+    exit 1
+fi
+
+# Check if Docker daemon is running
+if ! docker info &> /dev/null; then
+    echo "🔄 Starting Docker daemon..."
+    sudo service docker start
+    sleep 5
+fi
 
 # Check for python3-venv
 if ! dpkg -l | grep -q python3-venv; then
@@ -55,7 +86,12 @@ pip install PyPDF2
 
 # Start Docker services
 echo "🐳 Starting Docker services..."
-docker-compose up -d
+if ! docker-compose up -d; then
+    echo "❌ Failed to start Docker services. Please check the error messages above."
+    echo "You might need to run: sudo chmod 666 /var/run/docker.sock"
+    echo "Then try running this script again."
+    exit 1
+fi
 
 # Wait for services to be ready
 echo "⏳ Waiting for services to be ready..."
