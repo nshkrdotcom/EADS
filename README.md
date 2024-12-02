@@ -89,6 +89,17 @@ To create a self-healing, continuously improving software ecosystem that autonom
 - Docker and Docker Compose (for running services)
 - Git for version control
 - Sufficient disk space for Docker images and volumes
+- PostgreSQL client (choose one):
+  ```bash
+  # Ubuntu/Debian:
+  sudo apt install postgresql-client-common postgresql-client
+
+  # macOS:
+  brew install libpq
+
+  # Windows:
+  # Install pgAdmin 4 from https://www.pgadmin.org/
+  ```
 
 ### Development Setup
 
@@ -142,7 +153,19 @@ To create a self-healing, continuously improving software ecosystem that autonom
    docker-compose up -d       # Start Docker services
    ```
 
-2. **Stop Development Session**
+2. **Connect to PostgreSQL**
+   ```bash
+   # Using psql CLI:
+   psql -h localhost -p 5432 -U postgres -d eads
+   # Password: password
+
+   # Alternative GUI clients:
+   # - pgAdmin 4: Popular PostgreSQL GUI (https://www.pgadmin.org/)
+   # - DBeaver: Universal database tool (https://dbeaver.io/)
+   # - DataGrip: JetBrains database IDE (https://www.jetbrains.com/datagrip/)
+   ```
+
+3. **Stop Development Session**
    ```bash
    docker-compose down  # Stop Docker services
    deactivate          # Exit virtual environment
@@ -151,10 +174,18 @@ To create a self-healing, continuously improving software ecosystem that autonom
 ### Available Services
 
 When running, you can access:
-- Neo4j Browser: http://localhost:7474
-- NLP Service: http://localhost:8000
-- GP Engine: http://localhost:8001
-- PostgreSQL: http://localhost:5432
+- Neo4j Browser: http://localhost:7474 (web interface)
+- NLP Service: http://localhost:8000 (API endpoint)
+- GP Engine: http://localhost:8001 (API endpoint)
+- PostgreSQL: localhost:5432 (database server)
+  ```
+  Connection details:
+  Host: localhost
+  Port: 5432
+  User: postgres
+  Password: password
+  Database: eads
+  ```
 
 ### Troubleshooting
 
