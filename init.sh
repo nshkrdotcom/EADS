@@ -5,6 +5,13 @@ set -e
 
 echo "🚀 Initializing EADS (Evolutionary Autonomous Development System)"
 
+# Check for python3-venv
+if ! dpkg -l | grep -q python3-venv; then
+    echo "📦 Installing python3-venv..."
+    sudo apt-get update
+    sudo apt-get install -y python3-venv
+fi
+
 # Check if .env file exists
 if [ ! -f .env ]; then
     echo "❌ .env file not found"
@@ -18,8 +25,14 @@ fi
 echo "📁 Creating necessary directories..."
 mkdir -p init/data
 
+# Create and activate virtual environment
+echo "🐍 Creating Python virtual environment..."
+python3 -m venv .venv
+source .venv/bin/activate
+
 # Install dependencies
 echo "📦 Installing Python dependencies..."
+pip install --upgrade pip
 pip install -r requirements.txt
 
 # Start Docker services
@@ -38,6 +51,9 @@ python init/db_init.py
 echo "🧠 Initializing knowledge base..."
 python init/knowledge_base_init.py
 
+# Deactivate virtual environment
+deactivate
+
 echo "✨ EADS initialization completed!"
 echo "
 Available services:
@@ -49,4 +65,7 @@ Next steps:
 1. Access Neo4j browser and verify the knowledge graph
 2. Check Airflow UI for workflow status
 3. Start developing with EADS!
+
+To activate the virtual environment in the future, run:
+source .venv/bin/activate
 "

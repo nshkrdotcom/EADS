@@ -1,13 +1,4 @@
-# Clone the repository
-git clone https://github.com/nshkrdotcom/EADS.git
-cd EADS
-
-# Make the initialization script executable
-chmod +x init.sh
-
-# Copy and configure environment variables
-cp .env.example .env
-# Edit .env with your credentialsfrom neo4j import GraphDatabase
+from neo4j import GraphDatabase
 import psycopg2
 from pinecone import Pinecone
 import os
