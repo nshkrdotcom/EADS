@@ -100,6 +100,9 @@ To create a self-healing, continuously improving software ecosystem that autonom
 
 2. **Set Up Python Environment**
    ```bash
+   # Set permissions
+   chmod +x ./*.sh
+   
    # Run setup script to create virtual environment
    ./setup.sh
 
@@ -113,7 +116,10 @@ To create a self-healing, continuously improving software ecosystem that autonom
 3. **Configure Environment**
    ```bash
    cp .env.example .env
-   # Edit .env with your configuration
+   # The .env.example contains development defaults:
+   # - Neo4j password: "password"
+   # - Postgres password: "password"
+   # You can keep these defaults for development
    ```
 
 4. **Initialize System**
@@ -148,7 +154,7 @@ When running, you can access:
 - Neo4j Browser: http://localhost:7474
 - NLP Service: http://localhost:8000
 - GP Engine: http://localhost:8001
-- PostgreSQL: localhost:5432
+- PostgreSQL: http://localhost:5432
 
 ### Troubleshooting
 
