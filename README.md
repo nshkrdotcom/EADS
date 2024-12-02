@@ -85,12 +85,12 @@ To create a self-healing, continuously improving software ecosystem that autonom
 ## &#x1F527; Setup & Installation
 
 ### Prerequisites
-- Docker and Docker Compose installed on your system
+- Python 3.12 or higher
+- Docker and Docker Compose (for running services)
 - Git for version control
 - Sufficient disk space for Docker images and volumes
-- Python 3.12 or higher
 
-### Quick Start
+### Development Setup
 
 1. **Clone the Repository**
    ```bash
@@ -98,56 +98,57 @@ To create a self-healing, continuously improving software ecosystem that autonom
    cd EADS
    ```
 
-2. **Run Setup Script**
+2. **Set Up Python Environment**
    ```bash
-   chmod +x setup.sh
+   # Run setup script to create virtual environment
    ./setup.sh
+
+   # Activate virtual environment
+   source .venv/bin/activate
+
+   # Install Python requirements
+   ./install_requirements.sh
    ```
 
 3. **Configure Environment**
    ```bash
    cp .env.example .env
-   # Edit .env with your credentials
+   # Edit .env with your configuration
    ```
 
-4. **Activate Virtual Environment**
+4. **Initialize System**
    ```bash
-   source .venv/bin/activate
-   ```
-
-5. **Initialize EADS**
-   ```bash
+   # Initialize EADS components
    ./init.sh
    ```
 
-6. **When Done**
+5. **Build Docker Services** (Optional)
    ```bash
-   deactivate
+   # Only needed if you modified Dockerfiles
+   ./build.sh
    ```
-
-### Accessing Services
-
-Once the system is running, you can access various services:
-
-- **Neo4j Browser**: http://localhost:7474
-  - Default credentials: neo4j/your_password
-- **NLP Service**: http://localhost:8000
-- **GP Engine**: http://localhost:8001
-- **PostgreSQL**: localhost:5432
 
 ### Development Workflow
 
 1. **Start Development Session**
    ```bash
-   source .venv/bin/activate
-   docker-compose up -d
+   source .venv/bin/activate  # Activate virtual environment
+   docker-compose up -d       # Start Docker services
    ```
 
 2. **Stop Development Session**
    ```bash
-   docker-compose down
-   deactivate
+   docker-compose down  # Stop Docker services
+   deactivate          # Exit virtual environment
    ```
+
+### Available Services
+
+When running, you can access:
+- Neo4j Browser: http://localhost:7474
+- NLP Service: http://localhost:8000
+- GP Engine: http://localhost:8001
+- PostgreSQL: localhost:5432
 
 ### Troubleshooting
 
