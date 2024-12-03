@@ -18,20 +18,25 @@ async def initialize_knowledge_base(driver: AsyncDriver) -> Dict[str, Any]:
         Dict[str, Any]: Status of initialization
     """
     try:
-        session = await driver.session()
-        try:
-            # Create constraints and indexes in a single transaction
-            query = """
+        async with driver.session() as session:
+            # Create constraint
+            constraint_query = """
             CREATE CONSTRAINT unique_code_pattern IF NOT EXISTS
-            FOR (p:Pattern) REQUIRE p.code IS UNIQUE;
+            FOR (p:Pattern) REQUIRE p.code IS UNIQUE
+            """
+            result = await session.run(constraint_query)
+            await result.consume()
+
+            # Create index
+            index_query = """
             CREATE INDEX pattern_code_index IF NOT EXISTS
             FOR (p:Pattern) ON (p.code)
             """
-            await session.run(query)
+            result = await session.run(index_query)
+            await result.consume()
+            
             logger.info("Knowledge base initialized successfully")
             return {"status": "success", "message": "Knowledge base initialized successfully"}
-        finally:
-            await session.close()
     except Exception as e:
         logger.error(f"Failed to initialize knowledge base: {str(e)}")
         return {"status": "error", "message": str(e)}
