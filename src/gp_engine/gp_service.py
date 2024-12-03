@@ -2,19 +2,14 @@
 
 import logging
 import logging.config
-import random
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 
-import deap.base
-import deap.creator
-import deap.tools
 import uvicorn
 from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from src.config.settings import GP_CONFIG, LOGGING_CONFIG
-from src.error_handling.error_handler import ModelError
 
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
@@ -24,6 +19,7 @@ app: FastAPI = FastAPI(
     description="A service for genetic programming optimization",
     version="1.0.0",
 )
+
 
 class Individual:
     """Individual in the genetic programming population."""
