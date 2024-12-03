@@ -1,7 +1,50 @@
-"""Fault tolerance mechanisms for handling service failures."""
+"""Fault tolerance mechanisms for handling service failures.
+
+This module implements fault tolerance patterns designed to work with both direct HTTP
+and message queue architectures. All components support asynchronous operation patterns
+required for message queue readiness.
+
+Message Queue Ready Design Requirements:
+1. Async Operation Pattern:
+   - All operations must be async-compatible
+   - Long-running operations should return job IDs
+   - Status checking endpoints must be provided
+   - Results should be retrievable via separate endpoints
+
+2. Decoupled Processing:
+   - Services must operate independently
+   - State management via databases/caches
+   - No direct service-to-service dependencies
+
+3. Configurable Timeouts:
+   - All operations must respect timeout configurations
+   - Worker processes should be adjustable
+   - Async mode must be toggleable
+
+Example Usage with Message Queue Pattern:
+    ```python
+    @circuit_breaker
+    @retry_with_backoff
+    @fallback
+    async def process_message(message_id: str, payload: dict) -> str:
+        # Submit job and return ID for status tracking
+        job_id = str(uuid.uuid4())
+        asyncio.create_task(process_async(job_id, payload))
+        return job_id
+
+    # Status check endpoint
+    async def get_job_status(job_id: str) -> dict:
+        return await db.get_job_status(job_id)
+
+    # Result retrieval endpoint
+    async def get_job_result(job_id: str) -> dict:
+        return await db.get_job_result(job_id)
+    ```
+"""
 
 import asyncio
 import functools
+import time
 from typing import Any, Awaitable, Callable, Generic, TypeVar
 
 from cachetools import TTLCache  # type: ignore
@@ -12,11 +55,13 @@ T = TypeVar("T")
 class CircuitBreakerError(Exception):
     """Exception raised when circuit breaker is open."""
 
-    pass
-
 
 class CircuitBreaker:
-    """Circuit breaker implementation for handling service failures."""
+    """Circuit breaker implementation for handling service failures.
+
+    This implementation is message queue ready and supports both direct
+    HTTP calls and async message processing patterns.
+    """
 
     def __init__(self, failure_threshold: int = 5, reset_timeout: int = 60) -> None:
         """Initialize circuit breaker with configurable parameters.
@@ -34,15 +79,20 @@ class CircuitBreaker:
     def __call__(
         self, func: Callable[..., Awaitable[T]]
     ) -> Callable[..., Awaitable[T]]:
-        """Decorator for applying circuit breaker pattern to async functions."""
+        """Decorator for applying circuit breaker pattern to async functions.
+
+        This decorator is compatible with both direct function calls and
+        message queue processing patterns. When used with message queues,
+        it tracks failures at the message processing level.
+        """
 
         @functools.wraps(func)
         async def wrapper(*args: Any, **kwargs: Any) -> T:
+            current_time = time.time()
+
+            # Check circuit state
             if self.is_open:
-                if (
-                    asyncio.get_event_loop().time() - self._last_failure_time
-                    >= self.reset_timeout
-                ):
+                if current_time - self._last_failure_time >= self.reset_timeout:
                     self.is_open = False
                     self.failures = 0
                 else:
@@ -54,7 +104,7 @@ class CircuitBreaker:
                 return result
             except Exception as e:
                 self.failures += 1
-                self._last_failure_time = asyncio.get_event_loop().time()
+                self._last_failure_time = current_time
                 if self.failures >= self.failure_threshold:
                     self.is_open = True
                 raise e
@@ -63,22 +113,36 @@ class CircuitBreaker:
 
 
 class RetryWithBackoff:
-    """Retry mechanism with exponential backoff."""
+    """Retry mechanism with exponential backoff.
 
-    def __init__(self, max_retries: int = 3, base_delay: float = 1.0) -> None:
+    This implementation supports both direct HTTP calls and message queue
+    processing patterns. When used with message queues, it implements
+    retry logic at the message processing level.
+    """
+
+    def __init__(
+        self, max_retries: int = 3, base_delay: float = 1.0, max_delay: float = 60.0
+    ) -> None:
         """Initialize retry mechanism with configurable parameters.
 
         Args:
             max_retries: Maximum number of retry attempts
             base_delay: Base delay between retries in seconds
+            max_delay: Maximum delay between retries in seconds
         """
         self.max_retries = max_retries
         self.base_delay = base_delay
+        self.max_delay = max_delay
 
     def __call__(
         self, func: Callable[..., Awaitable[T]]
     ) -> Callable[..., Awaitable[T]]:
-        """Decorator for applying retry pattern with exponential backoff."""
+        """Decorator for applying retry pattern with exponential backoff.
+
+        This decorator supports both synchronous HTTP calls and asynchronous
+        message queue processing. When used with message queues, failed
+        messages can be requeued with appropriate delay.
+        """
 
         @functools.wraps(func)
         async def wrapper(*args: Any, **kwargs: Any) -> T:
@@ -90,7 +154,7 @@ class RetryWithBackoff:
                 except Exception as e:
                     if retries == self.max_retries:
                         raise e
-                    delay = self.base_delay * (2**retries)
+                    delay = min(self.base_delay * (2**retries), self.max_delay)
                     await asyncio.sleep(delay)
                     retries += 1
             raise RuntimeError("Should not reach here")
@@ -99,7 +163,12 @@ class RetryWithBackoff:
 
 
 class Fallback(Generic[T]):
-    """Fallback mechanism with caching for failed operations."""
+    """Fallback mechanism with caching for failed operations.
+
+    This implementation supports both direct calls and message queue
+    processing patterns. When used with message queues, it provides
+    cached responses while failed messages are being reprocessed.
+    """
 
     def __init__(self, ttl: int = 300) -> None:
         """Initialize fallback mechanism with TTL cache.
@@ -112,7 +181,12 @@ class Fallback(Generic[T]):
     def __call__(
         self, func: Callable[..., Awaitable[T]]
     ) -> Callable[..., Awaitable[T]]:
-        """Decorator for applying fallback pattern with caching."""
+        """Decorator for applying fallback pattern with caching.
+
+        This decorator supports both direct calls and message queue
+        processing. When used with message queues, it can provide
+        cached responses while failed messages are being reprocessed.
+        """
 
         @functools.wraps(func)
         async def wrapper(*args: Any, **kwargs: Any) -> T:
