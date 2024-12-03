@@ -691,7 +691,7 @@ graph TD
         Service[Service Call]
         Cache[Fallback Cache]
         Fallback[Fallback Handler]
-        
+
         Request --> CB
         CB -->|Open| Fallback
         CB -->|Closed| Retry
@@ -737,7 +737,7 @@ graph TB
         CB --> |Success Rate OK| Closed
         CB --> |High Failure Rate| Open
         CB --> |Testing Recovery| HalfOpen
-        
+
         Closed --> Retry
         Retry --> |Attempt| Services
         Services --> |Success| Cache
