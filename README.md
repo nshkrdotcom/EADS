@@ -162,8 +162,17 @@ To create a self-healing, continuously improving software ecosystem that autonom
 
 ### Prerequisites
 
+- Python 3.8 or higher
+- Docker and Docker Compose
+- Git
+- Linux/WSL2 environment (recommended)
+- System packages:
+  ```bash
+  sudo apt-get update
+  sudo apt-get install -y python3-venv python3-pip
+  ```
 
-### Development Setup
+### Environment Setup
 
 1. **Clone the Repository**
    ```bash
@@ -171,140 +180,121 @@ To create a self-healing, continuously improving software ecosystem that autonom
    cd EADS
    ```
 
-2. **Set Up Python Environment**
+2. **Run Setup Script**
    ```bash
-   # Set permissions
-   chmod +x ./*.sh
-
-   # Run setup script to create virtual environment
+   chmod +x setup.sh
    ./setup.sh
+   ```
+   This script will:
+   - Install required system packages
+   - Create Python virtual environment
+   - Make initialization scripts executable
 
-   # Activate virtual environment
+3. **Activate Virtual Environment**
+   ```bash
    source .venv/bin/activate
+   ```
 
-   # Install Python requirements
+4. **Install Dependencies**
+   ```bash
    ./install_requirements.sh
    ```
+   This installs:
+   - Core dependencies (FastAPI, DEAP, etc.)
+   - Development tools (black, flake8, etc.)
+   - ML libraries (TensorFlow, Sentence Transformers)
 
-3. **Configure Environment**
+5. **Environment Configuration**
    ```bash
    cp .env.example .env
-   # The .env.example contains development defaults:
-   # - Neo4j password: "password"
-   # - Postgres password: "password"
-   # You can keep these defaults for development
    ```
+   Configure the following in your `.env`:
+   - Database connections (Neo4j, PostgreSQL)
+   - Weaviate settings
+   - Ray cluster configuration
+   - MLflow tracking
+   - DVC remote storage
 
-4. **Initialize System**
+### Development Setup
+
+1. **Install Pre-commit Hooks**
    ```bash
-   # Initialize EADS components
+   pre-commit install
+   ```
+   This sets up:
+   - Code formatting (black)
+   - Import sorting (isort)
+   - Linting (flake8)
+   - Type checking (mypy)
+
+2. **Initialize Services**
+   ```bash
    ./init.sh
    ```
-
-5. **Build Docker Services** (Optional)
-   ```bash
-   # Only needed if you modified Dockerfiles
-   ./build.sh
-   ```
+   This script:
+   - Starts Docker services (Neo4j, PostgreSQL, Weaviate)
+   - Verifies service health
+   - Sets up initial database schemas
+   - Configures MLflow tracking
 
 ### Development Workflow
 
-1. **Start Development Session**
+1. **Start Services**
    ```bash
-   source .venv/bin/activate  # Activate virtual environment
-   docker-compose up -d       # Start Docker services
+   ./init.sh start
    ```
 
-2. **Connect to PostgreSQL**
+2. **Code Quality**
+   - Format code: `black .`
+   - Sort imports: `isort .`
+   - Type check: `mypy .`
+   - Run linter: `flake8`
+
+3. **Running Tests**
    ```bash
-   # Using psql CLI:
-   psql -h localhost -p 5432 -U postgres -d eads
-   # Password: password
-
-   # Alternative GUI clients:
-   # - pgAdmin 4: Popular PostgreSQL GUI (https://www.pgadmin.org/)
-   # - DBeaver: Universal database tool (https://dbeaver.io/)
-   # - DataGrip: JetBrains database IDE (https://www.jetbrains.com/datagrip/)
-   ```
-
-3. **Stop Development Session**
-   ```bash
-   docker-compose down  # Stop Docker services
-   deactivate          # Exit virtual environment
-   ```
-
-### Development Tools
-
-The project includes several development tools to maintain code quality.
-
-#### Initial Setup
-
-1. **Install System Packages** (Ubuntu/Debian)
-   ```bash
-   # Install pre-commit
-   sudo apt install pre-commit
-
-   # Install Python development tools
-   sudo apt install python3-dev
-   ```
-
-2. **Install Python Development Requirements**
-   ```bash
-   # Make sure your virtual environment is active
-   source .venv/bin/activate
-
-   # Install requirements
-   pip install -r requirements.txt
-   ```
-
-3. **Set Up Pre-commit Hooks**
-   ```bash
-   # Install the pre-commit hooks
-   pre-commit install
-
-   # Run all hooks initially
-   pre-commit run --all-files
-   ```
-
-#### Using Development Tools
-
-1. **Code Formatting**
-   ```bash
-   # Format code with black
-   black .
-
-   # Sort imports
-   isort .
-   ```
-
-2. **Code Quality Checks**
-   ```bash
-   # Run flake8
-   flake8 .
-
-   # Run mypy type checking
-   mypy .
-   ```
-
-3. **Testing**
-   ```bash
-   # Run tests with coverage
+   # Run all tests
    pytest
 
-   # View coverage report
-   open htmlcov/index.html
+   # Run with coverage
+   pytest --cov=src tests/
+
+   # Run async tests
+   pytest tests/ --asyncio-mode=auto
    ```
 
-4. **Pre-commit Hooks**
+4. **Local Development**
+   - NLP Service: `uvicorn src.nlp.nlp_service:app --reload --port 8000`
+   - GP Engine: `uvicorn src.gp_engine.gp_service:app --reload --port 8001`
+   - API docs at:
+     - NLP: `http://localhost:8000/docs`
+     - GP: `http://localhost:8001/docs`
+
+5. **Stop Services**
    ```bash
-   # Install pre-commit hooks
-   pre-commit install
-
-   # Run hooks manually
-   pre-commit run --all-files
+   ./init.sh stop
    ```
 
-These tools are automatically installed with the development requirements. The pre-commit hooks will run automatically on git commit to ensure code quality.
+### Troubleshooting
+
+1. **Service Health Check**
+   ```bash
+   docker-compose ps
+   docker-compose logs
+   ```
+
+2. **Database Connections**
+   - Neo4j Browser: `http://localhost:7474`
+   - Weaviate Console: `http://localhost:8080`
+   - PostgreSQL: Use any SQL client with credentials from `.env`
+
+3. **Common Issues**
+   - Port conflicts: Check if ports 7474, 7687, 8080, 5432 are available
+   - Memory issues: Ensure Docker has sufficient memory allocation
+   - Permission errors: Run `chmod +x` on shell scripts
+
+### Production Deployment
+
+Currently, we use Docker Compose for development and testing. Production deployment with Kubernetes is planned for future releases.
 
 ### Available Services
 
@@ -322,16 +312,7 @@ When running, you can access:
   Database: eads
   ```
 
-### Troubleshooting
-
-If you encounter Docker permission issues:
-```bash
-sudo usermod -aG docker $USER
-sudo chmod 666 /var/run/docker.sock
-# Log out and log back in for changes to take effect
-```
-
-## System Architecture Diagrams
+### System Architecture Diagrams
 
 ### High-Level Component Architecture
 
@@ -482,6 +463,172 @@ graph LR
     Deployment --> Config
 ```
 
+## &#x1F4C8; System Diagrams
+
+### Component Interaction Flow
+```mermaid
+graph TB
+    subgraph User["User Interface"]
+        CLI[CLI Interface]
+        API[API Endpoints]
+    end
+
+    subgraph Core["Core Services"]
+        NLP[NLP Service<br>:8000]
+        GP[GP Engine<br>:8001]
+        Orchestrator[Orchestration Service]
+    end
+
+    subgraph Storage["Data Storage"]
+        Neo4j[(Neo4j Graph DB)]
+        Postgres[(PostgreSQL)]
+        Weaviate[(Weaviate Vector DB)]
+    end
+
+    subgraph Processing["Processing Pipeline"]
+        CodeGen[Code Generation]
+        Testing[Testing & Validation]
+        Evolution[Evolution Engine]
+    end
+
+    CLI --> Orchestrator
+    API --> Orchestrator
+    Orchestrator --> NLP
+    Orchestrator --> GP
+    NLP --> Weaviate
+    NLP --> Neo4j
+    GP --> Neo4j
+    GP --> Postgres
+    CodeGen --> Testing
+    Testing --> Evolution
+    Evolution --> CodeGen
+```
+
+### Data Processing Pipeline
+```mermaid
+graph LR
+    subgraph Input
+        Code[Source Code]
+        Specs[Requirements]
+    end
+
+    subgraph Processing
+        Parse[Code Parser]
+        Embed[Embeddings Generator]
+        Match[Pattern Matcher]
+        Gen[Code Generator]
+    end
+
+    subgraph Storage
+        Vec[(Vector Store)]
+        Graph[(Graph DB)]
+        SQL[(SQL DB)]
+    end
+
+    Code --> Parse
+    Specs --> Parse
+    Parse --> Embed
+    Embed --> Vec
+    Embed --> Match
+    Match --> Graph
+    Graph --> Gen
+    Gen --> SQL
+```
+
+### Development Workflow
+```mermaid
+graph TD
+    subgraph Local["Local Development"]
+        Code[Write Code]
+        Test[Run Tests]
+        Lint[Lint & Format]
+    end
+
+    subgraph CI["CI Pipeline"]
+        Build[Build Images]
+        IntTest[Integration Tests]
+        Deploy[Deploy Services]
+    end
+
+    subgraph QA["Quality Assurance"]
+        PreCommit[Pre-commit Hooks]
+        TypeCheck[Type Checking]
+        Coverage[Test Coverage]
+    end
+
+    Code --> PreCommit
+    PreCommit --> TypeCheck
+    TypeCheck --> Test
+    Test --> Coverage
+    Coverage --> Lint
+    Lint --> Build
+    Build --> IntTest
+    IntTest --> Deploy
+```
+
+### Deployment Architecture
+```mermaid
+graph TB
+    subgraph Docker["Docker Environment"]
+        NLP[NLP Service]
+        GP[GP Engine]
+        Neo4j[Neo4j Service]
+        Postgres[PostgreSQL]
+        Weaviate[Weaviate Service]
+    end
+
+    subgraph Network["Network Configuration"]
+        Internal[Internal Network]
+        External[External Network]
+    end
+
+    subgraph Volumes["Persistent Storage"]
+        Neo4jData[Neo4j Data]
+        PostgresData[Postgres Data]
+        WeaviateData[Weaviate Data]
+    end
+
+    External --> NLP
+    External --> GP
+    NLP --> Internal
+    GP --> Internal
+    Internal --> Neo4j
+    Internal --> Postgres
+    Internal --> Weaviate
+    Neo4j --> Neo4jData
+    Postgres --> PostgresData
+    Weaviate --> WeaviateData
+```
+
+### Testing Strategy
+```mermaid
+graph TB
+    subgraph Tests["Test Suite"]
+        Unit[Unit Tests]
+        Integration[Integration Tests]
+        E2E[End-to-End Tests]
+    end
+
+    subgraph Coverage["Test Coverage"]
+        Code[Code Coverage]
+        Branch[Branch Coverage]
+        Integration[Integration Points]
+    end
+
+    subgraph CI["Continuous Integration"]
+        Build[Build Pipeline]
+        Test[Test Pipeline]
+        Deploy[Deploy Pipeline]
+    end
+
+    Unit --> Code
+    Integration --> Branch
+    E2E --> Integration
+    Code --> Build
+    Branch --> Test
+    Integration --> Deploy
+```
+
 ## Configuration
 
 The system uses environment variables for configuration. Copy the `.env.example` file to `.env` and adjust the values:
@@ -493,7 +640,6 @@ cp .env.example .env
 Required settings:
 - Neo4j: Database for knowledge graph (`NEO4J_*` variables)
 - PostgreSQL: Database for metadata (`POSTGRES_*` variables)
-
 
 ## &#x1F063; System Architecture
 
@@ -523,7 +669,6 @@ EADS employs a modular microservices architecture:
    - Logging configuration
    - Development and production settings
 
-
 ## &#x1F91D; Contribution
 
 Passionate about autonomous systems? We're always looking for brilliant minds to push the boundaries of AI-driven software engineering!
@@ -535,6 +680,3 @@ Passionate about autonomous systems? We're always looking for brilliant minds to
 - Curiosity and passion for cutting-edge tech
 
 ## Getting Started
-
-
-## &#x1F4BB; Project Diagrams
