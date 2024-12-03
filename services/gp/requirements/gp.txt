@@ -1,0 +1,8 @@
+# Core dependencies
+-r ../../core/requirements/base.txt
+
+# ML/GPU specific dependencies
+ray[default]==2.9.3  # Distributed computing
+tensorflow==2.15.0  # Deep learning framework
+torch==2.2.1  # PyTorch
+transformers==4.38.1  # Hugging Face transformers

@@ -1,6 +1,6 @@
 fastapi==0.110.0
 httpx==0.26.0  # Version required by weaviate-client
-langchain==0.1.0
+langchain==0.1.9  # Updated for langsmith compatibility
 llama-index==0.9.15
 pydantic==2.5.0
 sentence-transformers==2.5.0

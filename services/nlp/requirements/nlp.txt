@@ -1,0 +1,9 @@
+# Core dependencies
+-r ../../core/requirements/base.txt
+
+# NLP specific dependencies
+langchain==0.1.9
+langsmith==0.1.2
+llama-index==0.9.15
+sentence-transformers==2.5.0
+weaviate-client==4.4.4
