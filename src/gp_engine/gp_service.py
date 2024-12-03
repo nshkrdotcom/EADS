@@ -1,4 +1,4 @@
-"""Genetic Programming Service for EADS."""
+"""Genetic Programming Service for code evolution."""
 
 import logging
 import logging.config
@@ -9,7 +9,7 @@ import deap.base
 import deap.creator
 import deap.tools
 import uvicorn
-from fastapi import FastAPI, HTTPException, Request, status
+from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
@@ -32,7 +32,13 @@ deap.creator.create("Individual", list, fitness=deap.creator.FitnessMax)
 # Initialize toolbox
 toolbox = deap.base.Toolbox()
 toolbox.register("attr_bool", random.randint, 0, 1)
-toolbox.register("individual", deap.tools.initRepeat, deap.creator.Individual, toolbox.attr_bool, n=100)
+toolbox.register(
+    "individual",
+    deap.tools.initRepeat,
+    deap.creator.Individual,
+    toolbox.attr_bool,
+    n=100,
+)
 toolbox.register("population", deap.tools.initRepeat, list, toolbox.individual)
 
 
@@ -53,9 +59,8 @@ def evaluate_fitness(individual: List[Any]) -> Tuple[float]:
         individual: Individual to evaluate
 
     Returns:
-        Tuple containing fitness score
+        Tuple[float]: Fitness score
     """
-    # Simple fitness function - count number of 1s
     return (sum(individual),)
 
 
@@ -63,33 +68,36 @@ def initialize_population(population_size: int) -> List[Any]:
     """Initialize population for genetic programming.
 
     Args:
-        population_size: Size of population to create
+        population_size: Size of population to initialize
 
     Returns:
-        List of initialized individuals
+        List[Any]: Initialized population
     """
-    return toolbox.population(n=population_size)
+    return [[] for _ in range(population_size)]
 
 
-@app.get("/", response_model=Dict[str, str])  # type: ignore[misc]
+@app.get("/", response_model=Dict[str, str])
 async def read_root() -> Dict[str, str]:
     """Root endpoint.
 
     Returns:
-        Dict[str, str]: Welcome message
+        Dict[str, str]: Service status message
     """
     return {"message": "GP Service is running"}
 
 
-@app.post("/evolve", response_model=Dict[str, Any])  # type: ignore[misc]
+@app.post("/evolve", response_model=Dict[str, Any])
 async def evolve_solution(input_data: GPInput) -> Dict[str, Any]:
     """Evolve solution using genetic programming.
 
     Args:
-        input_data: Input parameters for GP
+        input_data: Input parameters for evolution
 
     Returns:
         Dict[str, Any]: Evolution results
+
+    Raises:
+        HTTPException: If evolution fails
     """
     try:
         # Initialize population
@@ -141,26 +149,47 @@ async def evolve_solution(input_data: GPInput) -> Dict[str, Any]:
         best_ind = max(population, key=lambda x: x.fitness.values[0])
 
         return {
-            "status": "success",
-            "solution": {
-                "fitness": best_ind.fitness.values[0],
-                "individual": list(best_ind),
-                "generation": input_data.generations,
-            },
+            "best_individual": list(best_ind),
+            "fitness": best_ind.fitness.values[0],
         }
-
     except Exception as e:
         logger.error(f"Error in GP evolution: {str(e)}")
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e),
         )
 
 
 @app.exception_handler(ModelError)
-async def model_error_handler(request: Request, exc: ModelError) -> JSONResponse:
-    """Handle model errors."""
+async def model_error_handler(request: Any, exc: ModelError) -> JSONResponse:
+    """Handle model errors.
+
+    Args:
+        request: FastAPI request
+        exc: Model error exception
+
+    Returns:
+        JSONResponse: Error response
+    """
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
+        content={"status": "error", "message": str(exc)},
+    )
+
+
+@app.exception_handler(Exception)
+async def exception_handler(request: Any, exc: Exception) -> JSONResponse:
+    """Handle general exceptions.
+
+    Args:
+        request: FastAPI request
+        exc: Exception that was raised
+
+    Returns:
+        JSONResponse: Error response
+    """
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={"status": "error", "message": str(exc)},
     )
 

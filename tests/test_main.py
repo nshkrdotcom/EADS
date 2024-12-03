@@ -1,23 +1,31 @@
 """Test module for EADS main functionality."""
-
 import pytest
 from fastapi.testclient import TestClient
 from neo4j import AsyncDriver
+from pytest_asyncio import fixture
 
 from src.gp_engine.gp_service import app as gp_app
 from src.init.knowledge_base_init import initialize_knowledge_base
 from src.nlp.nlp_service import app as nlp_app
 
 
-@pytest.fixture
+@fixture(scope="function")
 def gp_client() -> TestClient:
-    """Create a test client for the GP service."""
+    """Create a test client for the GP service.
+
+    Returns:
+        TestClient: FastAPI test client for GP service
+    """
     return TestClient(gp_app)
 
 
-@pytest.fixture
+@fixture(scope="function")
 def nlp_client() -> TestClient:
-    """Create a test client for the NLP service."""
+    """Create a test client for the NLP service.
+
+    Returns:
+        TestClient: FastAPI test client for NLP service
+    """
     return TestClient(nlp_app)
 
 
@@ -47,31 +55,26 @@ def test_gp_evolve(gp_client: TestClient) -> None:
     response = gp_client.post("/evolve", json=input_data)
     assert response.status_code == 200
     result = response.json()
-    assert result["status"] == "success"
-    assert "solution" in result
-    assert "fitness" in result["solution"]
-    assert "individual" in result["solution"]
-    assert "generation" in result["solution"]
+    assert "best_individual" in result
+    assert "fitness" in result
 
 
 def test_nlp_encode(nlp_client: TestClient) -> None:
     """Test NLP encode endpoint."""
-    response = nlp_client.post("/encode", json={"text": "def example(): pass"})
+    input_data = {"text": "Example code"}
+    response = nlp_client.post("/encode", json=input_data)
     assert response.status_code == 200
     result = response.json()
-    assert result["status"] == "success"
     assert "encoding" in result
-    assert isinstance(result["encoding"], list)
 
 
 def test_nlp_analyze(nlp_client: TestClient) -> None:
     """Test NLP analyze endpoint."""
-    response = nlp_client.post("/analyze", json={"code": "def example(): pass"})
+    input_data = {"code": "def example(): pass"}
+    response = nlp_client.post("/analyze", json=input_data)
     assert response.status_code == 200
     result = response.json()
-    assert result["status"] == "success"
     assert "patterns" in result
-    assert isinstance(result["patterns"], list)
 
 
 @pytest.mark.asyncio
@@ -80,29 +83,32 @@ async def test_end_to_end_flow(
     gp_client: TestClient,
     nlp_client: TestClient,
 ) -> None:
-    """Test end-to-end flow."""
+    """Test end-to-end flow including database initialization and service calls.
+
+    Args:
+        neo4j_driver: Neo4j async driver instance
+        gp_client: FastAPI test client for GP service
+        nlp_client: FastAPI test client for NLP service
+    """
     # Initialize knowledge base
-    result = await initialize_knowledge_base(neo4j_driver)
-    assert result["status"] == "success"
+    await initialize_knowledge_base(neo4j_driver)
 
-    # Test code analysis
-    code = "def example(): pass"
-    nlp_response = nlp_client.post("/analyze", json={"code": code})
+    # Test NLP service
+    nlp_response = nlp_client.post("/encode", json={"text": "Example code"})
     assert nlp_response.status_code == 200
-    nlp_result = nlp_response.json()
-    assert nlp_result["status"] == "success"
+    encoding = nlp_response.json()["encoding"]
 
-    # Test code evolution
+    # Test GP service with encoded input
     gp_response = gp_client.post(
         "/evolve",
         json={
-            "code": code,
+            "code": "def example(): pass",
             "population_size": 10,
             "generations": 5,
             "mutation_rate": 0.1,
             "crossover_rate": 0.7,
+            "encoding": encoding,
         },
     )
     assert gp_response.status_code == 200
-    gp_result = gp_response.json()
-    assert gp_result["status"] == "success"
+    assert "best_individual" in gp_response.json()

@@ -244,17 +244,6 @@ The project includes several development tools to maintain code quality.
 
 These tools are automatically installed with the development requirements. The pre-commit hooks will run automatically on git commit to ensure code quality.
 
-### Code Organization
-
-- `main.py`: Main entry point
-- `code_generation.py`: Code generation module
-- `genetic_programming.py`: GP engine implementation
-- `robustness_enhancements.py`: Code robustness tools
-- `deployment.py`: Deployment utilities
-- `gp_engine/`: Genetic Programming engine components
-- `nlp/`: Natural Language Processing services
-- `tests/`: Test cases
-
 ### Available Services
 
 When running, you can access:

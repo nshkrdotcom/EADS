@@ -1,7 +1,7 @@
 """Knowledge base initialization module."""
 
 import logging
-from typing import Dict, Any
+from typing import Any, Dict
 
 from neo4j import AsyncDriver
 
@@ -34,9 +34,12 @@ async def initialize_knowledge_base(driver: AsyncDriver) -> Dict[str, Any]:
             """
             result = await session.run(index_query)
             await result.consume()
-            
+
             logger.info("Knowledge base initialized successfully")
-            return {"status": "success", "message": "Knowledge base initialized successfully"}
+            return {
+                "status": "success",
+                "message": "Knowledge base initialized successfully",
+            }
     except Exception as e:
         logger.error(f"Failed to initialize knowledge base: {str(e)}")
         return {"status": "error", "message": str(e)}

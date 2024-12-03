@@ -1,9 +1,10 @@
 """Main entry point for EADS."""
 
-from code_generation import generate_code
-from deployment import prepare_deployment
 from genetic_programming import run_genetic_programming
 from robustness_enhancements import enhance_robustness
+
+from code_generation import generate_code
+from deployment import prepare_deployment
 
 
 def main(input_file: str, output_file: str) -> None:

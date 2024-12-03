@@ -1,13 +1,9 @@
 """EADS - Evolutionary Algorithm Design System."""
 
-from . import code_generation, config, error_handling, gp_engine, init, nlp
+from src import gp_engine, nlp
 
 __all__ = [
-    "code_generation",
-    "config",
-    "error_handling",
     "gp_engine",
-    "init",
     "nlp",
 ]
 
