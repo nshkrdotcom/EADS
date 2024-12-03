@@ -2,31 +2,31 @@ black>=23.12.0
 deap>=1.4.1
 dvc>=3.38.1
 flake8>=7.0.0
-isort>=5.13.0
-llama-index>=0.9.11
-
-# Experiment Tracking and Model Registry
+langchain>=0.1.0
+llama-index>=0.9.15
+# Core Dependencies
 mlflow>=2.10.0
 mypy>=1.8.0
-neo4j>=5.14.0
-numpy>=1.26.0
-pandas>=2.2.0
-pinecone-client>=3.0.0
-pre-commit>=3.6.0
+neo4j>=5.15.0
+
+# Database
 psycopg2-binary>=2.9.9
+pydantic>=2.5.0
 pygad>=3.2.0
-PyPDF2>=3.0.0
-
-# Development Tools
 pytest>=7.4.0
-pytest-cov>=4.1.0
+
+# Utilities
 python-dotenv>=1.0.0
-
-# Orchestration
 ray>=2.9.0
-scikit-learn>=1.4.0
-tensorflow>=2.14.0
-torch>=2.2.0
+scikit-learn>=1.3.0
+sqlalchemy>=2.0.25
 
-# Vector Store and RAG
-weaviate-client>=3.25.3
+# AI/ML
+tensorflow>=2.15.0
+torch>=2.1.0
+
+# Code Analysis
+tree-sitter>=0.20.4
+tree-sitter-java>=0.20.4
+tree-sitter-python>=0.20.4
+weaviate-client>=4.4.0
