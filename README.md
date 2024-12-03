@@ -1021,6 +1021,118 @@ Reach out if you're as excited about autonomous software evolution as we are!
 - Add debugging configurations for VS Code/PyCharm
 - Add development tools to dev dependencies in setup.py
 
+# The story thus far in diagrams
+
+## High-Level Component Diagram:
+
+```mermaid
+graph TD
+    A[Input PDF/Spec] --> B[run_pipeline.py]
+    B --> C[NLP Service]
+    B --> D[GP Engine]
+    C --> E[(Neo4j DB)]
+    D --> E
+    B --> F[Output Code]
+
+    subgraph Services
+        C
+        D
+    end
+
+    subgraph Storage
+        E
+    end
+
+```
+
+## Service Integration Flow:
+
+```mermaid
+sequenceDiagram
+    participant P as Pipeline
+    participant NLP as NLP Service
+    participant GP as GP Engine
+    participant Neo as Neo4j
+
+    P->>NLP: Process input file
+    NLP->>Neo: Store text analysis
+    P->>GP: Optimize solution
+    GP->>Neo: Store optimized patterns
+    GP->>P: Return solution
+    P->>P: Generate output
+
+```
+
+## Code Function Dependencies:
+
+```mermaid
+graph LR
+    subgraph run_pipeline.py
+        A[main] --> B[validate_input_file]
+        A --> C[validate_output_path]
+        A --> D[generate_code]
+        A --> E[run_genetic_programming]
+        A --> F[enhance_robustness]
+        A --> G[prepare_deployment]
+    end
+
+    subgraph nlp_service.py
+        H[encode_text] --> I[analyze_pattern]
+        J[FastAPI endpoints] --> H
+    end
+
+    subgraph gp_service.py
+        K[evolve_solution] --> L[evaluate_fitness]
+        K --> M[initialize_population]
+        N[FastAPI endpoints] --> K
+    end
+
+```
+
+## Database Schema:
+
+```mermaid
+erDiagram
+    PATTERN ||--o{ CODE_SEGMENT : contains
+    PATTERN {
+        string id
+        string pattern_type
+        vector embedding
+    }
+    CODE_SEGMENT {
+        string id
+        string code
+        vector embedding
+    }
+    PATTERN ||--o{ OPTIMIZATION : generates
+    OPTIMIZATION {
+        string id
+        float fitness_score
+        string optimized_code
+    }
+
+```
+
+## Service Configuration:
+
+```mermaid
+graph TD
+    subgraph Configuration
+        A[.env] --> B[config/settings.py]
+        C[requirements.txt] --> D[Dependencies]
+    end
+
+    subgraph Docker
+        E[docker-compose.yml]
+        F[Dockerfile.nlp]
+        G[Dockerfile.gp]
+        H[Dockerfile.neo4j]
+    end
+
+    B --> E
+
+```
+
 ---
 
 *Inspired by the boundless potential of artificial intelligence and the art of software craftsmanship.*
