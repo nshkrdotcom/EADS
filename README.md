@@ -683,7 +683,7 @@ graph LR
 
 ### Fault Tolerance Mechanism
 ```mermaid
-graph LR
+graph TD
     subgraph FaultTolerance["Fault Tolerance Mechanism"]
         Request[Client Request]
         CB[Circuit Breaker]
