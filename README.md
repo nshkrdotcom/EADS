@@ -1402,6 +1402,10 @@ For **active development** with **minimal overhead** and **easy integration**:
   * [ray](https://github.com/ray-project/ray)  :  ray
   * [Gymnasium](https://github.com/Farama-Foundation/Gymnasium): Replaces Gym
 
+
+  * [prefect](https://github.com/PrefectHQ/prefect)
+
+
 ### Top Frameworks for Distributed ML Systems
 
 #### 1. Ray
