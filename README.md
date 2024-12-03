@@ -1397,9 +1397,9 @@ For **active development** with **minimal overhead** and **easy integration**:
 
 # Tech explore
 
-  * [dvc](https://github.com/iterative/dvc)  :  document version control 
+  * [dvc](https://github.com/iterative/dvc)  :  document version control
 
-  * [ray](https://github.com/ray-project/ray)  :  ray 
+  * [ray](https://github.com/ray-project/ray)  :  ray
   * [Gymnasium](https://github.com/Farama-Foundation/Gymnasium): Replaces Gym
 
 ### Top Frameworks for Distributed ML Systems
@@ -1407,12 +1407,12 @@ For **active development** with **minimal overhead** and **easy integration**:
 #### 1. Ray
 - **GitHub**: https://github.com/ray-project/ray
 - **Language**: Python (with Rust core)
-- **Strengths**: 
+- **Strengths**:
   - Specifically designed for ML/AI distributed computing
   - Supports machine learning workflows
   - Dynamic task scheduling
   - Native support for distributed training
-- **Use Cases**: 
+- **Use Cases**:
   - Reinforcement Learning
   - Distributed training
   - Hyperparameter tuning
@@ -1492,7 +1492,7 @@ import ray
 class FlexibleAgent:
     def __init__(self, config):
         self.config = config
-    
+
     def process(self, task):
         # Configurable processing
         pass
@@ -1500,7 +1500,7 @@ class FlexibleAgent:
 class AgentSwarm:
     def __init__(self, num_agents):
         self.agents = [FlexibleAgent.remote(config) for config in generate_configs()]
-    
+
     def coordinate_tasks(self, tasks):
         # Genetic algorithm-driven task distribution
         pass
@@ -1512,9 +1512,9 @@ I strongly recommend exploring Ray. It bridges the gap between your vision of:
 - ML-focused computing
 - Scalable architecture
 - Local and distributed computing
- 
 
- 
+
+
 
 ### RLlib (Reinforcement Learning Library)
 - **GitHub**: https://github.com/ray-project/ray/tree/master/rllib
@@ -1608,7 +1608,7 @@ import ray.rllib.agents.marl as marl
 class MultiAgentTrainingEnvironment:
     def __init__(self, num_agents):
         self.agents = [Agent.remote() for _ in range(num_agents)]
-    
+
     def distributed_training(self):
         # Concurrent agent policy updates
         ray.get([agent.train.remote() for agent in self.agents])
@@ -1642,27 +1642,23 @@ class MultiAgentTrainingEnvironment:
 ## High-Level System Architecture:
 
 ```mermaid
-graph TB
+graph LR
     subgraph "EADS System"
         Input[Input Documents] --> Coord[Ray Coordinator]
-        
+
         subgraph "Ray Cluster"
             Coord --> NLP[NLP Agent]
             Coord --> GP[GP Agent]
             NLP <--> GP
         end
-        
+
         subgraph "Knowledge Layer"
             NLP --> LI[LlamaIndex]
             LI --> Neo[(Neo4j + Vector Store)]
         end
-        
+
         GP --> Output[Generated Solution]
     end
-
-    style Coord fill:#f9f,stroke:#333
-    style Neo fill:#ccf,stroke:#333
-    style LI fill:#cfc,stroke:#333
 ```
 
 ## Agent Communication Flow:
@@ -1673,14 +1669,14 @@ sequenceDiagram
     participant NLP as NLP Agent
     participant GP as GP Agent
     participant KB as Knowledge Base
-    
+
     C->>NLP: process_document(doc)
     activate NLP
     NLP->>KB: index_content()
     KB-->>NLP: document_index
     NLP-->>C: nlp_result
     deactivate NLP
-    
+
     C->>GP: evolve_solution(nlp_result)
     activate GP
     GP->>KB: query_knowledge()
@@ -1699,18 +1695,18 @@ graph LR
         Neo[Neo4j]
         FA[FastAPI]
     end
-    
+
     subgraph "Agents"
         NLP[NLP Agent]
         GP[GP Agent]
         Coord[Coordinator]
     end
-    
+
     subgraph "Services"
         API[API Service]
         KB[Knowledge Base]
     end
-    
+
     Ray --> NLP & GP & Coord
     LI --> KB
     Neo --> KB
@@ -1726,19 +1722,19 @@ flowchart TD
     subgraph Input
         Doc[Document] --> Parser[Document Parser]
     end
-    
+
     subgraph Processing
         Parser --> Embeddings[Generate Embeddings]
         Embeddings --> Index[Create Index]
         Index --> Store[Store Knowledge]
     end
-    
+
     subgraph Evolution
         Store --> Query[Query Knowledge]
         Query --> Evolve[Evolve Solution]
         Evolve --> Optimize[Optimize Result]
     end
-    
+
     subgraph Output
         Optimize --> Result[Final Solution]
     end
@@ -1751,25 +1747,25 @@ erDiagram
     DOCUMENT ||--o{ CHUNK : contains
     CHUNK ||--o{ EMBEDDING : has
     EMBEDDING ||--o{ RELATIONSHIP : forms
-    
+
     DOCUMENT {
         string id
         string content
         timestamp created
     }
-    
+
     CHUNK {
         string id
         string text
         int position
     }
-    
+
     EMBEDDING {
         string id
         vector data
         float similarity
     }
-    
+
     RELATIONSHIP {
         string source
         string target
@@ -1783,19 +1779,19 @@ erDiagram
 graph TD
     subgraph "Ray Actor System"
         Coord[Coordinator Actor]
-        
+
         subgraph "NLP Actors"
             NLP1[NLP Worker 1]
             NLP2[NLP Worker 2]
             NLPn[NLP Worker n]
         end
-        
+
         subgraph "GP Actors"
             GP1[GP Worker 1]
             GP2[GP Worker 2]
             GPn[GP Worker n]
         end
-        
+
         Coord --> NLP1 & NLP2 & NLPn
         Coord --> GP1 & GP2 & GPn
     end
@@ -1807,21 +1803,21 @@ graph TD
 graph TB
     subgraph "Production Environment"
         LB[Load Balancer]
-        
+
         subgraph "Ray Cluster"
             Head[Ray Head Node]
             W1[Worker Node 1]
             W2[Worker Node 2]
             Wn[Worker Node n]
-            
+
             Head --> W1 & W2 & Wn
         end
-        
+
         subgraph "Storage"
             Neo[(Neo4j)]
             Vec[(Vector Store)]
         end
-        
+
         LB --> Head
         W1 & W2 & Wn --> Neo
         W1 & W2 & Wn --> Vec
@@ -1837,14 +1833,14 @@ graph LR
         Ray[Ray Config]
         Neo[Neo4j Config]
         LI[LlamaIndex Config]
-        
+
         Env --> Ray & Neo & LI
-        
+
         subgraph "Runtime Config"
             RC[Ray Context]
             NC[Neo4j Connection]
             LC[LlamaIndex Context]
-            
+
             Ray --> RC
             Neo --> NC
             LI --> LC
@@ -1894,7 +1890,7 @@ class NLPAgent:
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
         self.model = AutoModel.from_pretrained(MODEL_NAME)
         self.knowledge_base = EADSKnowledgeBase()
-    
+
     async def process_text(self, text: str):
         # Migrate existing encode_text function
         embeddings = self.encode_text(text)
@@ -1918,7 +1914,7 @@ class GPAgent:
         # Migrate from gp_service.py
         self.toolbox = deap.base.Toolbox()
         self.setup_gp_tools()
-    
+
     async def evolve_solution(self, problem_space):
         # Migrate existing GP logic
         population = self.initialize_population()
@@ -1927,7 +1923,7 @@ class GPAgent:
         return self.get_best_solution(population)
 ```
 
-## Knowledge Management 
+## Knowledge Management
 
 ```
 # knowledge/indexer.py
@@ -1939,7 +1935,7 @@ class EADSKnowledgeBase:
             password=NEO4J_PASSWORD
         )
         self.service_context = ServiceContext.from_defaults()
-        
+
     async def index_document(self, content):
         documents = self.preprocess(content)
         index = VectorStoreIndex.from_documents(
@@ -1958,18 +1954,18 @@ class EADSCoordinator:
     def __init__(self):
         self.nlp_agent = NLPAgent.remote()
         self.gp_agent = GPAgent.remote()
-        
+
     async def process_pipeline(self, input_file: str):
         # 1. Process with NLP
         nlp_result = await self.nlp_agent.process_text.remote(
             self.read_input(input_file)
         )
-        
+
         # 2. Evolve solution
         solution = await self.gp_agent.evolve_solution.remote(
             nlp_result['index']
         )
-        
+
         return solution
 ```
 
@@ -1979,20 +1975,20 @@ class EADSCoordinator:
 async def main(input_file: str, output_file: str):
     if not validate_input_file(input_file):
         return None
-        
+
     try:
         # Initialize Ray
         ray.init()
-        
+
         # Create coordinator
         coordinator = EADSCoordinator.remote()
-        
+
         # Run pipeline
         result = await coordinator.process_pipeline.remote(input_file)
-        
+
         # Save results
         save_output(result, output_file)
-        
+
         return True
     except Exception as e:
         logger.error(f"Pipeline failed: {str(e)}")
