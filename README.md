@@ -2017,7 +2017,126 @@ async def process_document(file: UploadFile):
     return result
 ```
 
+## Experimental flexibility and simplicity
 
+1. Core Components:
+- LlamaIndex (over LangChain) - You're right, it's better for your use case since you're building a knowledge-intensive system with complex query patterns
+- Ray - Perfect for your multi-agent experiments; its Actor model will let you build arbitrarily complex agent interactions
+- MLflow - For experiment tracking (simpler than W&B to start, but powerful enough)
+
+2. Initial Architecture:
+```python
+import ray
+from llama_index import VectorStoreIndex, SimpleDirectoryReader
+from llama_index.vector_stores import SimpleVectorStore  # Start simple, can swap later
+
+@ray.remote
+class BaseAgent:
+    def __init__(self, config):
+        self.index = VectorStoreIndex([], vector_store=SimpleVectorStore())
+        self.config = config
+
+    async def process(self, input_data):
+        # Extensible processing logic
+        pass
+
+@ray.remote
+class Coordinator:
+    def __init__(self):
+        self.agents = {}
+
+    def spawn_agent(self, agent_type, config):
+        # Dynamic agent creation
+        self.agents[agent_type] = BaseAgent.remote(config)
+```
+
+Key Benefits:
+1. Starts simple but allows complexity:
+   - SimpleVectorStore → Can upgrade to Neo4j/Pinecone later
+   - Basic Ray actors → Can add complex coordination patterns
+   - Local MLflow → Can scale to distributed tracking
+
+2. Easy to experiment with:
+   - Agent behaviors
+   - Communication patterns
+   - Different model architectures
+
+## LlamaIndex Configuration
+
+```
+from llama_index import VectorStoreIndex, GraphStore, ServiceContext
+from llama_index.storage.storage_context import StorageContext
+
+# Assuming setup for Neo4j and vector database already done
+neo4j_graph = your_neo4j_graph_connection()
+vector_db = your_vector_database_connection()
+
+# Set up with LlamaIndex
+vector_index = VectorStoreIndex.from_documents(
+    documents=your_documents,  # code snippets or documentation
+    vector_store=vector_db
+)
+graph_store = GraphStore(graph=neo4j_graph)
+
+storage_context = StorageContext.from_defaults(
+    vector_store=vector_db,
+    graph_store=graph_store
+)
+
+service_context = ServiceContext.from_defaults(
+    llm_predictor=your_llm_model(),  # For enhanced query understanding if needed
+    storage_context=storage_context
+)
+
+# Create a query engine
+query_engine = vector_index.as_query_engine(
+    service_context=service_context,
+    similarity_top_k=5  # Or whatever fits your needs
+)
+
+# Example query
+response = query_engine.query("Find code examples related to sorting algorithms.")
+```
+
+
+## MLFlow with DVC integration
+
+```mermaid
+graph LR
+    subgraph EADS["EADS System"]
+        direction LR
+        A[Ray Cluster (Agents)] --> B(Data & Models);
+
+        subgraph DVC["DVC (Data Versioning)"]
+            B --> C[Versioned Data/Models]
+            C --> D[Storage (S3, GCS, etc.)]
+        end
+
+        subgraph Metaflow["Metaflow (Workflows)"]
+            A --> E[Workflow Steps]
+            E --> F[AWS Step Functions (Optional)]
+        end
+
+        subgraph MLflow["MLflow (Tracking/Models)"]
+             A --> G[Experiment Tracking]
+             B --> H[Model Registry]
+        end
+
+        subgraph Knowledge["Knowledge Base"]
+            I[Neo4j (Graph)]
+            J[Vector DB (Weaviate/Milvus)]
+        end
+        A --> Knowledge
+
+        subgraph Input["Input/Output"]
+           K[Input Data] --> A
+           A --> L[Output]
+        end
+    end
+
+    Metaflow --> DVC  : (Optional Integration)
+    DVC --> MLflow : (Optional Integration)
+```
 
 ---
 

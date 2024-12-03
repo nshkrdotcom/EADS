@@ -2,6 +2,7 @@ black>=23.12.0
 deap>=1.4.1
 flake8>=7.0.0
 isort>=5.13.0
+llama-index>=0.9.11
 mypy>=1.8.0
 neo4j>=5.14.0
 numpy>=1.26.0
@@ -16,6 +17,12 @@ PyPDF2>=3.0.0
 pytest>=7.4.0
 pytest-cov>=4.1.0
 python-dotenv>=1.0.0
+
+# Orchestration
+ray>=2.9.0
 scikit-learn>=1.4.0
 tensorflow>=2.14.0
 torch>=2.2.0
+
+# Vector Store and RAG
+weaviate-client>=3.25.3
