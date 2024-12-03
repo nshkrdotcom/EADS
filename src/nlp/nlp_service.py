@@ -3,14 +3,16 @@
 import logging
 import logging.config
 import sys
-from typing import Any, Dict, List
+from contextlib import asynccontextmanager
+from typing import Any, Dict, List, AsyncGenerator
 
 import torch
 import uvicorn
 from fastapi import FastAPI, HTTPException, status
 from neo4j import GraphDatabase
+from pydantic import BaseModel
 
-from ..config.settings import (
+from src.config.settings import (
     LOGGING_CONFIG,
     MODEL_NAME,
     NEO4J_PASSWORD,
@@ -20,12 +22,6 @@ from ..config.settings import (
 
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
-
-app = FastAPI(
-    title="NLP Service",
-    description="A service for natural language processing",
-    version="1.0.0",
-)
 
 # Initialize tokenizer and model
 try:
@@ -53,13 +49,39 @@ except Exception as e:
     sys.exit(1)
 
 
-@app.on_event("shutdown")  # type: ignore[misc]
-async def shutdown_event() -> None:
-    """Handle shutdown event."""
+# Request Models
+class TextRequest(BaseModel):
+    text: str
+
+class CodeRequest(BaseModel):
+    code: str
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    """Handle application lifespan events.
+
+    Args:
+        app: FastAPI application instance
+
+    Yields:
+        None
+    """
+    # Startup
+    yield
+    # Shutdown
     logger.info("Shutting down NLP service")
     if neo4j_driver:
         neo4j_driver.close()
         logger.info("Closed Neo4j connection")
+
+
+app = FastAPI(
+    title="NLP Service",
+    description="A service for natural language processing",
+    version="1.0.0",
+    lifespan=lifespan,
+)
 
 
 @app.get("/shutdown", response_model=Dict[str, str])  # type: ignore[misc]
@@ -71,22 +93,22 @@ async def shutdown() -> Dict[str, str]:
 @app.get("/", response_model=Dict[str, str])  # type: ignore[misc]
 async def read_root() -> Dict[str, str]:
     """Root endpoint."""
-    return {"status": "NLP service is running"}
+    return {"message": "NLP Service is running"}
 
 
-@app.post("/encode", response_model=Dict[str, List[float]])  # type: ignore[misc]
-async def encode_text(text: str) -> Dict[str, List[float]]:
+@app.post("/encode", response_model=Dict[str, Any])  # type: ignore[misc]
+async def encode_text(request: TextRequest) -> Dict[str, Any]:
     """Encode text into vector representation.
 
     Args:
-        text: Input text to encode
+        request: Request containing text to encode
 
     Returns:
-        Dict[str, List[float]]: Encoded vector
+        Dict[str, Any]: Encoded vector and status
     """
     try:
         inputs = tokenizer(
-            text,
+            request.text,
             padding=True,
             truncation=True,
             return_tensors="pt",
@@ -96,59 +118,57 @@ async def encode_text(text: str) -> Dict[str, List[float]]:
             outputs = model(**inputs)
             embeddings = outputs.last_hidden_state.mean(dim=1)
 
-        return {"vector": embeddings[0].tolist()}
+        return {
+            "status": "success",
+            "encoding": embeddings[0].tolist()
+        }
     except Exception as e:
         logger.error(f"Error encoding text: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e),
+        )
 
 
 @app.post("/analyze", response_model=Dict[str, Any])  # type: ignore[misc]
-async def analyze_pattern(code: str) -> Dict[str, Any]:
+async def analyze_pattern(request: CodeRequest) -> Dict[str, Any]:
     """Analyze a code pattern.
 
     Args:
-        code: Code pattern to analyze
+        request: Request containing code to analyze
 
     Returns:
         Dict[str, Any]: Analysis results
     """
     try:
-        encoded = await encode_text(code)
-        embeddings = encoded["vector"]
+        # Encode the code using our model
+        inputs = tokenizer(
+            request.code,
+            padding=True,
+            truncation=True,
+            return_tensors="pt",
+        )
 
-        if not neo4j_driver:
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="Database connection not available",
-            )
-
-        with neo4j_driver.session() as session:
-            result = session.run(
-                """
-                MATCH (p:Pattern)
-                WITH p, gds.similarity.cosine($embedding, p.embedding) as similarity
-                WHERE similarity > 0.8
-                RETURN p.name, p.description, similarity
-                ORDER BY similarity DESC
-                LIMIT 5
-                """,
-                embedding=embeddings,
-            )
-            patterns = [dict(record) for record in result]
+        with torch.no_grad():
+            outputs = model(**inputs)
+            embeddings = outputs.last_hidden_state.mean(dim=1)
 
         return {
             "status": "success",
-            "patterns": patterns,
+            "patterns": embeddings[0].tolist()
         }
     except Exception as e:
         logger.error(f"Error analyzing pattern: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e),
+        )
 
 
 if __name__ == "__main__":
     uvicorn.run(
-        app,
+        "src.nlp.nlp_service:app",
         host="0.0.0.0",
-        port=8000,
-        workers=1,
+        port=8001,
+        reload=True,
     )

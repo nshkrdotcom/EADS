@@ -2,6 +2,7 @@
 
 import logging
 import logging.config
+import random
 from typing import Any, Dict, List, Tuple
 
 import deap.base
@@ -12,8 +13,8 @@ from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
-from ..config.settings import GP_CONFIG, LOGGING_CONFIG
-from ..error_handling.error_handler import ModelError
+from src.config.settings import GP_CONFIG, LOGGING_CONFIG
+from src.error_handling.error_handler import ModelError
 
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
@@ -30,16 +31,19 @@ deap.creator.create("Individual", list, fitness=deap.creator.FitnessMax)
 
 # Initialize toolbox
 toolbox = deap.base.Toolbox()
+toolbox.register("attr_bool", random.randint, 0, 1)
+toolbox.register("individual", deap.tools.initRepeat, deap.creator.Individual, toolbox.attr_bool, n=100)
+toolbox.register("population", deap.tools.initRepeat, list, toolbox.individual)
 
 
 class GPInput(BaseModel):
     """Input model for GP operations."""
 
     code: str
-    population_size: int = Field(default=GP_CONFIG["population_size"])
-    generations: int = Field(default=GP_CONFIG["generations"])
-    mutation_rate: float = Field(default=GP_CONFIG["mutation_rate"])
-    crossover_rate: float = Field(default=GP_CONFIG["crossover_rate"])
+    population_size: int = Field(default=GP_CONFIG["population_size"], gt=0)
+    generations: int = Field(default=GP_CONFIG["generations"], gt=0)
+    mutation_rate: float = Field(default=GP_CONFIG["mutation_rate"], ge=0.0, le=1.0)
+    crossover_rate: float = Field(default=GP_CONFIG["crossover_rate"], ge=0.0, le=1.0)
 
 
 def evaluate_fitness(individual: List[Any]) -> Tuple[float]:
@@ -51,12 +55,8 @@ def evaluate_fitness(individual: List[Any]) -> Tuple[float]:
     Returns:
         Tuple containing fitness score
     """
-    try:
-        # TODO: Implement actual fitness evaluation
-        return (0.0,)
-    except Exception as e:
-        logger.error(f"Error evaluating fitness: {str(e)}")
-        raise ModelError(f"Fitness evaluation failed: {str(e)}")
+    # Simple fitness function - count number of 1s
+    return (sum(individual),)
 
 
 def initialize_population(population_size: int) -> List[Any]:
@@ -68,16 +68,7 @@ def initialize_population(population_size: int) -> List[Any]:
     Returns:
         List of initialized individuals
     """
-    try:
-        population = []
-        for _ in range(population_size):
-            # TODO: Implement actual individual initialization
-            individual = deap.creator.Individual([0])
-            population.append(individual)
-        return population
-    except Exception as e:
-        logger.error(f"Error initializing population: {str(e)}")
-        raise ModelError(f"Population initialization failed: {str(e)}")
+    return toolbox.population(n=population_size)
 
 
 @app.get("/", response_model=Dict[str, str])  # type: ignore[misc]
@@ -110,6 +101,11 @@ async def evolve_solution(input_data: GPInput) -> Dict[str, Any]:
         toolbox.register("mutate", deap.tools.mutFlipBit, indpb=0.05)
         toolbox.register("select", deap.tools.selTournament, tournsize=3)
 
+        # Evaluate initial population
+        fitnesses = list(map(toolbox.evaluate, population))
+        for ind, fit in zip(population, fitnesses):
+            ind.fitness.values = fit
+
         # Evolution loop
         for gen in range(input_data.generations):
             # Select next generation
@@ -118,20 +114,20 @@ async def evolve_solution(input_data: GPInput) -> Dict[str, Any]:
 
             # Apply crossover
             for child1, child2 in zip(offspring[::2], offspring[1::2]):
-                if input_data.crossover_rate > 0:
+                if random.random() < input_data.crossover_rate:
                     toolbox.mate(child1, child2)
                     del child1.fitness.values
                     del child2.fitness.values
 
             # Apply mutation
             for mutant in offspring:
-                if input_data.mutation_rate > 0:
+                if random.random() < input_data.mutation_rate:
                     toolbox.mutate(mutant)
                     del mutant.fitness.values
 
             # Evaluate invalid individuals
             invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
-            fitnesses = map(toolbox.evaluate, invalid_ind)
+            fitnesses = list(map(toolbox.evaluate, invalid_ind))
             for ind, fit in zip(invalid_ind, fitnesses):
                 ind.fitness.values = fit
 
@@ -160,15 +156,19 @@ async def evolve_solution(input_data: GPInput) -> Dict[str, Any]:
         )
 
 
-@app.exception_handler(ModelError)  # type: ignore[misc]
+@app.exception_handler(ModelError)
 async def model_error_handler(request: Request, exc: ModelError) -> JSONResponse:
     """Handle model errors."""
-    logger.error(f"Model error: {exc}")
     return JSONResponse(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"error": str(exc)},
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={"status": "error", "message": str(exc)},
     )
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8001, workers=1)
+    uvicorn.run(
+        "src.gp_engine.gp_service:app",
+        host="0.0.0.0",
+        port=8001,
+        reload=True,
+    )

@@ -1116,10 +1116,12 @@ erDiagram
 ## Service Configuration:
 
 ```mermaid
-graph TD
+graph LR
     subgraph Configuration
-        A[.env] --> B[config/settings.py]
-        C[requirements.txt] --> D[Dependencies]
+        A[.env]
+        B[config/settings.py]
+        C[requirements.txt]
+        D[Dependencies]
     end
 
     subgraph Docker
@@ -1133,492 +1135,36 @@ graph TD
 
 ```
 
-# EADS Gap Analysis Summary of Gaps
+## Project Structure
 
-## 1. Architecture Scope Gap
-- **As-Is:** Simple pipeline with NLP and GP services
-- **README:** Complex system with decentralized AI, meta-game dynamics
-
-## 2. Component Integration Gap
-- **As-Is:** Basic service communication
-- **README:** Advanced orchestration and feedback loops
-
-## 3. Storage Implementation Gap
-- **As-Is:** Simple Neo4j schema
-- **README:** Multi-database with Pinecone and PostgreSQL
-
-## 4. Service Functionality Gap
-- **As-Is:** Basic NLP and GP operations
-- **README:** Advanced AI and evolutionary features
-
-## 5. Deployment Infrastructure Gap
-- **As-Is:** Basic Docker setup
-- **README:** Kubernetes and Airflow integration
-
----
-
-# Detailed Analysis
-
-## 1. Architecture Scope Gap
-- **Current Implementation:**
-  - Linear pipeline flow
-  - Two main services (NLP, GP)
-  - Simple service communication
-- **README Vision:**
-  - Decentralized AI engine
-  - Meta-game dynamics
-  - Self-improving system
-- **Missing Elements:**
-  - Agent coordination system
-  - Learning feedback loops
-  - Meta-level optimization
-  - System self-adaptation mechanisms
-
----
-
-## 2. Component Integration Gap
-- **Current Implementation:**
-  - Direct service calls
-  - Synchronous operations
-  - Simple error handling
-- **README Vision:**
-  - Complex orchestration
-  - Asynchronous processing
-  - Advanced error recovery
-- **Missing Elements:**
-  - Event-driven communication
-  - Service discovery
-  - Circuit breakers
-  - Load balancing
-  - Retry mechanisms
-
----
-
-## 3. Storage Implementation Gap
-- **Current Implementation:**
-  - Basic Neo4j schema
-  - Simple relationships
-  - Limited query patterns
-- **README Vision:**
-  - Multi-database architecture
-  - Vector embeddings in Pinecone
-  - Complex knowledge graphs
-- **Missing Elements:**
-  - Vector store integration
-  - Cross-database consistency
-  - Cache layers
-  - Data versioning
-  - Backup strategies
-
----
-
-## 4. Service Functionality Gap
-- **Current Implementation:**
-  - Basic text analysis
-  - Simple GP operations
-  - Limited optimization
-- **README Vision:**
-  - Advanced AI capabilities
-  - Complex evolutionary algorithms
-  - Self-improvement mechanisms
-- **Missing Elements:**
-  - Advanced NLP features
-  - Learning mechanisms
-  - Adaptation strategies
-  - Performance optimization
-  - Security hardening
-
----
-
-## 5. Deployment Infrastructure Gap
-- **Current Implementation:**
-  - Basic Docker containers
-  - Simple compose setup
-  - Manual scaling
-- **README Vision:**
-  - Kubernetes orchestration
-  - Airflow workflows
-  - Auto-scaling
-- **Missing Elements:**
-  - Container orchestration
-  - CI/CD pipelines
-  - Monitoring systems
-  - Auto-scaling rules
-  - Resource optimization
-
----
-
-### **Summary Comparison Table**
-
-| Database         | Pros                                               | Cons                                          |
-|------------------|----------------------------------------------------|-----------------------------------------------|
-| **Timescale Vector** | PostgreSQL integration, scalable, open-source    | Less specialized for vector search, complexity in setup |
-| **Pinecone**      | Fully managed, highly scalable, fast search        | Not open-source, expensive for large-scale    |
-| **Weaviate**      | Open-source, ML model integration, flexible API   | Complex setup, performance bottlenecks        |
-| **FAISS**         | High performance, GPU support, flexible indexing   | Not a complete DB, requires integration, no built-in scaling |
-| **Milvus**        | High performance, distributed, multiple indexing options | Complex setup, resource-intensive           |
-| **Qdrant**        | Open-source, real-time updates, filtering support | Newer tool, still evolving                   |
-
----
-
-### **Conclusion**
-For **active development** with **minimal overhead** and **easy integration**:
-
-- **Pinecone** is the best choice if you prefer a **fully managed solution** with **high scalability** and **fast vector search** without the need for manual setup.
-- **Timescale Vector** is an excellent choice if you need both **time-series data support** and **vector search**, especially if you’re already using PostgreSQL.
-- **FAISS** and **Milvus** are best for high-performance and large-scale vector search when you want **open-source solutions** but can handle more complex setups.
-
----
-
-### **Unique Advantages for Your Vision**
-- Dynamic agent configuration
-- Scalable from laptop to cluster
-- Native support for:
-  * Concurrent processing
-  * Distributed computing
-  * Machine learning workflows
-
-### **Recommended Next Steps**
-1. Install Ray
-2. Experiment with RLlib
-3. Build small multi-agent systems
-4. Gradually increase complexity
-
----
-
-### **Deep Dive Recommendation**
-I strongly recommend exploring Ray. It bridges the gap between your vision of:
-- Flexible agent arrangements
-- ML-focused computing
-- Scalable architecture
-- Local and distributed computing
-
----
-
-### RLlib (Reinforcement Learning Library)
-- **GitHub**: https://github.com/ray-project/ray/tree/master/rllib
-- **Key Features**:
-  - Supports multiple RL algorithms
-  - Distributed training
-  - Supports multiple frameworks (TensorFlow, PyTorch)
-  - Algorithms include:
-    * Proximal Policy Optimization (PPO)
-    * Advantage Actor-Critic (A2C)
-    * Deep Q-Network (DQN)
-    * Soft Actor-Critic (SAC)
-
-#### Example RLlib Code
-```python
-import ray
-from ray import tune
-from ray.rllib.agents.ppo import PPOTrainer
-
-ray.init()
-
-tune.run(
-    PPOTrainer,
-    config={
-        "env": "CartPole-v0",
-        "num_workers": 4,
-        "train_batch_size": 4000,
-        "sgd_minibatch_size": 256
-    }
-)
+```
+EADS/
+├── src/                    # Source code
+│   ├── core/              # Core functionality
+│   │   └── robustness/    # Robustness enhancements
+│   ├── deployment/        # Deployment related code
+│   ├── gp_engine/        # Genetic Programming engine
+│   ├── nlp/              # Natural Language Processing
+│   ├── orchestration/    # Pipeline orchestration
+│   ├── tracking/         # Experiment tracking
+│   └── vector_store/     # Vector storage implementation
+├── docker/               # Docker configuration files
+│   ├── Dockerfile.app
+│   ├── Dockerfile.neo4j
+│   ├── Dockerfile.postgres
+│   └── docker-compose.yml
+├── docs/                 # Documentation
+├── scripts/             # Utility scripts
+├── tests/               # Test suite
+├── .env.example         # Example environment variables
+├── .flake8             # Flake8 configuration
+├── .pre-commit-config.yaml  # Pre-commit hooks
+├── mypy.ini            # MyPy configuration
+├── pytest.ini          # PyTest configuration
+├── requirements.txt    # Project dependencies
+└── setup.py           # Package setup
 ```
 
-### Tune (Hyperparameter Tuning)
-- **GitHub**: https://github.com/ray-project/ray/tree/master/python/ray/tune
-- **Capabilities**:
-  - Distributed hyperparameter search
-  - Support for multiple search algorithms
-  - Integration with ML frameworks
-  - Visualization of results
-
-#### Tune Example
-```python
-import ray
-from ray import tune
-from ray.tune.schedulers import ASHAScheduler
-
-def objective(config):
-    for _ in range(10):
-        loss = config["a"] + config["b"]
-        tune.report(loss=loss)
-
-ray.init()
-tune.run(
-    objective,
-    config={
-        "a": tune.uniform(0, 10),
-        "b": tune.uniform(0, 10)
-    },
-    scheduler=ASHAScheduler(metric="loss", mode="min")
-)
-```
-
-### MLflow Integration
-- Distributed experiment tracking
-- Scalable model management
-- Integrates with Ray for distributed ML workflows
-
-### Neurips Benchmark Projects
-Several machine learning benchmark projects use Ray for:
-- Distributed training
-- Scalable experimentation
-- Complex algorithm testing
-
-### Advanced ML Research Projects
-1. **Distributed Neural Architecture Search**
-   - Automatically finding optimal neural network architectures
-   - Parallel exploration of model configurations
-   - Genetic algorithm-like search strategies
-
-2. **Multi-Agent Reinforcement Learning**
-   - Simulating complex multi-agent environments
-   - Distributed policy learning
-   - Concurrent agent training
-
-### Cutting-Edge Research Implementations
-```python
-import ray
-import ray.rllib.agents.marl as marl
-
-@ray.remote
-class MultiAgentTrainingEnvironment:
-    def __init__(self, num_agents):
-        self.agents = [Agent.remote() for _ in range(num_agents)]
-
-    def distributed_training(self):
-        # Concurrent agent policy updates
-        ray.get([agent.train.remote() for agent in self.agents])
-```
-
-### Unique Advantages for Your Vision
-- Dynamic agent configuration
-- Scalable from laptop to cluster
-- Native support for:
-  * Concurrent processing
-  * Distributed computing
-  * Machine learning workflows
-
-### Recommended Next Steps
-1. Install Ray
-2. Experiment with RLlib
-3. Build small multi-agent systems
-4. Gradually increase complexity
-
----
-
-### **NEW DESIGN using Ray + LlamaIndex**
-
-## High-Level System Architecture:
-
-```mermaid
-graph LR
-    subgraph "EADS System"
-        Input[Input Documents] --> Coord[Ray Coordinator]
-
-        subgraph "Ray Cluster"
-            Coord --> NLP[NLP Agent]
-            Coord --> GP[GP Agent]
-            NLP <--> GP
-        end
-
-        subgraph "Knowledge Layer"
-            NLP --> LI[LlamaIndex]
-            LI --> Neo[(Neo4j + Vector Store)]
-        end
-
-        GP --> Output[Generated Solution]
-    end
-```
-
-## Agent Communication Flow:
-
-```mermaid
-sequenceDiagram
-    participant C as Coordinator
-    participant NLP as NLP Agent
-    participant GP as GP Agent
-    participant KB as Knowledge Base
-
-    C->>NLP: process_document(doc)
-    activate NLP
-    NLP->>KB: index_content()
-    KB-->>NLP: document_index
-    NLP-->>C: nlp_result
-    deactivate NLP
-
-    C->>GP: evolve_solution(nlp_result)
-    activate GP
-    GP->>KB: query_knowledge()
-    KB-->>GP: relevant_patterns
-    GP-->>C: optimized_solution
-    deactivate GP
-```
-
-## Component Dependencies:
-
-```mermaid
-graph LR
-    subgraph "Core Components"
-        Ray[Ray Framework]
-        LI[LlamaIndex]
-        Neo[Neo4j]
-        FA[FastAPI]
-    end
-
-    subgraph "Agents"
-        NLP[NLP Agent]
-        GP[GP Agent]
-        Coord[Coordinator]
-    end
-
-    subgraph "Services"
-        API[API Service]
-        KB[Knowledge Base]
-    end
-
-    Ray --> NLP & GP & Coord
-    LI --> KB
-    Neo --> KB
-    FA --> API
-    KB --> NLP & GP
-    API --> Coord
-```
-
-## Data Flow Architecture:
-
-```mermaid
-flowchart TD
-    subgraph Input
-        Doc[Document] --> Parser[Document Parser]
-    end
-
-    subgraph Processing
-        Parser --> Embeddings[Generate Embeddings]
-        Embeddings --> Index[Create Index]
-        Index --> Store[Store Knowledge]
-    end
-
-    subgraph Evolution
-        Store --> Query[Query Knowledge]
-        Query --> Evolve[Evolve Solution]
-        Evolve --> Optimize[Optimize Result]
-    end
-
-    subgraph Output
-        Optimize --> Result[Final Solution]
-    end
-```
-
-## Storage Architecture:
-
-```mermaid
-erDiagram
-    DOCUMENT ||--o{ CHUNK : contains
-    CHUNK ||--o{ EMBEDDING : has
-    EMBEDDING ||--o{ RELATIONSHIP : forms
-
-    DOCUMENT {
-        string id
-        string content
-        timestamp created
-    }
-
-    CHUNK {
-        string id
-        string text
-        int position
-    }
-
-    EMBEDDING {
-        string id
-        vector data
-        float similarity
-    }
-
-    RELATIONSHIP {
-        string source
-        string target
-        float weight
-    }
-```
-
-## Ray Actor Hierarchy:
-
-```mermaid
-graph TD
-    subgraph "Ray Actor System"
-        Coord[Coordinator Actor]
-
-        subgraph "NLP Actors"
-            NLP1[NLP Worker 1]
-            NLP2[NLP Worker 2]
-            NLPn[NLP Worker n]
-        end
-
-        subgraph "GP Actors"
-            GP1[GP Worker 1]
-            GP2[GP Worker 2]
-            GPn[GP Worker n]
-        end
-
-        Coord --> NLP1 & NLP2 & NLPn
-        Coord --> GP1 & GP2 & GPn
-    end
-```
-
-## Deployment Architecture:
-
-```mermaid
-graph TB
-    subgraph "Production Environment"
-        LB[Load Balancer]
-
-        subgraph "Ray Cluster"
-            Head[Ray Head Node]
-            W1[Worker Node 1]
-            W2[Worker Node 2]
-            Wn[Worker Node n]
-
-            Head --> W1 & W2 & Wn
-        end
-
-        subgraph "Storage"
-            Neo[(Neo4j)]
-            Vec[(Vector Store)]
-        end
-
-        LB --> Head
-        W1 & W2 & Wn --> Neo
-        W1 & W2 & Wn --> Vec
-    end
-```
-
-## Configuration Management:
-
-```mermaid
-graph LR
-    subgraph "Config Management"
-        Env[.env]
-        Ray[Ray Config]
-        Neo[Neo4j Config]
-        LI[LlamaIndex Config]
-
-        Env --> Ray & Neo & LI
-
-        subgraph "Runtime Config"
-            RC[Ray Context]
-            NC[Neo4j Connection]
-            LC[LlamaIndex Context]
-
-            Ray --> RC
-            Neo --> NC
-            LI --> LC
-        end
-    end
-```
 ## Update dept
 
 ```
@@ -1864,3 +1410,45 @@ query_engine = vector_index.as_query_engine(
 
 # Example query
 response = query_engine.query("Find code examples related to sorting algorithms.")
+
+```
+
+Follow these instructions to make the following change to my code document.
+
+Instruction: Add project structure section to README.md
+
+Code Edit:
+```
+{{ ... }}
+
+## Project Structure
+
+```
+EADS/
+├── src/                    # Source code
+│   ├── core/              # Core functionality
+│   │   └── robustness/    # Robustness enhancements
+│   ├── deployment/        # Deployment related code
+│   ├── gp_engine/        # Genetic Programming engine
+│   ├── nlp/              # Natural Language Processing
+│   ├── orchestration/    # Pipeline orchestration
+│   ├── tracking/         # Experiment tracking
+│   └── vector_store/     # Vector storage implementation
+├── docker/               # Docker configuration files
+│   ├── Dockerfile.app
+│   ├── Dockerfile.neo4j
+│   ├── Dockerfile.postgres
+│   └── docker-compose.yml
+├── docs/                 # Documentation
+├── scripts/             # Utility scripts
+├── tests/               # Test suite
+├── .env.example         # Example environment variables
+├── .flake8             # Flake8 configuration
+├── .pre-commit-config.yaml  # Pre-commit hooks
+├── mypy.ini            # MyPy configuration
+├── pytest.ini          # PyTest configuration
+├── requirements.txt    # Project dependencies
+└── setup.py           # Package setup
+```
+
+{{ ... }}

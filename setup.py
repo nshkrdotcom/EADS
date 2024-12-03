@@ -19,7 +19,8 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/nshkrdotcom/EADS",
-    packages=find_packages(exclude=["tests*"]),
+    package_dir={"": "src"},
+    packages=find_packages(where="src"),
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
@@ -47,8 +48,9 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "eads-nlp=nlp.nlp_service:main",
-            "eads-gp=gp_engine.gp_service:main",
+            "eads-nlp=eads.nlp.nlp_service:main",
+            "eads-gp=eads.gp_engine.gp_service:main",
         ],
     },
+    include_package_data=True,
 )
