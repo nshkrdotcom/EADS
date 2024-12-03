@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.11-slim
 
 WORKDIR /app
 
@@ -9,8 +9,8 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first to leverage Docker cache
-COPY requirements/nlp.lock requirements/nlp.lock
-RUN pip install --no-cache-dir -r requirements/nlp.lock
+COPY requirements/nlp.txt requirements/nlp.txt
+RUN pip install --no-cache-dir -r requirements/nlp.txt
 
 # Copy the rest of the application
 COPY . .

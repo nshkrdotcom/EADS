@@ -1,0 +1,9 @@
+FROM python:3.11-slim
+
+WORKDIR /requirements
+
+RUN pip install pip-tools
+
+COPY requirements/*.txt ./
+
+CMD ["sh", "-c", "for f in *.txt; do if [ \"$f\" != \"*.txt\" ]; then pip-compile --generate-hashes \"$f\" --output-file \"${f%.txt}.lock\"; fi; done"]
