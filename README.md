@@ -32,27 +32,30 @@ At its heart, EADS is not just another development tool&#x2014;it's an intellige
 ## &#x1F3D7;&#xFE0F; System Architecture
 
 ### Components
+
 1. **Genetic Programming Engine**
-   - Population management
-   - Variation operators
-   - Fitness evaluation
-   - Intelligent selection
+   - Population-based code evolution using DEAP
+   - Individual representation with code and fitness attributes
+   - Configurable evolution parameters (population size, generations, mutation/crossover rates)
+   - FastAPI-based service for evolution operations
 
-2. **Knowledge Management**
-   - Neo4j Knowledge Graph
-   - Pinecone Semantic Embeddings
-   - NLP-enriched code taxonomy
+2. **NLP Service**
+   - Sentence Transformer-based code analysis
+   - Semantic code pattern matching
+   - Code similarity computation
+   - FastAPI-based service for NLP operations
 
-3. **Robustness Enhancement**
-   - Static &amp; Dynamic Analysis
-   - Formal Verification
-   - Continuous optimization
+3. **Knowledge Management**
+   - Neo4j Graph Database integration
+   - Asynchronous database operations
+   - Structured code pattern storage
+   - Environment-based configuration
 
-4. **Deployment &amp; Monitoring**
-   - Apache Airflow Orchestration
-   - Docker Containerization
-   - Kubernetes Scaling
-   - Postgres Metadata Tracking
+4. **Testing & Quality Assurance**
+   - Comprehensive test suite with pytest
+   - Pre-commit hooks for code quality
+   - Type checking with mypy
+   - Linting with flake8 and black
 
 ## &#x1F31F; Unique Selling Points
 
@@ -63,20 +66,93 @@ At its heart, EADS is not just another development tool&#x2014;it's an intellige
 
 ## &#x1F6E0;&#xFE0F; Technology Stack
 
-- **AI/ML**:
-  - TensorFlow
-  - PyTorch
-  - Scikit-learn
+- **Core Services**:
+  - FastAPI
+  - Python 3.10+
+  - Pydantic
+  - Uvicorn
+- **Infrastructure**:
+  - Docker
+  - Docker Compose
+  - PostgreSQL
 - **Genetic Programming**:
   - DEAP
-  - PyGAD
-- **Knowledge Management**:
-  - Neo4j
-  - Pinecone
-- **Deployment**:
-  - Docker
-  - Kubernetes
-  - Apache Airflow
+- **NLP & ML**:
+  - Sentence Transformers
+  - TensorFlow Keras
+- **Database**:
+  - Neo4j (AuraDB)
+- **Development Tools**:
+  - pre-commit
+  - pytest
+  - mypy
+  - black
+  - flake8
+  - isort
+
+## Technology Stack Details
+
+| Component                    | Technology               | Description & Usage                                                                                           |
+|-----------------------------|-------------------------|-------------------------------------------------------------------------------------------------------------|
+| **Core Framework**          |                         |                                                                                                             |
+| Web Framework               | FastAPI 0.110.0+        | High-performance async web framework for building APIs with automatic OpenAPI documentation                  |
+| Python Runtime              | Python 3.8+             | Modern Python version with support for type hints and async/await                                           |
+| API Documentation           | OpenAPI/Swagger         | Interactive API documentation and testing interface                                                         |
+| Server                      | Uvicorn 0.27.0+        | Lightning-fast ASGI server implementation                                                                   |
+| Configuration              | Pydantic 2.5.0+        | Data validation, settings management, and schema definition                                                 |
+| **Infrastructure**          |                         |                                                                                                             |
+| Containerization           | Docker                  | Container-based deployment with microservices architecture                                                  |
+| Orchestration              | docker-compose          | Multi-container application orchestration                                                                   |
+| Metadata Storage           | PostgreSQL              | Relational database for experiment tracking and metrics                                                     |
+| **Genetic Programming**     |                         |                                                                                                             |
+| Evolution Framework         | DEAP 1.4.1+            | Primary framework for evolutionary computation and genetic programming                                       |
+| Alternative Framework       | PyGAD 3.2.0+           | Alternative genetic algorithm implementation for specific use cases                                         |
+| **NLP & Machine Learning**  |                         |                                                                                                             |
+| Text Embeddings            | Sentence Transformers 2.5.0+ | Neural network models for code embedding generation                                                    |
+| Deep Learning              | TensorFlow 2.15.0+      | Deep learning framework for model training                                                                 |
+| Code Analysis              | Tree-sitter 0.20.4+     | Fast, accurate code parsing and analysis                                                                   |
+| **Knowledge & Storage**     |                         |                                                                                                             |
+| Graph Database             | Neo4j 5.15.0+           | Graph database for code patterns and relationships                                                         |
+| Vector Database            | Weaviate 4.4.0+         | Vector search and storage for code embeddings                                                              |
+| Environment Variables      | python-dotenv 1.0.0+    | Configuration management for sensitive data                                                                |
+| **ML Ops & Tracking**      |                         |                                                                                                             |
+| Experiment Tracking        | MLflow 2.10.0+          | ML experiment tracking and model management                                                                |
+| Version Control            | DVC 3.38.1+             | Data and model version control                                                                             |
+| Distributed Computing      | Ray 2.9.0+              | Distributed computing framework for scaling ML workloads                                                    |
+| **LLM Integration**        |                         |                                                                                                             |
+| LLM Framework              | LangChain 0.1.0+        | Framework for building LLM applications                                                                    |
+| RAG Framework              | LlamaIndex 0.9.15+      | Framework for building RAG applications                                                                    |
+| **Development Tools**       |                         |                                                                                                             |
+| Type Checking              | mypy 1.8.0+             | Static type checking with strict enforcement                                                               |
+| Code Formatting            | black 23.12.0+          | Code formatting with consistent style                                                                      |
+| Import Sorting             | isort 5.13.0+           | Python import organization                                                                                 |
+| Linting                    | flake8 7.0.0+           | Code quality enforcement                                                                                   |
+| Git Hooks                  | pre-commit 3.6.0+       | Automated code quality checks                                                                              |
+| **Testing**                |                         |                                                                                                             |
+| Testing Framework          | pytest 7.4.0+           | Testing framework with fixture support                                                                     |
+| Async Testing              | pytest-asyncio 0.23.5+  | Async test support                                                                                        |
+| Coverage                   | pytest-cov 4.1.0+       | Test coverage reporting                                                                                    |
+
+### Planned Components
+
+The following components are planned for future implementation:
+
+1. **Infrastructure & Deployment**
+   - Kubernetes orchestration for production scaling
+   - Enhanced monitoring and logging
+   - Service mesh implementation
+
+2. **Code Analysis & Verification**
+   - CBMC/KLEE for formal verification
+   - DynamoRIO/Frida for dynamic analysis
+   - Additional vector store integration (Pinecone)
+
+3. **Enhanced ML Capabilities**
+   - CodeBERT integration
+   - Additional language support in Tree-sitter
+   - Expanded RAG capabilities
+
+Each component in our current stack has been carefully selected and integrated into the system. The stack is modular by design, allowing for easy updates and replacements as the project evolves.
 
 ## &#x1F4AC; Vision
 
@@ -85,21 +161,7 @@ To create a self-healing, continuously improving software ecosystem that autonom
 ## &#x1F527; Setup & Installation
 
 ### Prerequisites
-- Python 3.12 or higher
-- Docker and Docker Compose (for running services)
-- Git for version control
-- Sufficient disk space for Docker images and volumes
-- PostgreSQL client (choose one):
-  ```bash
-  # Ubuntu/Debian:
-  sudo apt install postgresql-client-common postgresql-client
 
-  # macOS:
-  brew install libpq
-
-  # Windows:
-  # Install pgAdmin 4 from https://www.pgadmin.org/
-  ```
 
 ### Development Setup
 
@@ -269,6 +331,158 @@ sudo chmod 666 /var/run/docker.sock
 # Log out and log back in for changes to take effect
 ```
 
+## System Architecture Diagrams
+
+### High-Level Component Architecture
+
+```mermaid
+graph TB
+    subgraph Services
+        NLP[NLP Service<br>:8000]
+        GP[GP Engine<br>:8001]
+    end
+
+    subgraph Databases
+        Neo4j[(Neo4j<br>:7474/:7687)]
+        Postgres[(PostgreSQL<br>:5432)]
+        Weaviate[(Weaviate<br>:8080)]
+    end
+
+    subgraph Storage
+        VectorStore[Vector Store]
+        GraphDB[Graph Database]
+        MetadataDB[Metadata Store]
+    end
+
+    NLP --> Neo4j
+    NLP --> Weaviate
+    GP --> Neo4j
+    GP --> Postgres
+
+    Weaviate --> VectorStore
+    Neo4j --> GraphDB
+    Postgres --> MetadataDB
+```
+
+### Service Integration Flow
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant NLP as NLP Service
+    participant GP as GP Engine
+    participant Neo4j
+    participant Weaviate
+    participant Postgres
+
+    Client->>NLP: Analyze Code Pattern
+    NLP->>Weaviate: Store Embeddings
+    NLP->>Neo4j: Store Pattern Structure
+
+    Client->>GP: Evolve Solution
+    GP->>Neo4j: Query Patterns
+    GP->>Postgres: Track Evolution
+    GP->>Client: Return Solution
+```
+
+### Container Architecture
+
+```mermaid
+graph TB
+    subgraph Docker Compose
+        subgraph Services
+            nlp[nlp_service<br>:8000]
+            gp[gp_engine<br>:8001]
+        end
+
+        subgraph Storage
+            neo4j[neo4j<br>:7474/:7687]
+            postgres[postgres<br>:5432]
+            weaviate[weaviate<br>:8080]
+        end
+
+        subgraph Volumes
+            neo4j_data[(neo4j_data)]
+            postgres_data[(postgres_data)]
+            weaviate_data[(weaviate_data)]
+        end
+    end
+
+    nlp --> neo4j
+    nlp --> weaviate
+    gp --> neo4j
+    gp --> postgres
+
+    neo4j --> neo4j_data
+    postgres --> postgres_data
+    weaviate --> weaviate_data
+```
+
+### Data Flow Architecture
+
+```mermaid
+flowchart TB
+    subgraph Input
+        Code[Code Input]
+        Pattern[Pattern Input]
+    end
+
+    subgraph Processing
+        NLP[NLP Service]
+        GP[GP Engine]
+        Evolution[Evolution Process]
+    end
+
+    subgraph Storage
+        Neo4j[(Neo4j)]
+        Weaviate[(Weaviate)]
+        Postgres[(PostgreSQL)]
+    end
+
+    Code --> NLP
+    Pattern --> NLP
+    NLP --> Weaviate
+    NLP --> Neo4j
+    Neo4j --> GP
+    GP --> Evolution
+    Evolution --> Postgres
+    Evolution --> |Optimized Solution| Output
+```
+
+### Module Dependencies
+
+```mermaid
+graph LR
+    subgraph Core
+        Config[config]
+        ErrorHandling[error_handling]
+        Core[core]
+    end
+
+    subgraph Services
+        NLP[nlp]
+        GP[gp_engine]
+        VectorStore[vector_store]
+    end
+
+    subgraph Infrastructure
+        Tracking[tracking]
+        Orchestration[orchestration]
+        Deployment[deployment]
+    end
+
+    NLP --> Config
+    NLP --> ErrorHandling
+    NLP --> VectorStore
+    GP --> Config
+    GP --> ErrorHandling
+    GP --> Core
+    VectorStore --> Config
+    Tracking --> Config
+    Orchestration --> Config
+    Deployment --> Config
+```
+
 ## Configuration
 
 The system uses environment variables for configuration. Copy the `.env.example` file to `.env` and adjust the values:
@@ -281,53 +495,35 @@ Required settings:
 - Neo4j: Database for knowledge graph (`NEO4J_*` variables)
 - PostgreSQL: Database for metadata (`POSTGRES_*` variables)
 
-Optional settings:
-- Pinecone: Vector database for code embeddings
-  - Set `PINECONE_API_KEY` if you want to use vector similarity search
-  - Get your API key from [Pinecone](https://www.pinecone.io/)
-  - The system will work without Pinecone, but some advanced features may be limited
 
 ## &#x1F063; System Architecture
 
-EADS employs a modular architecture, integrating several key components:
+EADS employs a modular microservices architecture:
 
-1. **Knowledge Base:**  A richly structured knowledge base encompassing code examples, design patterns, libraries, best practices, and security guidelines.  This is used to inform the AI Engine and the GP Engine.  This incorporates a robust and scalable Graph Database (Neo4j) to store code taxonomies and architectural knowledge, and a semantic embedding layer (Pinecone) to facilitate intelligent code search and retrieval.
+1. **GP Service (`gp_engine`):**
+   - Manages code evolution through genetic programming
+   - Handles population initialization and evolution
+   - Configurable evolution parameters
+   - RESTful API endpoints for evolution operations
 
+2. **NLP Service (`nlp`):**
+   - Code analysis using transformer models
+   - Pattern matching and similarity computation
+   - RESTful API endpoints for NLP operations
+   - Configurable model selection
 
-2. **Decentralized AI Engine:** Multiple specialized AI modules (security, performance, maintainability, etc.), leveraging deep learning frameworks like TensorFlow or PyTorch, collaborate to generate, analyze, and optimize code.  This design enhances resilience and allows for focused expertise.
+3. **Knowledge Base:**
+   - Neo4j graph database for storing code patterns, relationships, and metadata
+   - Asynchronous database operations
+   - Structured knowledge representation
+   - Environment-based configuration
 
+4. **Configuration Management:**
+   - Environment variables for sensitive data
+   - Service-specific configuration
+   - Logging configuration
+   - Development and production settings
 
-3. **Genetic Programming Engine:** This component utilizes a robust GP engine (DEAP or PyGAD) for code evolution. It uses sophisticated techniques like AST manipulation, semantic embedding-guided crossover, and LLM-enhanced mutation and code generation, leveraging the CodeBERT model for advanced code understanding.
-
-
-4. **Robustness Enhancement Module:** Performs comprehensive code analysis (static and dynamic) and formal verification (where feasible) to identify potential issues.  It utilizes static analysis tools (PMD, FindBugs, SonarQube, etc.), dynamic instrumentation (DynamoRIO, Frida), and potentially model checkers (CBMC, KLEE).  This generates a robustness score and specific feedback.
-
-
-5. **Deployment and Monitoring:** A robust pipeline (managed by Apache Airflow) that deploys the generated code to ASKA using Docker containers, and monitors performance, resource usage, security, and user feedback.  It integrates with Kubernetes for scaling and resilience.
-
-
-6. **Metadata Management:**  A relational database (Postgres) stores experiment tracking data, version control information, fitness scores, metrics, logs, and compliance data.
-
-
-7. **Human-Machine Interface:**  A user-friendly interface for developers to interact with and guide the EADS, providing feedback, setting goals, and reviewing results.
-
-## Technology Stack
-
-| Component                    | Technology               | Description                                                                                                    |
-|-------------------------------|---------------------------|-------------------------------------------------------------------------------------------------------------|
-| Knowledge Base                | Neo4j, Pinecone           | Graph database and vector database for code knowledge and semantic search.                                  |
-| Decentralized AI Engine       | TensorFlow/PyTorch, Scikit-learn | Deep learning frameworks and machine learning library.                                                        |
-| Genetic Programming Engine    | DEAP/PyGAD               | Evolutionary algorithm framework.                                                                             |
-| Code Representation           | TreeSitter                | Parser for creating Abstract Syntax Trees (ASTs).                                                            |
-| Static Analysis               | PMD, FindBugs, SonarQube  | Tools for static code analysis.                                                                              |
-| Dynamic Analysis             | DynamoRIO, Frida          | Tools for dynamic code analysis.                                                                              |
-| Formal Verification           | CBMC, KLEE (Optional)      | Model checkers for formal verification.                                                                         |
-| Retrieval Augmented Generation (RAG) | LlamaIndex, LangChain | Data framework and framework for LLM-powered applications. |
-| Code Understanding           | CodeBERT                 | Pre-trained LLM for enhanced code understanding.                                                           |
-| Workflow Orchestration       | Apache Airflow            | Manages the EADS pipeline.                                                                                   |
-| Containerization              | Docker                    | Creates isolated development environments.                                                                     |
-| Orchestration                  | Kubernetes                | Manages container deployment and scaling.                                                                     |
-| Metadata Database             | Postgres                  | Stores experiment data, metrics, and logs.                                                                  |
 
 ## &#x1F91D; Contribution
 
@@ -341,1103 +537,5 @@ Passionate about autonomous systems? We're always looking for brilliant minds to
 
 ## Getting Started
 
-1. **Clone the Repository:**  `git clone <repository_url>`
-2. **Install Dependencies:**  Refer to the `requirements.txt` file.
-3. **Build Docker Images:**  `./build.sh`  (This script will handle building all Docker images using `docker-compose`).
-4. **Start Containers:** `docker-compose up -d`  (Starts all containers in detached mode).
-5. **Access Services:** Access databases and APIs via the ports specified in `docker-compose.yml`.
-6. **Run Main Code:** Execute the main pipeline script:
-   ```bash
-   docker-compose exec app python run_pipeline.py input.pdf output.tex
-   ```
-7. **Run Robustness Enhancement Module:** Execute the robustness enhancement script:
-   ```bash
-   docker-compose exec app python run_robustness.py
-   ```
-8. **Run Genetic Programming Module:** Execute the genetic programming script:
-   ```bash
-   docker-compose exec app python run_gp.py
-   ```
-9. **Run Deployment Module:** Execute the deployment script:
-   ```bash
-   docker-compose exec app python run_deployment.py
-   ```
 
 ## &#x1F4BB; Project Diagrams
-
-### EADS System Architecture Diagram
-
-```mermaid
-flowchart TB
-    subgraph "EADS:&nbsp;Evolutionary&nbsp;Autonomous&nbsp;Development&nbsp;System"
-        A[Decentralized AI Engine] --> B[Genetic Programming Engine]
-        B --> C[Code Generation Module]
-        B --> D[Robustness Enhancement Module]
-
-        subgraph "Knowledge Management"
-            E[Neo4j Knowledge Graph]
-            F[Pinecone Semantic Embeddings]
-            E <--> F
-        end
-
-        C --> G[Testing & Evaluation]
-        D --> G
-        E & F --> A
-
-        G --> H[Version Control]
-        H --> I[Deployment Orchestration]
-
-        subgraph "Monitoring & Analysis"
-            J[Performance Metrics]
-            K[Continuous Improvement Feedback]
-        end
-
-        I --> J
-        G --> K
-        K --> B
-    end
-
-    M[Human-in-the-Loop Interface] --> A
-    J --> M
-```
-
-### EADS Autonomous Development Workflow
-
-```mermaid
-flowchart TD
-    A[Problem Definition] --> B[Initial Code Generation]
-
-    subgraph "Genetic Programming Cycle"
-        B --> C{Fitness Evaluation}
-        C -->|Pass Criteria| D[Code Refinement]
-        C -->|Fail Criteria| E[Variation & Mutation]
-        E --> B
-    end
-
-    D --> F[Comprehensive Testing]
-
-    subgraph "Robustness Enhancement"
-        F --> G[Static Analysis]
-        F --> H[Dynamic Analysis]
-        F --> I[Security Scanning]
-        G & H & I --> J{Meets Robustness Criteria}
-    end
-
-    J -->|Yes| K[Code Optimization]
-    J -->|No| L[Targeted Improvement]
-    L --> B
-
-    K --> M[Deployment Preparation]
-    M --> N[Containerization]
-    N --> O[Kubernetes Deployment]
-
-    subgraph "Continuous Monitoring"
-        O --> P[Performance Tracking]
-        P --> Q[Adaptive Learning]
-        Q --> R{Improvement Needed}
-        R -->|Yes| B
-        R -->|No| S[Maintain & Scale]
-    end
-
-    T[Human Oversight] --> P
-```
-
-### System Diagram
-
-```mermaid
-graph TD
-    subgraph EADS
-        subgraph Knowledge
-            Neo4j["Knowledge<br>Graph<br>(Neo4j)"]
-            Pinecone["Semantic<br>Embeddings<br>(Pinecone)"]
-            CodeBERT["Code<br>Understanding<br>(CodeBERT)"] --> Neo4j & Pinecone
-        end
-
-        subgraph "Genetic&nbsp;Programming"
-            DEAP["GP<br>Engine<br>(DEAP/PyGAD)"]
-            AI["Decentralized<br>AI<br>Engine<br>(TensorFlow/PyTorch/Scikit-learn)"] --> DEAP
-            CodeBERT --> AI & DEAP
-            HCI["Human-in-the-Loop<br>Interface"] --> AI & DEAP & Robustness
-        end
-
-        subgraph Robustness
-            direction TB
-            SA["Static<br>Analysis"] --> REM
-            DA["Dynamic<br>Analysis"] --> REM
-            FV["Formal<br>Verification"] --> REM
-            CodeBERT --> REM
-            Pinecone --> REM
-            REM["Robustness<br>Enhancement<br>Module"] --> DEAP & AI
-
-        end
-
-        subgraph Deployment
-            Airflow["Workflow<br>Orchestration<br>(Apache<br>Airflow)"] --> Docker["Containerization<br>(Docker)"]
-            Docker --> Kubernetes["Orchestration<br>(Kubernetes)"]
-        end
-
-        subgraph Monitoring
-           MD["Metadata<br>Database<br>(Postgres)"]
-           MD --> DEAP & AI & REM & HCI
-        end
-
-        DEAP --> Deployment
-
-    end
-    Knowledge --> DEAP & AI
-    Robustness --> DEAP
-    Monitoring --> Airflow
-    Deployment --> Monitoring &  EADS["EADS Output"]
-```
-
-### Language Game Example
-
-```mermaid
-graph LR
-    subgraph LanguageGame["Language&nbsp;Game&nbsp;Example"]
-        subgraph Agent1["Agent 1"]
-            LLM1["LLM(Core)"]
-        end
-        subgraph Agent2["Agent&nbsp;2"]
-            LLM2["LLM(Core)"]
-        end
-
-        subgraph GameMechanics["Game&nbsp;Mechanics"]
-            Rules["Game<br>Rules"]
-            ScoringFunction["Scoring<br>Function"]
-        end
-
-        subgraph Evaluator["Game#8209;Specific&nbsp;Evaluator"]
-            EvaluationProcess["Evaluation<br>Process"]
-            ScoreOutput["Score Output"] --> GameScheduler["Game&nbsp;Scheduler"]
-        end
-
-
-        Agent1 --> Rules
-        Agent2 --> Rules
-        Agent1 --> ScoringFunction
-        Agent2 --> ScoringFunction
-        Agent1 --> EvaluationProcess
-        Agent2 --> EvaluationProcess
-        GameMechanics --> EvaluationProcess
-    end
-```
-
-### Meta Game Dynamics
-
-
-```mermaid
-graph LR
-    subgraph MetaGameDynamics["Meta Game Dynamics"]
-
-        subgraph GameScheduler["Game Scheduler"]
-            SchedulingLogic["Scheduling<br>Logic"]
-            SelectedGame["Selected<br>Game"]
-        end
-
-        subgraph MetaCritic["Meta Critic"]
-            EvaluationMetrics["Evaluation<br>Metrics (e.g.,<br>Learning<br>Progress,<br>Diversity)"]
-            GameEvaluations["Game<br>Evaluations"]
-        end
-
-        subgraph GameLibrary["Language Game Library"]
-            Game1["Game 1"]
-            Game2["Game 2"]
-            Game3["Game 3"]
-        end
-
-        EvaluationMetrics --> GameEvaluations
-        GameEvaluations --> SchedulingLogic
-        GameLibrary ----> SchedulingLogic
-        SchedulingLogic --> SelectedGame
-    end
-```
-
-### Agent Learning Process
-
-```mermaid
-graph LR
-    subgraph AgentLearning["Agent&nbsp;Learning&nbsp;Process"]
-
-        subgraph Agent["Agent"]
-            LLM["LLM<br>(Core)"]
-            LearnedElements["Learned<br>Elements"]
-        end
-
-        subgraph Game["Game&nbsp;Interaction"]
-            AgentActions["Agent<br>Actions<br>(Outputs)"]
-            GameEnvironment["Game<br>Environment"]
-        end
-
-        subgraph Evaluator["Evaluator"]
-            Score["Score/Feedback"]
-        end
-
-        subgraph LearningAlgorithm["Learning&nbsp;Algo"]
-            UpdateRule["Update<br>Rule"]
-        end
-
-        LLM --> AgentActions
-        AgentActions --> GameEnvironment
-        GameEnvironment --> Evaluator
-        Evaluator --> Score
-        Score --> LearningAlgorithm
-        LearningAlgorithm --> UpdateRule
-        UpdateRule --> LearnedElements
-        LearnedElements --> LLM
-    end
-```
-
-### State Diagram (Boundless Socratic Learning)
-
-```mermaid
-stateDiagram-v2
-    direction TB
-
-    [*] --> Agent : Initiate
-
-    state Agent {
-        direction TB
-        Code_Generator --> Knowledge_Base : Draws_From
-        Code_Generator --> Language_Games : Interacts_With
-    }
-
-    state Language_Games {
-        direction LR
-        Unit_Test_Generation
-        Performance_Optimization
-        Security_Hardening
-        Refactoring
-        API_Design
-    }
-
-    Agent --> Critic : Generated_Code
-    Critic --> Agent : Feedback
-
-    state Critic {
-        direction LR
-        Static_Analysis
-        Dynamic_Analysis
-        Formal_Verification
-        Diversity_Assessment
-    }
-
-    Meta_Critic --> Agent : Oversight
-    Meta_Critic --> Language_Games : Adjust_Scoring
-
-    state Meta_Critic {
-        direction TB
-        Human_Review
-        Automated_Metrics
-    }
-
-    Environment --> Agent : Secure_Sandbox
-
-    state Environment {
-        ASKA
-        IES_Instances
-        DTMS
-        HESE_DAR
-    }
-
-    Knowledge_Base --> CodeBERT : Enhanced_By
-
-    [*] --> Continuous_Improvement
-```
-
-### Architectural Diagram (Boundless Socratic Learning)
-
-```mermaid
-graph LR
-    subgraph SocraticLearning["Socratic&nbsp;Learning&nbsp;System"]
-        subgraph Agent["Agent"]
-            LLM["LLM<br>(Core)"]
-            LearnedElements["Learned<br>Elements"] --> LLM
-            TransientElements["Transient<br>Elements"] --> LLM
-            Memory["Memory<br>Management"] --> LLM
-            Introspection["Introspection<br>Module"] --> LLM
-            LearningAlgorithms["Learning<br>Algorithms"] --> LearnedElements
-        end
-
-        subgraph GamesAndEvaluation["Games&nbsp;&&nbsp;Evaluation"]
-            GameLibrary["Language<br>Game<br>Library"]
-            GameScheduler["Game<br>Scheduler"] --> GameLibrary
-            GameGenerator["Game<br>Generator"] --> GameLibrary
-
-            GameInstance["Game<br>Instance"]
-            GameRules["Game<br>Rules"] --> GameInstance
-            AgentActions["Agent<br>Actions"] --> GameInstance
-            Evaluator["Game-Specific<br>Evaluator"] --> GameInstance
-            Score["Score/Feedback"] --> LearningAlgorithms
-        end
-
-        subgraph Meta["Meta#8209;Game"]
-            MetaCritic["Meta-Critic"] --> GameScheduler
-            EvaluationMetrics["Evaluation<br>Metrics"] --> MetaCritic
-        end
-
-        Agent --> GameInstance
-        GameInstance --> Score
-    end
-
-    Observer["Observer"]
-    Performance["Performance<br>Metric"] --> Observer
-    EvaluationMechanism["Evaluation<br>Mechanism"] --> Observer --> SocraticLearning
-    Bootstrapping["Bootstrapping<br>Process"] --> Agent
-    InitialData["Initial<br>Data"] --> Bootstrapping
-    KnowledgeBase["Knowledge<br>Base"] --> Agent
-    DataAugmenter["Data<br>Augmenter"] --> KnowledgeBase ----> GamesAndEvaluation
-```
-
-# Boundless Socratic Learning System for Software Development
-
-## Abstract
-
-The Boundless Socratic Learning System represents a revolutionary approach to autonomous software development, leveraging AI-driven recursive self-improvement through a carefully designed ecosystem of code generation, evaluation, and refinement.
-
-## 1. System Architecture
-
-### 1.1 Core Components
-
-The system comprises five primary architectural components:
-
-#### 1.1.1 The Agent (AI-Powered Code Generator)
-- **Primary Function**: Autonomous code generation and manipulation
-- **Key Capabilities**:
-  - Deep understanding of programming languages
-  - Comprehensive knowledge of software design principles
-  - Active learning mechanism
-  - Adaptive code generation
-
-#### 1.1.2 Language Games
-- **Definition**: Structured software development tasks with explicit scoring mechanisms
-- **Purpose**: Provide context, challenges, and feedback for continuous learning
-
-**Canonical Language Game Types**:
-1. **Unit Test Generation Game**
-   - Objective: Generate comprehensive unit tests
-   - Scoring Metric: Code coverage achieved
-   - Evaluation Criteria:
-     - Line coverage
-     - Branch coverage
-     - Functional coverage
-
-2. **Performance Optimization Game**
-   - Objective: Optimize code execution efficiency
-   - Scoring Metric: Reduction in execution time
-   - Evaluation Criteria:
-     - Computational complexity
-     - Memory utilization
-     - Algorithmic efficiency
-
-3. **Security Hardening Game**
-   - Objective: Identify and mitigate security vulnerabilities
-   - Scoring Metric: Number of vulnerabilities addressed
-   - Evaluation Criteria:
-     - OWASP Top 10 compliance
-     - Static code analysis results
-     - Potential exploit mitigation
-
-4. **Refactoring Game**
-   - Objective: Improve code maintainability and readability
-   - Scoring Metric: Reduction in code complexity
-   - Evaluation Criteria:
-     - Cyclomatic complexity
-     - Cognitive complexity
-     - Code duplication percentage
-
-5. **API Design Game**
-   - Objective: Design robust and intuitive APIs
-   - Scoring Metric: API usability and completeness
-   - Evaluation Criteria:
-     - Adherence to design principles
-     - Comprehensive documentation
-     - Intuitive method signatures
-
-#### 1.1.3 The Environment (ASKA-Powered Sandbox)
-- **Core Characteristics**:
-  - Secure and isolated execution environment
-  - Controlled experiment space
-  - Resource management
-  - Comprehensive security boundaries
-
-**Key Infrastructure Components**:
-- IES (Intelligent Execution System) Instances
-- DTMS (Dynamic Trust Management System)
-- HESE-DAR (Highly Secure Data Access and Retrieval)
-
-#### 1.1.4 The Critic (Robustness Enhancement Module)
-- **Primary Responsibilities**:
-  - Comprehensive code analysis
-  - Feedback generation
-  - Learning guidance
-
-**Analytical Techniques**:
-- Static code analysis
-- Dynamic code execution monitoring
-- Formal verification processes
-- Diversity assessment
-
-#### 1.1.5 Meta-Critic (Human Oversight & Metrics)
-- **Oversight Mechanisms**:
-  - Human review processes
-  - Automated performance metrics
-  - Strategic alignment validation
-
-**Evaluation Dimensions**:
-- Code quality metrics
-- Bug reduction rates
-- Developer productivity enhancement
-- Long-term system alignment
-
-### 1.2 Knowledge Management
-
-#### 1.2.1 Knowledge Base
-- **Powered by**: CodeBERT and advanced semantic understanding technologies
-- **Characteristics**:
-  - Continuously expanding code repository
-  - Semantic code understanding
-  - Best practices library
-  - Design pattern catalog
-
-### 2. Learning Mechanism
-
-#### 2.1 Recursive Self-Improvement Cycle
-1. Code Generation
-2. Execution in Sandbox
-3. Critic Evaluation
-4. Feedback Integration
-5. Knowledge Base Update
-
-### 3. Challenges and Mitigations
-
-#### 3.1 Potential Challenges
-- Language game design complexity
-- Maintaining exploration diversity
-- Computational resource management
-- Ensuring system security
-
-#### 3.2 Mitigation Strategies
-- Adaptive language game scoring
-- Exploration-exploitation algorithms
-- Cloud-native infrastructure
-- Continuous security monitoring
-
-## 4. Potential Impact
-
-### 4.1 Transformative Capabilities
-- Autonomous software evolution
-- Enhanced security paradigms
-- Accelerated development cycles
-- Reduced human intervention
-
-### 4.2 Long-Term Vision
-Creating a self-healing, continuously improving software ecosystem that adapts to emerging technological landscapes.
-
-## 5. Conclusion
-
-The Boundless Socratic Learning System represents a paradigm shift in software development, moving from static, human-driven processes to dynamic, AI-powered autonomous evolution.
-
-## References
-- Schaul's Original Research on Boundless Socratic Learning
-- CodeBERT Documentation
-
-## Tech Exploration
-
-### **Ontologies and Knowledge Graphs**
-1. **Description Logics (DLs)**
-   - Overview: [https://en.wikipedia.org/wiki/Description_logic](https://en.wikipedia.org/wiki/Description_logic)
-
-2. **Web Ontology Language (OWL)**
-   - Website: [https://www.w3.org/OWL/](https://www.w3.org/OWL/)
-
-3. **Pellet (OWL Reasoner)**
-   - Website: [https://github.com/stardog-union/pellet](https://github.com/stardog-union/pellet)
-
-4. **HermiT (OWL Reasoner)**
-   - Website: [http://www.hermit-reasoner.com/](http://www.hermit-reasoner.com/)
-
-5. **FaCT++ (OWL Reasoner)**
-   - Website: [https://github.com/owlcs/factplusplus](https://github.com/owlcs/factplusplus)
-
-6. **Resource Description Framework (RDF)**
-   - Website: [https://www.w3.org/RDF/](https://www.w3.org/RDF/)
-
-7. **SPARQL (Query Language for RDF)**
-   - Website: [https://www.w3.org/TR/sparql11-query/](https://www.w3.org/TR/sparql11-query/)
-
-8. **RDF Schema (RDFS)**
-   - Website: [https://www.w3.org/TR/rdf-schema/](https://www.w3.org/TR/rdf-schema/)
-
-9. **Neo4j (Graph Database)**
-   - Website: [https://neo4j.com/](https://neo4j.com/)
-
-10. **JanusGraph (Graph Database)**
-    - Website: [https://janusgraph.org/](https://janusgraph.org/)
-
-11. **Amazon Neptune**
-    - Website: [https://aws.amazon.com/neptune/](https://aws.amazon.com/neptune/)
-
----
-
-### **Formal Methods**
-12. **Z Notation**
-    - Overview: [https://en.wikipedia.org/wiki/Z_notation](https://en.wikipedia.org/wiki/Z_notation)
-    - Z/EVES Tool: [https://www.oracle.com/technetwork/systems/z-eves-index-098299.html](https://www.oracle.com/technetwork/systems/z-eves-index-098299.html)
-
-13. **Alloy (Formal Specification Language)**
-    - Website: [http://alloytools.org/](http://alloytools.org/)
-
-14. **Event-B (System-Level Modeling)**
-    - Website: [https://www.event-b.org/](https://www.event-b.org/)
-
-15. **Rodin (Event-B Tool)**
-    - Website: [https://www.event-b.org/tools/](https://www.event-b.org/tools/)
-
----
-
-### **Program Analysis and Transformation**
-16. **Abstract Syntax Trees (ASTs)**
-    - TreeSitter: [https://tree-sitter.github.io/tree-sitter/](https://tree-sitter.github.io/tree-sitter/)
-    - ANTLR: [https://www.antlr.org/](https://www.antlr.org/)
-
-17. **Symbolic Execution**
-    - Overview: [https://en.wikipedia.org/wiki/Symbolic_execution](https://en.wikipedia.org/wiki/Symbolic_execution)
-
----
-
-### **Knowledge Representation and Reasoning**
-18. **Prolog**
-    - Website: [https://www.swi-prolog.org/](https://www.swi-prolog.org/)
-
-19. **Drools (Rule Engine)**
-    - Website: [https://www.drools.org/](https://www.drools.org/)
-
-20. **Jess (Rule Engine)**
-    - Website: [https://www.jessrules.com/jess/](https://www.jessrules.com/jess/)
-
----
-
-### **Knowledge Representation and Reasoning (KRR) Systems and Logic Programming**
-21. **NLTK (Natural Language Toolkit)**
-    - Website: [https://www.nltk.org/](https://www.nltk.org/)
-
-22. **Stanford CoreNLP**
-    - Website: [https://stanfordnlp.github.io/CoreNLP/](https://stanfordnlp.github.io/CoreNLP/)
-
-23. **Stanza**
-    - Website: [https://stanfordnlp.github.io/stanza/](https://stanfordnlp.github.io/stanza/)
-
-24. **Gensim**
-    - Website: [https://radimrehurek.com/gensim/](https://radimrehurek.com/gensim/)
-
-25. **AllenNLP**
-    - Website: [https://allennlp.org/](https://allennlp.org/)
-
-26. **Transformers (Hugging Face)**
-    - Website: [https://huggingface.co/transformers/](https://huggingface.co/transformers/)
-
-## &#x1F4DC; License
-
-MIT License
-
-## &#x1F4E7; Contact
-
-Reach out if you're as excited about autonomous software evolution as we are!
-
-
-# Discussion
-
-** Use a multi agent framework
-
-*** Use each agent to comprehend part of it
-
-*** define policy for each Agent, keep track of entire state of the System
-
-*** use an observer LLM to keep track of variables
-
-*** smartest model should be observing
-
-*** andrej karpethi talks about this
-
-*** LEARN HOW DOES A MODEL INFER WITH THAT LIBRARY - how can i run an LLM without any exter
-
-*** experiment with microsoft phi 2 - ecosystems
-
-*** cosine similarity search, set up the vector store
-
-*** vector: check out "timescale vector"
-
-*** build an embedding service for myself
-
-# Roadmap
-
-## Package Distribution & Installation
-
-- Create a proper MANIFEST.in to include non-Python files (e.g., py.typed, mypy.ini)
-- Update setup.py to handle package data and ensure all dependencies are correctly specified
-- Test package installation in a clean environment to verify all imports work correctly
-
-## Documentation Enhancement
-
-- Add docstring type hints to match mypy's strict settings
-- Create module-level docstrings for each package component
-- Document the package structure and module relationships
-- Add examples of how the different components (nlp, gp_engine, etc.) interact
-
-## Test Coverage
-
-- Add more test cases to test_main.py, particularly for error conditions
-- Add unit tests for individual components (nlp_service.py, gp_service.py)
-- Add integration tests for the Neo4j database interactions
-- Set up test coverage reporting
-
-## CI/CD Pipeline
-
-### Configure GitHub Actions to:
-
-- Run pre-commit hooks
-- Execute test suite
-- Check package installation
-- Verify Docker builds
-
-### Add automated version bumping and release management
-
-## Development Environment
-
-- Document development setup steps
-- Create development-specific configuration files
-- Add debugging configurations for VS Code/PyCharm
-- Add development tools to dev dependencies in setup.py
-
-# The story thus far in diagrams
-
-## High-Level Component Diagram:
-
-```mermaid
-graph TD
-    A[Input PDF/Spec] --> B[run_pipeline.py]
-    B --> C[NLP Service]
-    B --> D[GP Engine]
-    C --> E[(Neo4j DB)]
-    D --> E
-    B --> F[Output Code]
-
-    subgraph Services
-        C
-        D
-    end
-
-    subgraph Storage
-        E
-    end
-
-```
-
-## Service Integration Flow:
-
-```mermaid
-sequenceDiagram
-    participant P as Pipeline
-    participant NLP as NLP Service
-    participant GP as GP Engine
-    participant Neo as Neo4j
-
-    P->>NLP: Process input file
-    NLP->>Neo: Store text analysis
-    P->>GP: Optimize solution
-    GP->>Neo: Store optimized patterns
-    GP->>P: Return solution
-    P->>P: Generate output
-
-```
-
-## Code Function Dependencies:
-
-```mermaid
-graph LR
-    subgraph run_pipeline.py
-        A[main] --> B[validate_input_file]
-        A --> C[validate_output_path]
-        A --> D[generate_code]
-        A --> E[run_genetic_programming]
-        A --> F[enhance_robustness]
-        A --> G[prepare_deployment]
-    end
-
-    subgraph nlp_service.py
-        H[encode_text] --> I[analyze_pattern]
-        J[FastAPI endpoints] --> H
-    end
-
-    subgraph gp_service.py
-        K[evolve_solution] --> L[evaluate_fitness]
-        K --> M[initialize_population]
-        N[FastAPI endpoints] --> K
-    end
-
-```
-
-## Database Schema:
-
-```mermaid
-erDiagram
-    PATTERN ||--o{ CODE_SEGMENT : contains
-    PATTERN {
-        string id
-        string pattern_type
-        vector embedding
-    }
-    CODE_SEGMENT {
-        string id
-        string code
-        vector embedding
-    }
-    PATTERN ||--o{ OPTIMIZATION : generates
-    OPTIMIZATION {
-        string id
-        float fitness_score
-        string optimized_code
-    }
-
-```
-
-## Service Configuration:
-
-```mermaid
-graph LR
-    subgraph Configuration
-        A[.env]
-        B[config/settings.py]
-        C[requirements.txt]
-        D[Dependencies]
-    end
-
-    subgraph Docker
-        E[docker-compose.yml]
-        F[Dockerfile.nlp]
-        G[Dockerfile.gp]
-        H[Dockerfile.neo4j]
-    end
-
-    B --> E
-
-```
-
-## Project Structure
-
-```
-EADS/
-├── src/                    # Source code
-│   ├── core/              # Core functionality
-│   │   └── robustness/    # Robustness enhancements
-│   ├── deployment/        # Deployment related code
-│   ├── gp_engine/        # Genetic Programming engine
-│   ├── nlp/              # Natural Language Processing
-│   ├── orchestration/    # Pipeline orchestration
-│   ├── tracking/         # Experiment tracking
-│   └── vector_store/     # Vector storage implementation
-├── docker/               # Docker configuration files
-│   ├── Dockerfile.app
-│   ├── Dockerfile.neo4j
-│   ├── Dockerfile.postgres
-│   └── docker-compose.yml
-├── docs/                 # Documentation
-├── scripts/             # Utility scripts
-├── tests/               # Test suite
-├── .env.example         # Example environment variables
-├── .flake8             # Flake8 configuration
-├── .pre-commit-config.yaml  # Pre-commit hooks
-├── mypy.ini            # MyPy configuration
-├── pytest.ini          # PyTest configuration
-├── requirements.txt    # Project dependencies
-└── setup.py           # Package setup
-```
-
-## Update dept
-
-```
-# Add new dependencies
-ray>=2.9.0
-llama-index>=0.9.0
-# Keep existing
-neo4j>=5.14.0
-fastapi>=0.109.0
-```
-
-## Refactor directory structure
-
-```
-EADS/
-├── agents/                  # New
-│   ├── __init__.py
-│   ├── base.py             # Base agent classes
-│   ├── nlp_agent.py        # Migrate from nlp_service.py
-│   └── gp_agent.py         # Migrate from gp_service.py
-├── knowledge/              # New
-│   ├── __init__.py
-│   ├── indexer.py          # LlamaIndex integration
-│   └── store.py            # Neo4j integration
-├── orchestration/          # New
-│   ├── __init__.py
-│   └── coordinator.py      # Ray orchestration
-├── nlp/                    # Existing
-├── gp_engine/             # Existing
-└── run_pipeline.py        # To be updated
-```
-
-## NLP agent is now Ray Actor
-
-```
-# agents/nlp_agent.py
-@ray.remote
-class NLPAgent:
-    def __init__(self):
-        # Migrate from nlp_service.py
-        self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-        self.model = AutoModel.from_pretrained(MODEL_NAME)
-        self.knowledge_base = EADSKnowledgeBase()
-
-    async def process_text(self, text: str):
-        # Migrate existing encode_text function
-        embeddings = self.encode_text(text)
-        # Add LlamaIndex processing
-        doc_index = await self.knowledge_base.index_document(text)
-        return {
-            'embeddings': embeddings,
-            'index': doc_index
-        }
-
-    # Migrate other methods from nlp_service.py
-```
-
-## GP Engine is now Ray Actor
-
-```
-# agents/gp_agent.py
-@ray.remote
-class GPAgent:
-    def __init__(self):
-        # Migrate from gp_service.py
-        self.toolbox = deap.base.Toolbox()
-        self.setup_gp_tools()
-
-    async def evolve_solution(self, problem_space):
-        # Migrate existing GP logic
-        population = self.initialize_population()
-        for gen in range(N_GENERATIONS):
-            population = await self.evolve_generation(population)
-        return self.get_best_solution(population)
-```
-
-## Knowledge Management
-
-```
-# knowledge/indexer.py
-class EADSKnowledgeBase:
-    def __init__(self):
-        self.vector_store = Neo4jVectorStore(
-            url=NEO4J_URI,
-            username=NEO4J_USER,
-            password=NEO4J_PASSWORD
-        )
-        self.service_context = ServiceContext.from_defaults()
-
-    async def index_document(self, content):
-        documents = self.preprocess(content)
-        index = VectorStoreIndex.from_documents(
-            documents,
-            vector_store=self.vector_store,
-            service_context=self.service_context
-        )
-        return index
-```
-
-## Orchestration - Ray management
-```
-# orchestration/coordinator.py
-@ray.remote
-class EADSCoordinator:
-    def __init__(self):
-        self.nlp_agent = NLPAgent.remote()
-        self.gp_agent = GPAgent.remote()
-
-    async def process_pipeline(self, input_file: str):
-        # 1. Process with NLP
-        nlp_result = await self.nlp_agent.process_text.remote(
-            self.read_input(input_file)
-        )
-
-        # 2. Evolve solution
-        solution = await self.gp_agent.evolve_solution.remote(
-            nlp_result['index']
-        )
-
-        return solution
-```
-
-## Orchestration - Update pipeline runner
-```
-# run_pipeline.py
-async def main(input_file: str, output_file: str):
-    if not validate_input_file(input_file):
-        return None
-
-    try:
-        # Initialize Ray
-        ray.init()
-
-        # Create coordinator
-        coordinator = EADSCoordinator.remote()
-
-        # Run pipeline
-        result = await coordinator.process_pipeline.remote(input_file)
-
-        # Save results
-        save_output(result, output_file)
-
-        return True
-    except Exception as e:
-        logger.error(f"Pipeline failed: {str(e)}")
-        return False
-    finally:
-        ray.shutdown()
-```
-
-## API Update - FastAPI
-
-```
-
-# api/service.py
-app = FastAPI()
-
-@app.post("/process")
-async def process_document(file: UploadFile):
-    coordinator = EADSCoordinator.remote()
-    result = await coordinator.process_pipeline.remote(
-        await file.read()
-    )
-    return result
-```
-
-## Experimental flexibility and simplicity
-
-1. Core Components:
-- LlamaIndex (over LangChain) - You're right, it's better for your use case since you're building a knowledge-intensive system with complex query patterns
-- Ray - Perfect for your multi-agent experiments; its Actor model will let you build arbitrarily complex agent interactions
-- MLflow - For experiment tracking (simpler than W&B to start, but powerful enough)
-
-2. Initial Architecture:
-```python
-import ray
-from llama_index import VectorStoreIndex, SimpleDirectoryReader
-from llama_index.vector_stores import SimpleVectorStore  # Start simple, can swap later
-
-@ray.remote
-class BaseAgent:
-    def __init__(self, config):
-        self.index = VectorStoreIndex([], vector_store=SimpleVectorStore())
-        self.config = config
-
-    async def process(self, input_data):
-        # Extensible processing logic
-        pass
-
-@ray.remote
-class Coordinator:
-    def __init__(self):
-        self.agents = {}
-
-    def spawn_agent(self, agent_type, config):
-        # Dynamic agent creation
-        self.agents[agent_type] = BaseAgent.remote(config)
-```
-
-Key Benefits:
-1. Starts simple but allows complexity:
-   - SimpleVectorStore → Can upgrade to Neo4j/Pinecone later
-   - Basic Ray actors → Can add complex coordination patterns
-   - Local MLflow → Can scale to distributed tracking
-
-2. Easy to experiment with:
-   - Agent behaviors
-   - Communication patterns
-   - Different model architectures
-
-## LlamaIndex Configuration
-
-```
-from llama_index import VectorStoreIndex, GraphStore, ServiceContext
-from llama_index.storage.storage_context import StorageContext
-
-# Assuming setup for Neo4j and vector database already done
-neo4j_graph = your_neo4j_graph_connection()
-vector_db = your_vector_database_connection()
-
-# Set up with LlamaIndex
-vector_index = VectorStoreIndex.from_documents(
-    documents=your_documents,  # code snippets or documentation
-    vector_store=vector_db
-)
-graph_store = GraphStore(graph=neo4j_graph)
-
-storage_context = StorageContext.from_defaults(
-    vector_store=vector_db,
-    graph_store=graph_store
-)
-
-service_context = ServiceContext.from_defaults(
-    llm_predictor=your_llm_model(),  # For enhanced query understanding if needed
-    storage_context=storage_context
-)
-
-# Create a query engine
-query_engine = vector_index.as_query_engine(
-    service_context=service_context,
-    similarity_top_k=5  # Or whatever fits your needs
-)
-
-# Example query
-response = query_engine.query("Find code examples related to sorting algorithms.")
-
-```
-
-Follow these instructions to make the following change to my code document.
-
-Instruction: Add project structure section to README.md
-
-Code Edit:
-```
-{{ ... }}
-
-## Project Structure
-
-```
-EADS/
-├── src/                    # Source code
-│   ├── core/              # Core functionality
-│   │   └── robustness/    # Robustness enhancements
-│   ├── deployment/        # Deployment related code
-│   ├── gp_engine/        # Genetic Programming engine
-│   ├── nlp/              # Natural Language Processing
-│   ├── orchestration/    # Pipeline orchestration
-│   ├── tracking/         # Experiment tracking
-│   └── vector_store/     # Vector storage implementation
-├── docker/               # Docker configuration files
-│   ├── Dockerfile.app
-│   ├── Dockerfile.neo4j
-│   ├── Dockerfile.postgres
-│   └── docker-compose.yml
-├── docs/                 # Documentation
-├── scripts/             # Utility scripts
-├── tests/               # Test suite
-├── .env.example         # Example environment variables
-├── .flake8             # Flake8 configuration
-├── .pre-commit-config.yaml  # Pre-commit hooks
-├── mypy.ini            # MyPy configuration
-├── pytest.ini          # PyTest configuration
-├── requirements.txt    # Project dependencies
-└── setup.py           # Package setup
-```
-
-{{ ... }}
