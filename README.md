@@ -88,7 +88,29 @@ Lock files are generated in an isolated Python 3.11 Docker container:
 ```bash
 # Generate lock files for all requirements
 ./requirements/generate_locks.sh
+```
 
+### Development Setup on WSL2/Ubuntu 24.04
+
+EADS requires Python 3.11 due to ML library compatibility. If you're on Ubuntu 24.04 (which comes with Python 3.12), follow these steps to set up your development environment:
+
+```bash
+# Install Python 3.11
+sudo apt update
+sudo apt install software-properties-common -y
+sudo add-apt-repository ppa:deadsnakes/ppa -y
+sudo apt update
+sudo apt install python3.11 python3.11-venv python3.11-dev -y
+
+# Create Python 3.11 virtual environment
+python3.11 -m venv .venv
+
+# Activate virtual environment
+source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements/dev.txt
+```
 
 ### Testing Strategy
 ```mermaid
