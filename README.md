@@ -119,7 +119,7 @@ curl -sSL https://raw.githubusercontent.com/nshkrdotcom/EADS/main/setup.sh | bas
 
 2. Start services:
    ```bash
-   docker-compose up -d
+   docker-compose -f docker/docker-compose.yml up -d
    ```
 
 3. Verify setup:
@@ -135,7 +135,7 @@ curl -sSL https://raw.githubusercontent.com/nshkrdotcom/EADS/main/setup.sh | bas
 - Run all checks: `pre-commit run --all-files`
 
 ### Troubleshooting
-- Services not starting? Run `docker-compose down -v && docker-compose up -d`
+- Services not starting? Run `docker-compose -f docker/docker-compose.yml down -v && docker-compose -f docker/docker-compose.yml up -d`
 - Database issues? Wait 45 seconds after startup for Neo4j to initialize
 - Port conflicts? Check and stop services using ports 7474, 8000, 8001
 
@@ -185,14 +185,14 @@ To create a self-healing, continuously improving software ecosystem that autonom
 ### Development Workflow
 
 1. **Start Development Environment:** `source .venv/bin/activate && ./init.sh`
-2. **Verify Services:** `docker-compose ps`; Access service endpoints: Neo4j Browser (http://localhost:7474), NLP Service (http://localhost:8000/docs), GP Engine (http://localhost:8001/docs).
+2. **Verify Services:** `docker-compose -f docker/docker-compose.yml ps`; Access service endpoints: Neo4j Browser (http://localhost:7474), NLP Service (http://localhost:8000/docs), GP Engine (http://localhost:8001/docs).
 3. **Development Commands:**  `pytest` (run tests), `mypy .` (run type checking), `black . && isort .` (format code), `flake8` (run linting).
 4. **Pre-commit Hooks:** `pre-commit install` and `pre-commit run --all-files`.
 
 ### Troubleshooting
 
-1. **Docker Issues:** `docker-compose down -v && docker-compose up -d`; `docker-compose logs`
-2. **Database Issues:**  `docker-compose down -v neo4j && docker-compose up -d neo4j`; `docker-compose down -v postgres && docker-compose up -d postgres`
+1. **Docker Issues:** `docker-compose -f docker/docker-compose.yml down -v && docker-compose -f docker/docker-compose.yml up -d`
+2. **Database Issues:**  `docker-compose -f docker/docker-compose.yml down -v neo4j && docker-compose -f docker/docker-compose.yml up -d neo4j`; `docker-compose -f docker/docker-compose.yml down -v postgres && docker-compose -f docker/docker-compose.yml up -d postgres`
 3. **Common Problems:** Services not starting (check Docker logs and ensure ports are not in use); Neo4j connection failed (wait 45 seconds after startup); Permission errors (ensure Docker has proper permissions); Memory issues (check Docker memory allocation).
 
 ### Development Best Practices
@@ -219,7 +219,7 @@ To create a self-healing, continuously improving software ecosystem that autonom
 ### Updating Dependencies
 
 1. **Python Dependencies:** `pip install --upgrade -r requirements.txt` or `pip install --upgrade package_name`
-2. **Docker Images:** `docker-compose pull && docker-compose build --no-cache`
+2. **Docker Images:** `docker-compose -f docker/docker-compose.yml pull && docker-compose -f docker/docker-compose.yml build --no-cache`
 
 
 ## &#x1F6E0;&#xFE0F; Message Queue Readiness & Roadmap
@@ -903,3 +903,4 @@ Passionate about autonomous systems? We're always looking for brilliant minds to
 - Experience with genetic algorithms
 - Python expertise
 - Curiosity and passion for cutting-edge tech
+
