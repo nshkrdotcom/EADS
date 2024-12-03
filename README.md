@@ -113,7 +113,7 @@ curl -sSL https://raw.githubusercontent.com/nshkrdotcom/EADS/main/setup.sh | bas
    cd EADS
    python -m venv .venv
    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   pip install -r requirements.txt
+   pip install -r requirements/dev.txt
    pre-commit install
    ```
 
@@ -218,7 +218,7 @@ To create a self-healing, continuously improving software ecosystem that autonom
 
 ### Updating Dependencies
 
-1. **Python Dependencies:** `pip install --upgrade -r requirements.txt` or `pip install --upgrade package_name`
+1. **Python Dependencies:** `pip install --upgrade -r requirements/dev.txt` or `pip install --upgrade package_name`
 2. **Docker Images:** `docker-compose -f docker/docker-compose.yml pull && docker-compose -f docker/docker-compose.yml build --no-cache`
 
 
@@ -903,4 +903,3 @@ Passionate about autonomous systems? We're always looking for brilliant minds to
 - Experience with genetic algorithms
 - Python expertise
 - Curiosity and passion for cutting-edge tech
-
