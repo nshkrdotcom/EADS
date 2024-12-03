@@ -15,6 +15,6 @@ fi
 
 # Install requirements
 echo "📦 Installing Python packages..."
-pip install -r requirements.txt
+pip install -r requirements/dev.txt
 
 echo "✅ Python requirements installed successfully!"

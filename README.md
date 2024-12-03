@@ -156,11 +156,19 @@ To create a self-healing, continuously improving software ecosystem that autonom
 ### Environment Setup
 
 1. **Clone the Repository:** `git clone https://github.com/nshkrdotcom/EADS.git && cd EADS`
-2. **Run Setup Script:** `chmod +x setup.sh && ./setup.sh` (Installs system packages, creates a Python virtual environment, and makes initialization scripts executable).
+2. **Run Setup Script:** `chmod +x setup.sh init.sh install_requirements.sh requirements/lock_deps.sh && ./setup.sh` (Installs system packages, creates a Python virtual environment, and makes initialization scripts executable).
 3. **Activate Virtual Environment:** `source .venv/bin/activate`
 4. **Install Dependencies:** `./install_requirements.sh` (Installs core dependencies, development tools, and ML libraries).
 5. **Environment Configuration:** `cp .env.example .env` (Configure database connections, Weaviate settings, Ray cluster configuration, MLflow tracking, and DVC remote storage).
 
+
+## Dependency Management
+
+To prevent pip dependency conflicts, we use dependency locking:
+```bash
+./requirements/lock_deps.sh  # Generates base.lock and dev.lock with exact versions
+```
+This ensures consistent dependencies across all environments. The lock files should be committed to version control.
 
 ## &#x1F4BB; Development Setup
 
@@ -179,7 +187,7 @@ To create a self-healing, continuously improving software ecosystem that autonom
 ### Initial Setup
 
 1. **Clone the Repository:** `git clone https://github.com/yourusername/EADS.git && cd EADS`
-2. **Environment Setup:** `chmod +x setup.sh init.sh install_requirements.sh && ./setup.sh`
+2. **Environment Setup:** `chmod +x setup.sh init.sh install_requirements.sh requirements/lock_deps.sh && ./setup.sh`
 3. **Configure Environment Variables:** `cp .env.example .env && nano .env`
 
 ### Development Workflow
