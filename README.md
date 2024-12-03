@@ -456,7 +456,6 @@ graph LR
     subgraph Core
         Config[config]
         ErrorHandling[error_handling]
-        Core[core]
     end
 
     subgraph Services
