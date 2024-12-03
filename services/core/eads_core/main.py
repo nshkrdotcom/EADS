@@ -1,5 +1,7 @@
 """Core service FastAPI application."""
-from fastapi import FastAPI, Request
+from typing import Callable
+
+from fastapi import FastAPI, Request, Response
 from pydantic import BaseModel
 
 from .config import load_config
@@ -33,7 +35,7 @@ class HealthCheck(BaseModel):
 
 
 @app.middleware("http")
-async def log_requests(request: Request, call_next):
+async def log_requests(request: Request, call_next: Callable) -> Response:
     """Log all HTTP requests and responses."""
     ctx = logger.log_request(request.method, request.url.path)
     response = await call_next(request)

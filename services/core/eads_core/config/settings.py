@@ -1,30 +1,74 @@
 """Configuration settings for the EADS application."""
-
-import os
 from typing import Any, Dict
 
 from dotenv import load_dotenv
+from pydantic import BaseSettings
 
 # Load environment variables from .env file
 load_dotenv()
 
-# Neo4j settings
-NEO4J_URI = os.getenv("NEO4J_URI", "bolt://localhost:7687")
-NEO4J_USER = os.getenv("NEO4J_USER", "neo4j")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "password")
 
-# NLP Model settings
-MODEL_NAME = os.getenv("MODEL_NAME", "sentence-transformers/all-MiniLM-L6-v2")
+class CoreConfig(BaseSettings):
+    """Core service configuration settings.
 
-# Genetic Programming settings
-GP_CONFIG: Dict[str, Any] = {
-    "population_size": int(os.getenv("GP_POPULATION_SIZE", "100")),
-    "generations": int(os.getenv("GP_GENERATIONS", "50")),
-    "mutation_rate": float(os.getenv("GP_MUTATION_RATE", "0.1")),
-    "crossover_rate": float(os.getenv("GP_CROSSOVER_RATE", "0.7")),
-}
+    Attributes:
+        environment: Runtime environment (development, staging, production)
+        version: Service version
+        log_level: Logging level (debug, info, warning, error)
+    """
 
-# Logging Configuration
+    environment: str = "development"
+    version: str = "dev"
+    log_level: str = "info"
+
+    # Neo4j settings
+    neo4j_uri: str = "bolt://localhost:7687"
+    neo4j_user: str = "neo4j"
+    neo4j_password: str = "password"
+
+    # NLP Model settings
+    model_name: str = "sentence-transformers/all-MiniLM-L6-v2"
+
+    # Genetic Programming settings
+    gp_population_size: int = 100
+    gp_generations: int = 50
+    gp_mutation_rate: float = 0.1
+    gp_crossover_rate: float = 0.7
+
+    class Config:
+        """Pydantic config class."""
+
+        env_prefix = "EADS_"
+        case_sensitive = False
+
+
+def load_config() -> Dict[str, Any]:
+    """Load core service configuration.
+
+    Returns:
+        Dict[str, Any]: Configuration dictionary
+    """
+    config = CoreConfig()
+    return {
+        "environment": config.environment,
+        "version": config.version,
+        "log_level": config.log_level,
+        "neo4j": {
+            "uri": config.neo4j_uri,
+            "user": config.neo4j_user,
+            "password": config.neo4j_password,
+        },
+        "model": {"name": config.model_name},
+        "gp": {
+            "population_size": config.gp_population_size,
+            "generations": config.gp_generations,
+            "mutation_rate": config.gp_mutation_rate,
+            "crossover_rate": config.gp_crossover_rate,
+        },
+    }
+
+
+# Default logging configuration
 LOGGING_CONFIG: Dict[str, Any] = {
     "version": 1,
     "disable_existing_loggers": False,

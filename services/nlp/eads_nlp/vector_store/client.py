@@ -67,7 +67,7 @@ class WeaviateClient:
             num_tags=len(tags),
             source=source,
         ) as ctx:
-            result = self.client.data_object.create(
+            result: Dict[str, Any] = self.client.data_object.create(
                 class_name="CodeSnippet",
                 data_object={
                     "content": content,
@@ -99,7 +99,7 @@ class WeaviateClient:
                 result = result.with_where(filters)
 
             response = result.do()
-            snippets = response.get("data", {}).get("Get", {}).get("CodeSnippet", [])
+            snippets: List[Dict[str, Any]] = response.get("results", [])
             ctx.update(num_results=len(snippets))
             return snippets
 
@@ -114,7 +114,7 @@ class WeaviateClient:
             template_length=len(template),
             category=category,
         ) as ctx:
-            result = self.client.data_object.create(
+            result: Dict[str, Any] = self.client.data_object.create(
                 class_name="Pattern",
                 data_object={
                     "name": name,
@@ -148,6 +148,6 @@ class WeaviateClient:
                 )
 
             response = result.do()
-            patterns = response.get("data", {}).get("Get", {}).get("Pattern", [])
+            patterns: List[Dict[str, Any]] = response.get("results", [])
             ctx.update(num_results=len(patterns))
             return patterns

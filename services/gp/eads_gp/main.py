@@ -1,6 +1,8 @@
 """GP service FastAPI application."""
+from typing import Callable
+
 from eads_core.logging import ServiceLogger, log_operation
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Response
 from pydantic import BaseModel
 
 from .gp_engine.gp_service import evolve_solution
@@ -40,7 +42,7 @@ class Solution(BaseModel):
 
 
 @app.middleware("http")
-async def log_requests(request: Request, call_next):
+async def log_requests(request: Request, call_next: Callable) -> Response:
     """Log all HTTP requests and responses."""
     ctx = logger.log_request(request.method, request.url.path)
     response = await call_next(request)
