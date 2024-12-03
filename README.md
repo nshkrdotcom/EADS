@@ -681,6 +681,79 @@ graph LR
     Gen --> SQL
 ```
 
+### Fault Tolerance Mechanism
+```mermaid
+graph TB
+    subgraph FaultTolerance["Fault Tolerance Mechanism"]
+        Request[Client Request]
+        CB[Circuit Breaker]
+        Retry[Retry Mechanism]
+        Service[Service Call]
+        Cache[Fallback Cache]
+        Fallback[Fallback Handler]
+        
+        Request --> CB
+        CB -->|Open| Fallback
+        CB -->|Closed| Retry
+        Retry -->|Attempt| Service
+        Service -->|Success| Cache
+        Service -->|Failure| Retry
+        Retry -->|Max Attempts| Fallback
+        Fallback -->|Check| Cache
+        Cache -->|Available| Response
+        Fallback -->|Compute| Response
+    end
+
+    style FaultTolerance fill:#f5f5f5,stroke:#333,stroke-width:2px
+    style CB fill:#ffebee,stroke:#c62828,stroke-width:2px
+    style Retry fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    style Cache fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style Fallback fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+```mermaid
+
+### Fault Tolerance Architecture
+```mermaid
+graph TB
+    subgraph Architecture["Fault Tolerance Architecture"]
+        subgraph Services["Service Layer"]
+            NLP[NLP Service]
+            GP[GP Engine]
+        end
+
+        subgraph FaultTolerance["Fault Tolerance Layer"]
+            CB[Circuit Breaker]
+            Retry[Retry Mechanism]
+            Fallback[Fallback Handler]
+            Cache[Response Cache]
+        end
+
+        subgraph States["Circuit States"]
+            Closed[Closed State]
+            Open[Open State]
+            HalfOpen[Half-Open State]
+        end
+
+        Client[Client Request] --> CB
+        CB --> |Success Rate OK| Closed
+        CB --> |High Failure Rate| Open
+        CB --> |Testing Recovery| HalfOpen
+        
+        Closed --> Retry
+        Retry --> |Attempt| Services
+        Services --> |Success| Cache
+        Services --> |Failure| Retry
+        Retry --> |Max Attempts| Fallback
+        Fallback --> |Check| Cache
+        Cache --> |Available| Response[Response]
+        Fallback --> |Compute| Response
+    end
+
+    style Architecture fill:#f5f5f5,stroke:#333,stroke-width:2px
+    style Services fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    style FaultTolerance fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    style States fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+```
+
 ### Development Workflow
 ```mermaid
 graph TD
