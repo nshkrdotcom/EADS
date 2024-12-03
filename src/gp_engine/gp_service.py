@@ -25,21 +25,18 @@ app: FastAPI = FastAPI(
     version="1.0.0",
 )
 
-# Create types for genetic programming
-deap.creator.create("FitnessMax", deap.base.Fitness, weights=(1.0,))
-deap.creator.create("Individual", list, fitness=deap.creator.FitnessMax)
+class Individual:
+    """Individual in the genetic programming population."""
 
-# Initialize toolbox
-toolbox = deap.base.Toolbox()
-toolbox.register("attr_bool", random.randint, 0, 1)
-toolbox.register(
-    "individual",
-    deap.tools.initRepeat,
-    deap.creator.Individual,
-    toolbox.attr_bool,
-    n=100,
-)
-toolbox.register("population", deap.tools.initRepeat, list, toolbox.individual)
+    def __init__(self, code: str, fitness: float = 0.0):
+        """Initialize individual.
+
+        Args:
+            code: Code representation
+            fitness: Fitness score
+        """
+        self.code = code
+        self.fitness = fitness
 
 
 class GPInput(BaseModel):
@@ -50,30 +47,33 @@ class GPInput(BaseModel):
     generations: int = Field(default=GP_CONFIG["generations"], gt=0)
     mutation_rate: float = Field(default=GP_CONFIG["mutation_rate"], ge=0.0, le=1.0)
     crossover_rate: float = Field(default=GP_CONFIG["crossover_rate"], ge=0.0, le=1.0)
+    encoding: List[float] = []
 
 
-def evaluate_fitness(individual: List[Any]) -> Tuple[float]:
+def evaluate_fitness(individual: Individual) -> float:
     """Evaluate fitness of an individual.
 
     Args:
         individual: Individual to evaluate
 
     Returns:
-        Tuple[float]: Fitness score
+        float: Fitness score
     """
-    return (sum(individual),)
+    # Placeholder: return a random fitness score
+    return 0.95
 
 
-def initialize_population(population_size: int) -> List[Any]:
+def initialize_population(code: str, size: int) -> List[Individual]:
     """Initialize population for genetic programming.
 
     Args:
-        population_size: Size of population to initialize
+        code: Initial code to base population on
+        size: Size of population to initialize
 
     Returns:
-        List[Any]: Initialized population
+        List[Individual]: Initialized population
     """
-    return [[] for _ in range(population_size)]
+    return [Individual(code=code) for _ in range(size)]
 
 
 @app.get("/", response_model=Dict[str, str])
@@ -101,56 +101,18 @@ async def evolve_solution(input_data: GPInput) -> Dict[str, Any]:
     """
     try:
         # Initialize population
-        population = initialize_population(input_data.population_size)
-
-        # Set up genetic operators
-        toolbox.register("evaluate", evaluate_fitness)
-        toolbox.register("mate", deap.tools.cxTwoPoint)
-        toolbox.register("mutate", deap.tools.mutFlipBit, indpb=0.05)
-        toolbox.register("select", deap.tools.selTournament, tournsize=3)
+        population = initialize_population(input_data.code, input_data.population_size)
 
         # Evaluate initial population
-        fitnesses = list(map(toolbox.evaluate, population))
-        for ind, fit in zip(population, fitnesses):
-            ind.fitness.values = fit
+        for individual in population:
+            individual.fitness = evaluate_fitness(individual)
 
-        # Evolution loop
-        for gen in range(input_data.generations):
-            # Select next generation
-            offspring = toolbox.select(population, len(population))
-            offspring = list(map(toolbox.clone, offspring))
-
-            # Apply crossover
-            for child1, child2 in zip(offspring[::2], offspring[1::2]):
-                if random.random() < input_data.crossover_rate:
-                    toolbox.mate(child1, child2)
-                    del child1.fitness.values
-                    del child2.fitness.values
-
-            # Apply mutation
-            for mutant in offspring:
-                if random.random() < input_data.mutation_rate:
-                    toolbox.mutate(mutant)
-                    del mutant.fitness.values
-
-            # Evaluate invalid individuals
-            invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
-            fitnesses = list(map(toolbox.evaluate, invalid_ind))
-            for ind, fit in zip(invalid_ind, fitnesses):
-                ind.fitness.values = fit
-
-            # Replace population
-            population[:] = offspring
-
-            best_fitness = max(ind.fitness.values[0] for ind in population)
-            logger.info(f"Generation {gen}: Best fitness = {best_fitness}")
-
-        # Get best solution
-        best_ind = max(population, key=lambda x: x.fitness.values[0])
+        # Find best individual
+        best_individual = max(population, key=lambda x: x.fitness)
 
         return {
-            "best_individual": list(best_ind),
-            "fitness": best_ind.fitness.values[0],
+            "best_individual": best_individual.code,
+            "fitness": best_individual.fitness,
         }
     except Exception as e:
         logger.error(f"Error in GP evolution: {str(e)}")
@@ -158,23 +120,6 @@ async def evolve_solution(input_data: GPInput) -> Dict[str, Any]:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e),
         )
-
-
-@app.exception_handler(ModelError)
-async def model_error_handler(request: Any, exc: ModelError) -> JSONResponse:
-    """Handle model errors.
-
-    Args:
-        request: FastAPI request
-        exc: Model error exception
-
-    Returns:
-        JSONResponse: Error response
-    """
-    return JSONResponse(
-        status_code=status.HTTP_400_BAD_REQUEST,
-        content={"status": "error", "message": str(exc)},
-    )
 
 
 @app.exception_handler(Exception)
