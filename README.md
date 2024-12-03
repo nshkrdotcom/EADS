@@ -981,6 +981,46 @@ Reach out if you're as excited about autonomous software evolution as we are!
 
 *** build an embedding service for myself
 
+# Roadmap
+
+## Package Distribution & Installation
+
+- Create a proper MANIFEST.in to include non-Python files (e.g., py.typed, mypy.ini)
+- Update setup.py to handle package data and ensure all dependencies are correctly specified
+- Test package installation in a clean environment to verify all imports work correctly
+
+## Documentation Enhancement
+
+- Add docstring type hints to match mypy's strict settings
+- Create module-level docstrings for each package component
+- Document the package structure and module relationships
+- Add examples of how the different components (nlp, gp_engine, etc.) interact
+
+## Test Coverage
+
+- Add more test cases to test_main.py, particularly for error conditions
+- Add unit tests for individual components (nlp_service.py, gp_service.py)
+- Add integration tests for the Neo4j database interactions
+- Set up test coverage reporting
+
+## CI/CD Pipeline
+
+### Configure GitHub Actions to:
+
+- Run pre-commit hooks
+- Execute test suite
+- Check package installation
+- Verify Docker builds
+
+### Add automated version bumping and release management
+
+## Development Environment
+
+- Document development setup steps
+- Create development-specific configuration files
+- Add debugging configurations for VS Code/PyCharm
+- Add development tools to dev dependencies in setup.py
+
 ---
 
 *Inspired by the boundless potential of artificial intelligence and the art of software craftsmanship.*
