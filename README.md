@@ -94,6 +94,51 @@ graph TB
     Integration --> Deploy
 ```
 
+## &#x1F680; Quick Start
+
+### Prerequisites
+- Python 3.8+
+- Docker and Docker Compose
+- Git
+
+### One-Line Setup (Linux/WSL)
+```bash
+curl -sSL https://raw.githubusercontent.com/nshkrdotcom/EADS/main/setup.sh | bash
+```
+
+### Manual Setup (All Platforms)
+1. Clone and setup:
+   ```bash
+   git clone https://github.com/nshkrdotcom/EADS.git
+   cd EADS
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   pip install -r requirements.txt
+   pre-commit install
+   ```
+
+2. Start services:
+   ```bash
+   docker-compose up -d
+   ```
+
+3. Verify setup:
+   ```bash
+   pytest
+   ```
+
+### Development
+- Format code: `black . && isort .`
+- Run tests: `pytest`
+- Type check: `mypy .`
+- Lint: `flake8`
+- Run all checks: `pre-commit run --all-files`
+
+### Troubleshooting
+- Services not starting? Run `docker-compose down -v && docker-compose up -d`
+- Database issues? Wait 45 seconds after startup for Neo4j to initialize
+- Port conflicts? Check and stop services using ports 7474, 8000, 8001
+
 ## &#x1F4AC; Vision
 
 To create a self-healing, continuously improving software ecosystem that autonomously adapts to emerging technological landscapes.
