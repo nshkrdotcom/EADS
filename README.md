@@ -286,6 +286,235 @@ Generate locked dependencies:
 1. **Python Dependencies:** `pip install --upgrade -r requirements/dev.txt` or `pip install --upgrade package_name`
 2. **Docker Images:** `docker-compose -f docker/docker-compose.yml pull && docker-compose -f docker/docker-compose.yml build --no-cache`
 
+# EADS Logging and Instrumentation Guide
+
+## Overview
+
+EADS uses structured logging and instrumentation to provide comprehensive visibility into service operations, performance, and errors during development. The system is built on **structlog** for structured logging with JSON output, making it easy to analyze and debug issues.
+
+## Core Features
+
+- Structured JSON logging with timing and context
+- Request/response tracking across all services
+- Operation-specific metrics and error tracking
+- Performance timing built into all operations
+- Automatic sensitive data filtering
+- Service-specific logging patterns
+
+## Quick Start
+
+### Basic Operation Logging
+
+```python
+from eads_core.logging import log_operation
+
+def process_text(text: str) -> dict:
+    with log_operation("process_text", text_length=len(text)) as ctx:
+        result = do_processing(text)
+        ctx.update(result_size=len(result))
+        return result
+```
+
+**Output:**
+```json
+{"event": "process_text_started", "text_length": 150, "service": "nlp", "timestamp": "2024-02-20T10:30:45Z"}
+{"event": "process_text_completed", "text_length": 150, "result_size": 42, "elapsed_seconds": 0.125, "service": "nlp", "timestamp": "2024-02-20T10:30:45Z"}
+```
+
+### Service Setup
+
+```python
+from fastapi import FastAPI
+from eads_core.logging import ServiceLogger
+
+app = FastAPI()
+logger = ServiceLogger("my_service")
+
+# Log service startup
+logger.log_startup({
+    "service": "my_service",
+    "config": {
+        "host": "localhost",
+        "port": 8080
+    }
+})
+
+# Add request logging middleware
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    ctx = logger.log_request(request.method, request.url.path)
+    response = await call_next(request)
+    logger.log_response(response.status_code, request_id=ctx.get("request_id"))
+    return response
+```
+
+## Common Use Cases
+
+### 1. Error Tracking
+
+```python
+def analyze_code(code: str) -> dict:
+    with log_operation("analyze_code", code_length=len(code)) as ctx:
+        try:
+            result = perform_analysis(code)
+            ctx.update(num_findings=len(result["findings"]))
+            return result
+        except Exception as e:
+            ctx.update(error=str(e))
+            raise  # Log will include error and stack trace
+```
+
+### 2. Performance Monitoring
+
+```python
+def batch_process(items: List[str]) -> List[dict]:
+    with log_operation("batch_process", batch_size=len(items)) as ctx:
+        start_memory = get_memory_usage()
+        results = [process_item(item) for item in items]
+        ctx.update(
+            memory_delta=get_memory_usage() - start_memory,
+            processed_count=len(results)
+        )
+        return results
+```
+
+### 3. Complex Operations
+
+```python
+async def train_model(dataset: Dataset, epochs: int):
+    with log_operation("model_training",
+                      dataset_size=len(dataset),
+                      epochs=epochs) as ctx:
+        for epoch in range(epochs):
+            loss = await train_epoch(dataset)
+            ctx.update({f"loss_epoch_{epoch}": loss})
+```
+
+## Development Tools
+
+### 1. Log Viewing
+
+During development, logs are output in JSON format to stdout. Use jq for easy filtering and viewing:
+
+```bash
+# Watch all logs in pretty format
+tail -f service.log | jq '.'
+
+# Filter for specific events
+tail -f service.log | jq 'select(.event | contains("model_training"))'
+
+# Watch timing metrics
+tail -f service.log | jq 'select(.elapsed_seconds != null)'
+```
+
+### 2. Performance Analysis
+
+```bash
+# Get average response times for each endpoint
+cat service.log | jq -r 'select(.event == "http_response") | {path: .path, time: .elapsed_seconds}' | \
+  jq -s 'group_by(.path) | map({path: .[0].path, avg_time: (map(.time) | add / length)})'
+```
+
+### 3. Error Investigation
+
+```bash
+# Find all errors with stack traces
+cat service.log | jq 'select(.error != null)'
+
+# Get error frequency by type
+cat service.log | jq -r 'select(.error_type != null) | .error_type' | sort | uniq -c
+```
+
+## Best Practices
+
+### Operation Context
+- Always include relevant input sizes and counts
+- Update context with operation-specific metrics
+- Add timing for operations that might be slow
+
+```python
+with log_operation("process_document",
+                  doc_size=len(document),
+                  doc_type=document.type) as ctx:
+    # Processing...
+    ctx.update(
+        sections_processed=len(sections),
+        cache_hits=cache_hits,
+        warnings=warning_count
+    )
+```
+
+### Error Handling
+- Log errors with full context
+- Include relevant state information
+- Use appropriate log levels
+
+```python
+try:
+    result = risky_operation()
+except ValueError as e:
+    logger.warning("Invalid input", error=str(e), input_value=value)
+except Exception as e:
+    logger.error("Operation failed",
+                error=str(e),
+                state=current_state,
+                traceback=traceback.format_exc())
+```
+
+### Performance Tracking
+- Log resource usage for heavy operations
+- Track timing for all network calls
+- Monitor memory usage for large data processing
+
+```python
+with log_operation("data_processing") as ctx:
+    ctx.update(initial_memory=get_memory_usage())
+    result = process_large_dataset(data)
+    ctx.update(
+        final_memory=get_memory_usage(),
+        records_processed=len(result)
+    )
+```
+
+## Future Extensions
+
+The logging system is designed to be extensible. Future additions might include:
+
+- Integration with Grafana for metrics visualization
+- OpenTelemetry integration for distributed tracing
+- Custom log aggregation with Loki
+- Automated performance regression detection
+- Real-time alerting based on log patterns
+
+## Technical Details
+
+### Core Components
+
+- **structlog**: Structured logging with JSON output
+- **FastAPI middleware** for HTTP request tracking
+- **Context managers** for operation tracking
+- **Time and resource usage measurements**
+
+### Configuration
+
+The logging system is configured in `eads_core/logging.py` and provides:
+
+- JSON formatting for machine readability
+- ISO timestamp formatting
+- Automatic context propagation
+- Environment-based configuration
+- Sensitive data filtering
+
+### Performance Impact
+
+The logging system is designed to have minimal overhead:
+
+- JSON serialization is done asynchronously
+- Context managers have microsecond-level overhead
+- Log levels prevent unnecessary processing
+- Sampling can be enabled for high-volume operations
+
+
 
 ## &#x1F6E0;&#xFE0F; Message Queue Readiness & Roadmap
 
