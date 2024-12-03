@@ -813,12 +813,6 @@ graph TD
         Cache -->|Available| Response
         Fallback -->|Compute| Response
     end
-
-    style FaultTolerance fill:#f5f5f5,stroke:#333,stroke-width:2px
-    style CB fill:#ffebee,stroke:#c62828,stroke-width:2px
-    style Retry fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
-    style Cache fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
-    style Fallback fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
 ```
 
 ### Fault Tolerance Architecture
@@ -857,11 +851,6 @@ graph TB
         Cache --> |Available| Response[Response]
         Fallback --> |Compute| Response
     end
-
-    style Architecture fill:#f5f5f5,stroke:#333,stroke-width:2px
-    style Services fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
-    style FaultTolerance fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
-    style States fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
 ```
 
 ### Development Workflow
