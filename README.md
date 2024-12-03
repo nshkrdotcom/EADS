@@ -683,7 +683,7 @@ graph LR
 
 ### Fault Tolerance Mechanism
 ```mermaid
-graph TB
+graph LR
     subgraph FaultTolerance["Fault Tolerance Mechanism"]
         Request[Client Request]
         CB[Circuit Breaker]
@@ -709,7 +709,7 @@ graph TB
     style Retry fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
     style Cache fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
     style Fallback fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
-```mermaid
+```
 
 ### Fault Tolerance Architecture
 ```mermaid
