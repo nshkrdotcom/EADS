@@ -1,18 +1,19 @@
 """Knowledge base initialization module."""
 
 import logging
-from typing import Any, Dict, List
+import logging.config
+from typing import Any, Dict, List, Sequence
 
-from neo4j import GraphDatabase
+from neo4j import Driver
 
-from config.settings import LOGGING_CONFIG
+from ..config.settings import LOGGING_CONFIG
 
 # Configure logging
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
 
 
-def initialize_knowledge_base(driver: GraphDatabase.driver) -> Dict[str, Any]:
+def initialize_knowledge_base(driver: Driver) -> Dict[str, Any]:
     """Initialize the knowledge base with design patterns.
 
     Args:
@@ -59,39 +60,20 @@ def initialize_knowledge_base(driver: GraphDatabase.driver) -> Dict[str, Any]:
         }
 
 
-def get_initial_patterns() -> List[Dict[str, Any]]:
+def get_initial_patterns() -> List[Dict[str, Sequence[Any]]]:
     """Get initial patterns to populate the knowledge base.
 
     Returns:
-        List of pattern dictionaries
+        List[Dict[str, Sequence[Any]]]: List of initial patterns
     """
     # TODO: Add more patterns
     return [
         {
-            "name": "Singleton",
-            "description": "Ensure a class has only one instance",
-            "code": """
-            class Singleton:
-                _instance = None
-
-                def __new__(cls):
-                    if cls._instance is None:
-                        cls._instance = super().__new__(cls)
-                    return cls._instance
-            """,
-            "embedding": [0.1, 0.2, 0.3],  # Placeholder
+            "name": "Basic Loop",
+            "elements": ["for", "in", "range"],
         },
         {
-            "name": "Factory",
-            "description": "Define an interface for creating objects",
-            "code": """
-            class Factory:
-                def create_object(self, type_):
-                    if type_ == "A":
-                        return ObjectA()
-                    elif type_ == "B":
-                        return ObjectB()
-            """,
-            "embedding": [0.4, 0.5, 0.6],  # Placeholder
+            "name": "Conditional",
+            "elements": ["if", "else", "elif"],
         },
     ]

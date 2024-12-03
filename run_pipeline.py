@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from code_generation import generate_initial_code
+from code_generation import generate_code
 from deployment import prepare_deployment
 from genetic_programming import run_genetic_programming
 from robustness_enhancements import enhance_robustness
@@ -95,7 +95,7 @@ def main(input_file: str, output_file: str) -> Optional[bool]:
 
         # Step 2: Generate initial code
         logger.info("Generating initial code")
-        if not generate_initial_code(input_file):
+        if not generate_code(input_file):
             logger.error("Initial code generation failed")
             return False
 

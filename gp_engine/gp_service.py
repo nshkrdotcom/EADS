@@ -1,23 +1,28 @@
 """Genetic Programming Service for EADS."""
 
 import logging
+import logging.config
 from typing import Any, Dict, List, Tuple
 
 import deap.base
 import deap.creator
 import deap.tools
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request, status
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
-from config.settings import GP_CONFIG, LOGGING_CONFIG
-from error_handling.error_handler import ModelError, handle_exception
+from ..config.settings import GP_CONFIG, LOGGING_CONFIG
+from ..error_handling.error_handler import ModelError
 
-# Configure logging
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
 
-app = FastAPI()
+app: FastAPI = FastAPI(
+    title="GP Service",
+    description="A service for genetic programming optimization",
+    version="1.0.0",
+)
 
 # Create types for genetic programming
 deap.creator.create("FitnessMax", deap.base.Fitness, weights=(1.0,))
@@ -75,13 +80,17 @@ def initialize_population(population_size: int) -> List[Any]:
         raise ModelError(f"Population initialization failed: {str(e)}")
 
 
-@app.get("/", response_model=Dict[str, str])
+@app.get("/", response_model=Dict[str, str])  # type: ignore[misc]
 async def read_root() -> Dict[str, str]:
-    """Root endpoint."""
+    """Root endpoint.
+
+    Returns:
+        Dict[str, str]: Welcome message
+    """
     return {"message": "GP Service is running"}
 
 
-@app.post("/evolve", response_model=Dict[str, Any])
+@app.post("/evolve", response_model=Dict[str, Any])  # type: ignore[misc]
 async def evolve_solution(input_data: GPInput) -> Dict[str, Any]:
     """Evolve solution using genetic programming.
 
@@ -89,7 +98,7 @@ async def evolve_solution(input_data: GPInput) -> Dict[str, Any]:
         input_data: Input parameters for GP
 
     Returns:
-        Dictionary containing evolved solution
+        Dict[str, Any]: Evolution results
     """
     try:
         # Initialize population
@@ -146,7 +155,19 @@ async def evolve_solution(input_data: GPInput) -> Dict[str, Any]:
 
     except Exception as e:
         logger.error(f"Error in GP evolution: {str(e)}")
-        return handle_exception(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
+@app.exception_handler(ModelError)  # type: ignore[misc]
+async def model_error_handler(request: Request, exc: ModelError) -> JSONResponse:
+    """Handle model errors."""
+    logger.error(f"Model error: {exc}")
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={"error": str(exc)},
+    )
 
 
 if __name__ == "__main__":
