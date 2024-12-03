@@ -69,6 +69,27 @@ EADS is an intelligent, self-improving system that learns, adapts, and generates
 | Coverage                 | pytest-cov 4.1.0+       | Test coverage reporting                                                                                     |
 | Dependency Management    | pip-tools 7.4.0+        | Dependency pinning and resolution                                                                          |
 
+## Python Version Management
+
+This project uses Python 3.11 throughout all environments due to ML library compatibility:
+
+### Development Environment
+- Uses Python 3.11 in virtual environment
+- ML libraries (TensorFlow, Ray, etc.) require Python < 3.12
+- Direct installation from `requirements/*.txt`
+
+### Production Services
+- Docker containers run Python 3.11
+- Uses locked dependencies via `requirements/*.lock`
+- Ensures reproducible builds
+
+### Lock File Generation
+Lock files are generated in an isolated Python 3.11 Docker container:
+```bash
+# Generate lock files for all requirements
+./requirements/generate_locks.sh
+
+
 ### Testing Strategy
 ```mermaid
 graph TB
@@ -112,7 +133,7 @@ curl -sSL https://raw.githubusercontent.com/nshkrdotcom/EADS/main/setup.sh | bas
    ```bash
    git clone https://github.com/nshkrdotcom/EADS.git
    cd EADS
-   python -m venv .venv
+   python3 -m venv .venv
    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
    pip install -r requirements/dev.txt
    pre-commit install
