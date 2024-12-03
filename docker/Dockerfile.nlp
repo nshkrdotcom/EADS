@@ -8,15 +8,16 @@ RUN apt-get update && \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first to leverage Docker cache
-COPY requirements/nlp.txt requirements.txt
+COPY services/core/eads_core /app/eads_core
+COPY services/nlp/eads_nlp /app/eads_nlp
+COPY services/nlp/requirements/nlp.txt /app/requirements.txt
+
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application
-COPY . .
+ENV PYTHONPATH=/app
 
 # Expose the port the app runs on
-EXPOSE 8000
+EXPOSE 8001
 
 # Command to run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "eads_nlp.main:app", "--host", "0.0.0.0", "--port", "8001"]

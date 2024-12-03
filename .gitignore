@@ -22,6 +22,22 @@ wheels/
 .installed.cfg
 *.egg
 
+# Service-specific virtual environments
+venv-core/
+venv-nlp/
+venv-gp/
+
+# Service-specific Python artifacts
+services/*/dist/
+services/*/*.egg-info/
+services/*/__pycache__/
+services/*/src/__pycache__/
+services/*/tests/__pycache__/
+
+# Service-specific IDE files
+services/*/.idea/
+services/*/.vscode/
+
 # IDE
 .idea/
 .vscode/
@@ -44,3 +60,12 @@ htmlcov/
 # Logs
 *.log
 logs/
+
+# Lock files
+*.lock
+!poetry.lock
+
+# Ensure we track lock files in services
+!services/core/requirements/*.lock
+!services/nlp/requirements/*.lock
+!services/gp/requirements/*.lock
