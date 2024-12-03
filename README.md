@@ -46,27 +46,28 @@ EADS is an intelligent, self-improving system that learns, adapts, and generates
 |---------------------------|-------------------------|-------------------------------------------------------------------------------------------------------------|
 | **Core Framework**         |                         |                                                                                                             |
 | Core Framework            | FastAPI 0.110.0+        | High-performance async web framework                                                                        |
-| Fault Tolerance          | resilience4j 2.1.0+     | Circuit breakers, retry mechanisms, and fallback strategies                                                 |
+| HTTP Client              | httpx 0.26.0/0.27.0     | Modern async HTTP client for service communication                                                          |
+| Fault Tolerance          | tenacity 8.2.3+         | Retrying library for Python (more Pythonic than resilience4j)                                               |
 | Cache Management         | cachetools 5.3.2+       | TTL caching for fallback responses                                                                          |
 | **Storage**               |                         |                                                                                                             |
 | Graph Database            | Neo4j 5.15.0+           | Knowledge graph storage                                                                                     |
 | Vector Database           | Weaviate 4.4.0+         | Vector embeddings storage                                                                                   |
-| Relational Database       | PostgreSQL              | Metadata and experiment tracking                                                                            |
+| Relational Database       | PostgreSQL 16+          | Metadata and experiment tracking                                                                            |
 | **Machine Learning**       |                         |                                                                                                             |
-| Deep Learning             | PyTorch 2.1.0+          | Neural network implementations                                                                              |
+| Deep Learning             | PyTorch 2.2.0+          | Neural network implementations                                                                              |
 | NLP Models                | sentence-transformers   | Code analysis and understanding                                                                             |
-| ML Pipeline               | scikit-learn 1.3.0+     | Feature processing and traditional ML                                                                       |
+| ML Pipeline               | scikit-learn 1.4.0+     | Feature processing and traditional ML                                                                       |
 | Experiment Tracking       | MLflow 2.10.0+          | ML experiment versioning and tracking                                                                       |
 | **Genetic Programming**    |                         |                                                                                                             |
 | Evolution Framework       | DEAP 1.4.1+             | Primary framework for evolutionary computation                                                              |
 | Alternative Framework     | PyGAD 3.2.0+            | Alternative genetic algorithm implementation                                                                |
 | **Development Tools**      |                         |                                                                                                             |
-| Code Quality              | black, flake8, isort    | Code formatting and linting                                                                                |
+| Code Quality              | black, ruff             | Code formatting and linting (ruff replaces flake8 & isort)                                                 |
 | Type Checking            | mypy 1.8.0+             | Static type checking                                                                                        |
-| Testing                  | pytest 7.4.0+           | Testing framework with fixture support                                                                      |
+| Testing                  | pytest 8.0.0+           | Testing framework with fixture support                                                                      |
 | Async Testing            | pytest-asyncio 0.23.5+  | Async test support                                                                                         |
 | Coverage                 | pytest-cov 4.1.0+       | Test coverage reporting                                                                                     |
-
+| Dependency Management    | pip-tools 7.4.0+        | Dependency pinning and resolution                                                                          |
 
 ### Testing Strategy
 ```mermaid
