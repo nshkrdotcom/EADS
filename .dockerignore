@@ -28,6 +28,18 @@ wheels/
 env/
 venv/
 ENV/
+venv-*/
+*venv*/
+.venv/
+venv-gp/
+venv-nlp/
+venv-core/
+
+# Cache
+.mypy_cache/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
 
 # IDE
 .idea/
