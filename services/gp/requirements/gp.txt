@@ -1,5 +1,5 @@
 # Core dependencies
--r ../../core/requirements/base.txt
+-r /app/requirements/base.txt
 
 # ML/GPU specific dependencies
 ray[default]==2.9.3  # Distributed computing

@@ -8,11 +8,15 @@ RUN apt-get update && \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy requirements files first
+COPY services/core/requirements/base.txt /app/requirements/base.txt
+COPY services/gp/requirements/gp.txt /app/requirements/gp.txt
+
 COPY services/core/eads_core /app/eads_core
 COPY services/gp/eads_gp /app/eads_gp
-COPY services/gp/requirements/gp.txt /app/requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt
+# Install dependencies
+RUN pip install --no-cache-dir -r /app/requirements/gp.txt
 
 ENV PYTHONPATH=/app
 
