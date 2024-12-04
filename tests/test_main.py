@@ -1,6 +1,6 @@
 """Test module for EADS main functionality."""
 import pytest
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
 from neo4j import AsyncDriver
 from pytest_asyncio import fixture
 
@@ -16,7 +16,9 @@ async def gp_client() -> AsyncClient:
     Returns:
         AsyncClient: HTTPX async client for GP service
     """
-    async with AsyncClient(app=gp_app, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=ASGITransport(app=gp_app), base_url="http://test"
+    ) as client:
         yield client
 
 
@@ -27,7 +29,9 @@ async def nlp_client() -> AsyncClient:
     Returns:
         AsyncClient: HTTPX async client for NLP service
     """
-    async with AsyncClient(app=nlp_app, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=ASGITransport(app=nlp_app), base_url="http://test"
+    ) as client:
         yield client
 
 
