@@ -821,7 +821,7 @@ graph TB
         GraphDB[Graph Database]
         MetadataDB[Metadata Store]
     end
-	
+
 	subgraph LLM Layer
 		LocalLLM[llama.cpp Models]
 		CloudLLM[Cloud LLM APIs]

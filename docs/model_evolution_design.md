@@ -343,47 +343,47 @@ evolution_config = {
 ```python
 class EvolutionLifecycleManager:
     """Manages the complete lifecycle of evolution runs"""
-    
+
     def __init__(self, config: dict):
         self.config = config
         self.state_manager = StateManager()
         self.resource_manager = ResourceManager()
         self.metrics_collector = MetricsCollector()
-        
+
     async def run_evolution(self) -> EvolutionResult:
         """Execute a complete evolution run"""
         try:
             # Initialize resources and state
             await self.setup_evolution()
-            
+
             # Main evolution loop
             while not self.should_terminate():
                 # Generation management
                 await self.run_generation()
-                
+
                 # Resource management
                 await self.manage_resources()
-                
+
                 # State persistence
                 await self.persist_state()
-                
+
                 # Convergence check
                 if self.check_convergence():
                     break
-            
+
             return await self.finalize_evolution()
-            
+
         except Exception as e:
             await self.handle_evolution_error(e)
             raise
-            
+
     async def setup_evolution(self):
         """Setup for evolution run"""
         # Initialize population
         # Setup monitoring
         # Prepare resources
         pass
-        
+
     async def run_generation(self):
         """Execute a single generation"""
         # Population evaluation
@@ -391,14 +391,14 @@ class EvolutionLifecycleManager:
         # Reproduction
         # Validation
         pass
-        
+
     async def manage_resources(self):
         """Manage compute and API resources"""
         # Monitor resource usage
         # Apply rate limiting
         # Handle resource cleanup
         pass
-        
+
     async def persist_state(self):
         """Persist evolution state"""
         # Save population state
@@ -411,19 +411,19 @@ class EvolutionLifecycleManager:
 ```python
 class StateManager:
     """Manages evolution state and recovery"""
-    
+
     def __init__(self):
         self.current_state = None
         self.checkpoints = []
-        
+
     async def save_checkpoint(self, state: EvolutionState):
         """Save evolution checkpoint"""
         pass
-        
+
     async def restore_checkpoint(self, checkpoint_id: str):
         """Restore from checkpoint"""
         pass
-        
+
     async def get_latest_state(self) -> EvolutionState:
         """Get latest evolution state"""
         pass
@@ -433,19 +433,19 @@ class StateManager:
 ```python
 class ResourceManager:
     """Manages compute and API resources"""
-    
+
     def __init__(self):
         self.resource_pools = {}
         self.usage_metrics = {}
-        
+
     async def allocate_resources(self, requirements: dict):
         """Allocate required resources"""
         pass
-        
+
     async def release_resources(self, resource_id: str):
         """Release allocated resources"""
         pass
-        
+
     async def monitor_usage(self):
         """Monitor resource usage"""
         pass
@@ -455,19 +455,19 @@ class ResourceManager:
 ```python
 class MetricsCollector:
     """Collects and analyzes evolution metrics"""
-    
+
     def __init__(self):
         self.metrics = {}
         self.analyzers = {}
-        
+
     async def collect_metrics(self, phase: str, data: dict):
         """Collect metrics for a phase"""
         pass
-        
+
     async def analyze_metrics(self) -> dict:
         """Analyze collected metrics"""
         pass
-        
+
     async def export_metrics(self, format: str):
         """Export metrics in specified format"""
         pass
@@ -477,19 +477,19 @@ class MetricsCollector:
 ```python
 class ProcessMonitor:
     """Monitors evolution process health"""
-    
+
     def __init__(self):
         self.health_checks = {}
         self.alerts = []
-        
+
     async def check_health(self) -> HealthStatus:
         """Check process health"""
         pass
-        
+
     async def handle_alert(self, alert: Alert):
         """Handle process alert"""
         pass
-        
+
     async def generate_report(self) -> Report:
         """Generate monitoring report"""
         pass
@@ -523,49 +523,49 @@ performance_benchmarks = {
 ```python
 class EvolutionManager:
     """Manages the evolution process"""
-    
+
     def __init__(self, params: dict):
         self.params = params
         self.population = []
         self.history = []
         self.best_individual = None
-        
+
     def initialize_population(self) -> None:
         """Create initial population"""
         pass
-        
+
     def evolve(self) -> ModelStrategy:
         """Run the evolution process"""
         for generation in range(self.params["generations"]):
             # Evaluate fitness
             self._evaluate_population()
-            
+
             # Check convergence
             if self._check_convergence():
                 break
-                
+
             # Selection
             parents = self._select_parents()
-            
+
             # Create new population
             new_population = []
-            
+
             # Elitism
             new_population.extend(self._get_elite())
-            
+
             # Crossover and Mutation
             while len(new_population) < self.params["population_size"]:
                 parent1, parent2 = self._tournament_select(parents)
                 child1, child2 = parent1.crossover(parent2)
-                
+
                 child1.mutate(self.params["mutation_operators"])
                 child2.mutate(self.params["mutation_operators"])
-                
+
                 new_population.extend([child1, child2])
-            
+
             self.population = new_population[:self.params["population_size"]]
             self._update_history(generation)
-        
+
         return self.best_individual
 ```
 
@@ -573,7 +573,7 @@ class EvolutionManager:
 ```python
 class ResultsTracker:
     """Tracks and analyzes evolution results"""
-    
+
     def __init__(self):
         self.generation_stats = {
             "best_fitness": [],
@@ -586,15 +586,15 @@ class ResultsTracker:
             "model_performances": {},
             "improvement_metrics": {}
         }
-        
+
     def update_generation(self, generation: int, population: list) -> None:
         """Update statistics for a generation"""
         pass
-        
+
     def update_individual(self, individual: ModelStrategy, results: dict) -> None:
         """Update statistics for an individual"""
         pass
-        
+
     def generate_report(self) -> dict:
         """Generate comprehensive results report"""
         pass
@@ -604,10 +604,10 @@ class ResultsTracker:
 ```python
 class SuccessValidator:
     """Validates if evolution results meet success criteria"""
-    
+
     def __init__(self, criteria: dict):
         self.criteria = criteria
-        
+
     def validate(self, results: dict) -> tuple[bool, dict]:
         """Check if results meet success criteria"""
         validations = {
@@ -616,7 +616,7 @@ class SuccessValidator:
             "cost_reasonable": self._check_costs(results),
             "results_consistent": self._check_consistency(results)
         }
-        
+
         success = all(validations.values())
         return success, validations
 ```
@@ -642,15 +642,15 @@ def handle_model_error(error: Exception, strategy: ModelStrategy) -> None:
 ```python
 class ResultsCache:
     """Caches model execution results"""
-    
+
     def __init__(self, max_size: int = 1000):
         self.cache = {}
         self.max_size = max_size
-        
+
     def get(self, key: str) -> Optional[dict]:
         """Get cached result"""
         pass
-        
+
     def set(self, key: str, value: dict) -> None:
         """Cache result"""
         pass
@@ -660,14 +660,14 @@ class ResultsCache:
 ```python
 class EvolutionLogger:
     """Handles logging for the evolution process"""
-    
+
     def __init__(self, log_level: str = "INFO"):
         self.logger = self._setup_logger(log_level)
-        
+
     def log_generation(self, generation: int, stats: dict) -> None:
         """Log generation statistics"""
         pass
-        
+
     def log_individual(self, individual: ModelStrategy, results: dict) -> None:
         """Log individual execution results"""
         pass
@@ -698,3 +698,126 @@ class EvolutionLogger:
    - Generate performance reports
    - Analyze model usage patterns
    - Optimize parameters
+
+
+
+
+# EADS: Evolutionary Autonomous Development System - "Hello, Evolution" Experiment
+
+This document outlines the design and implementation of a simplified "Hello, Evolution" experiment within the Evolutionary Autonomous Development System (EADS).  This experiment serves as a foundational starting point for exploring multi-inference model evolution, focusing on discovering optimal combinations of LLMs for a specific task.
+
+## Goal
+
+The primary goal of this initial experiment is to establish a functional evolutionary algorithm framework that can evolve combinations of two LLMs for a simple task, demonstrating the core principles of model evolution.  We will focus on understanding the basic dynamics of the evolutionary process and how different parameters affect the results.
+
+## System Architecture
+
+### Components
+
+* **Evolution Manager:**  Manages the evolutionary algorithm, including population initialization, selection, crossover, mutation, and fitness evaluation.
+* **Model Executor:** Executes code generated by LLMs and collects performance metrics.
+* **LLM Interfaces:**  Wrappers for interacting with specific LLMs (e.g., Claude, GPT-4).
+
+
+### Technology Choices
+
+* **Programming Language:** Python
+* **LLMs:**  Claude and GPT-4 (or any two readily available LLMs).
+* **Evolutionary Algorithm Library:**  DEAP (or a custom implementation if desired).
+
+
+## Experiment Design
+
+### 1. Task:  Fibonacci Calculation
+
+For simplicity, the initial task will be to generate Python code that efficiently calculates the nth Fibonacci number.  This task is well-defined, easy to implement, and allows for clear performance measurement.
+
+### 2. LLMs
+
+We will use two LLMs initially: Claude and GPT-4 (or any two readily available LLMs).  The goal is to discover if and how combining these LLMs can lead to better performance than using either one individually.  We will start *without* predefined assumptions about the strengths of each model.  Let the evolution discover which model performs which subtask best!
+
+### 3. Model Representation (Genome)
+
+A "model strategy" (individual in the population) will be represented as a simple list: `[model_for_generation, model_for_validation]`. where the first model is what is used to generate code, and the second model evaluates it. For example, `["claude", "gpt4"]` indicates that Claude is used for code generation and GPT-4 for validation.
+
+### 4. Fitness Function
+
+The fitness function will combine three metrics:
+
+* **Correctness (70%):** Percentage of test cases passed.
+* **Performance (20%):** Execution time of the generated code (lower is better).
+* **Cost (10%):** Total number of tokens used by both models (lower is better).
+
+The weights assigned to each metric reflect the prioritization of correctness, followed by performance and then cost.  These can be adjusted in later experiments.  The fitness function will be calculated as:
+```
+fitness = 0.7 * correctness + 0.2 * (1 / performance) + 0.1 * (1 / cost)
+```
+The performance and cost metrics will be inverted so that higher values contribute to higher fitness.
+
+### 5. Test Cases
+
+We will use a set of test cases with various inputs (n values for Fibonacci calculation) and expected outputs to evaluate the correctness of the generated code.  Examples include edge cases, large values of `n`, or different data types, like so:
+
+```python
+test_cases = [
+    {"input": 0, "expected": 0},
+    {"input": 1, "expected": 1},
+    {"input": 5, "expected": 5},
+    {"input": 10, "expected": 55},
+    {"input": 20, "expected": 6765}, #Larger value test
+    {"input": -1, "expected": "ValueError"},  # Edge case
+    {"input": "string", "expected": "TypeError"},  # Edge case
+]
+```
+
+### 6. Evolutionary Algorithm Configuration
+
+* **Population Size:** 5
+* **Generations:** 3 (for the initial experiment). Can increase in later experiments
+* **Selection:** Tournament selection with tournament size 2.  Simple and efficient.
+* **Crossover:**  None. Since our genome is very simple for now, we don't do crossover
+* **Mutation:** `swap_model`: Swaps the models used for generation and validation with a probability of 20%.
+* **Elitism:** Keep the best individual from each generation. This strategy preserves top solutions.
+
+
+## Implementation Details
+
+### Model Executor
+The Model Executor will be responsible for:
+1. Sending prompts to the specified LLMs to generate Python code for Fibonacci calculation.  The specific prompts for code generation will need to be created.  
+2. Executing the generated code using `exec()` within a safe and controlled environment (e.g., using a sandboxed execution environment to prevent malicious code execution).  The test harness to run and validate each output will need to be created. 
+3. Measuring the execution time of the generated code.
+4. Recording the number of tokens used by each LLM call.
+5. Handling any errors during execution and returning appropriate error messages or default values for the fitness metrics.
+
+### Evolution Manager
+The Evolution Manager will:
+1. Initialize a population of model strategies randomly.
+2. Evaluate the fitness of each individual in the population using the Model Executor.
+3. Apply tournament selection and elitism to create a new generation.
+4. Apply `swap_model` mutation to introduce variation.
+5. Repeat steps 2-4 for the specified number of generations.
+6. Return the best-performing model strategy found during the evolution process.
+
+## Evaluation and Analysis
+
+The results of the "Hello, Evolution" experiment will be analyzed to:
+
+* Understand the dynamics of the evolutionary process.
+* Determine if evolving combinations of models can outperform individual models.
+* Identify the relative strengths and weaknesses of each model for the given task.
+* Evaluate the effectiveness of the chosen fitness function, mutation operators, and other evolutionary parameters.
+
+We will track the fitness of the best individual and the average fitness of the population over generations to assess the progress of evolution.  We will also analyze the frequency of different model combinations in the final population to understand how the evolutionary process has explored the model strategy space.
+
+
+## Future Work
+
+After the initial experiment, we can expand EADS by:
+
+* **More Complex Tasks:**  Introduce more complex programming tasks involving different data structures, algorithms, or libraries.
+* **More LLMs:** Incorporate more LLMs into the evolution process.
+* **Advanced Model Representation:**  Explore more sophisticated representations of model strategies, such as allowing for different models to handle different subtasks within a more complex task.
+* **Fine-grained Mutation Operators:** Develop more specialized mutation operators that can modify individual model parameters, prompt templates, or other aspects of the model strategy.
+* **Dynamic Parameter Tuning:** Implement mechanisms for dynamically adjusting evolutionary parameters (e.g., mutation rate, population size) during the evolution process.
+* **Integration with Knowledge Graph and Vector Database:** Leverage Neo4j and Weaviate to store and retrieve code examples, model performance data, and other relevant information.
