@@ -784,8 +784,8 @@ test_cases = [
 
 ### Model Executor
 The Model Executor will be responsible for:
-1. Sending prompts to the specified LLMs to generate Python code for Fibonacci calculation.  The specific prompts for code generation will need to be created.  
-2. Executing the generated code using `exec()` within a safe and controlled environment (e.g., using a sandboxed execution environment to prevent malicious code execution).  The test harness to run and validate each output will need to be created. 
+1. Sending prompts to the specified LLMs to generate Python code for Fibonacci calculation.  The specific prompts for code generation will need to be created.
+2. Executing the generated code using `exec()` within a safe and controlled environment (e.g., using a sandboxed execution environment to prevent malicious code execution).  The test harness to run and validate each output will need to be created.
 3. Measuring the execution time of the generated code.
 4. Recording the number of tokens used by each LLM call.
 5. Handling any errors during execution and returning appropriate error messages or default values for the fitness metrics.
