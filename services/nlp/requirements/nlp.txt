@@ -1,5 +1,5 @@
 # Core dependencies
--r ../../core/requirements/base.txt
+-r /app/requirements/base.txt
 
 # NLP specific dependencies
 langchain==0.1.9

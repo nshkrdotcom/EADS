@@ -821,6 +821,13 @@ graph TB
         GraphDB[Graph Database]
         MetadataDB[Metadata Store]
     end
+	
+	subgraph LLM Layer
+		LocalLLM[llama.cpp Models]
+		CloudLLM[Cloud LLM APIs]
+	end
+	NLP --> LocalLLM
+	NLP --> CloudLLM
 
     NLP --> Neo4j
     NLP --> Weaviate
@@ -851,6 +858,8 @@ sequenceDiagram
     GP->>Neo4j: Query Patterns
     GP->>Postgres: Track Evolution
     GP->>Client: Return Solution
+	NLP->>LocalLLM: Quick Analysis
+	NLP->>CloudLLM: Complex Reasoning
 ```
 
 ### Container Architecture
@@ -899,6 +908,8 @@ graph LR
         NLP[NLP Service]
         GP[GP Engine]
         Evolution[Evolution Process]
+		LocalInference[Local Inference]
+		CloudInference[Cloud Inference]
     end
 
     subgraph Storage
@@ -1245,16 +1256,3 @@ graph TB
 - Add monitoring stack.
 - Implement proper logging.
 - Set up development environment automation.
-
-
-
-## &#x1F91D; Contribution
-
-Passionate about autonomous systems? We're always looking for brilliant minds to push the boundaries of AI-driven software engineering!
-
-### Prerequisites
-
-- Strong understanding of machine learning
-- Experience with genetic algorithms
-- Python expertise
-- Curiosity and passion for cutting-edge tech

@@ -51,10 +51,13 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile.gp
+      cache_from: 
+        - gp_engine:latest
     ports:
       - "8001:8001"
     volumes:
       - ./gp_engine:/app
+      - docker-cache:/root/.cache
     environment:
       # Database connections
       - NEO4J_URI=bolt://localhost:7687
@@ -86,3 +89,5 @@ volumes:
   neo4j_data:
   postgres_data:
   weaviate_data:
+  docker-cache:
+    external: false
