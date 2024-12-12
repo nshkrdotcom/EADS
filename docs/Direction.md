@@ -711,8 +711,8 @@ Instead of a separate system, the AI documentation assistant becomes an integral
 graph LR
     A[Code Change] --> B(Git Hook);
     B --> C[NLP Service];
-    C --> D{Knowledge Graph (Neo4j)};
-    C --> E{Vector Database (Weaviate)};
+    C --> D{"Knowledge Graph (Neo4j)"};
+    C --> E{"Vector Database (Weaviate)"};
     D --> F[Documentation Generator];
     F --> G[Deployment];
     G --> H[Documentation Viewer];
@@ -756,7 +756,7 @@ graph LR
     C --> E{Vector Database};
     D --> F[EADS Documentation Generator];
     F --> G[Deployment];
-    G --> H[Documentation Viewer (for EADS)];
+    G --> H["Documentation Viewer (for EADS)"];
 ```
 
 
@@ -957,7 +957,7 @@ graph LR
     A[Codebase] --> B(NLP Service);
     B --> C{Knowledge Graph};
     C --> D[Documentation Generator];
-    D --> E[Human (Optional)];
+    D --> E["Human (Optional)"];
     E --> C;
     C --> F[AI Agents];
     F --> G[Software Evolution];
