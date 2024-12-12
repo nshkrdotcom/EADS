@@ -32,7 +32,7 @@ A router acts as a decision-making layer that selects the most appropriate searc
 
 ## Integration Strategy for EADS
 
-1. **Assessment of Data and User Needs**: 
+1. **Assessment of Data and User Needs**:
    - Analyze the types of data stored in EADS and the typical queries users perform.
    - Identify scenarios where each search technique can be most beneficial.
 
@@ -54,4 +54,3 @@ A router acts as a decision-making layer that selects the most appropriate searc
 ## Conclusion
 
 Integrating a router with advanced search techniques into EADS will significantly improve the system's ability to retrieve relevant information quickly and accurately. By leveraging the strengths of each search method, EADS can provide a robust and flexible search experience tailored to diverse user needs and data types.
-
