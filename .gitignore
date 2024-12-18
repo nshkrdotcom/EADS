@@ -69,3 +69,10 @@ logs/
 !services/core/requirements/*.lock
 !services/nlp/requirements/*.lock
 !services/gp/requirements/*.lock
+
+# Dagster
+orchestration/history/
+runs/
+tmp/
+storage/
+schedules/
