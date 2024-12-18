@@ -1,4 +1,7 @@
+"""Orchestration package for EADS workflows using Dagster."""
+
 from dagster import Definitions
+
 from .assets.core_assets import core_assets
 from .jobs.core_jobs import core_job
 
