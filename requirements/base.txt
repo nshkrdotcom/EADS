@@ -18,3 +18,6 @@ tensorflow==2.18.0
 torch==2.2.1
 uvicorn==0.27.0
 weaviate-client==4.4.4
+dagster==1.6.7
+dagster-graphql==1.6.7
+dagster-webserver==1.6.7
