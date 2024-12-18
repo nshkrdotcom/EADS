@@ -766,6 +766,70 @@ class GPService:
 These examples demonstrate how the services are designed with message queue patterns in mind, simplifying future migration.  Key aspects include job/task-based processing, asynchronous execution, status tracking, result storage, and error handling.
 
 
+## Environment Variables and Configuration
+
+EADS uses a two-level configuration system:
+
+1. Project-wide settings (`.env`):
+   - Default configurations shared across the team
+   - Version controlled with placeholders
+   - Copy `.env.template` to `.env` and fill in values
+
+2. Personal overrides (`~/.eads/config`):
+   - User-specific settings and API keys
+   - Takes precedence over `.env`
+   - Not version controlled
+
+### Required Variables
+
+- `GOOGLE_API_KEY`: Google API key for Gemini
+- `XAI_API_KEY`: xAI API key for Grok (format: `xai-*`)
+
+### Optional Settings
+
+- `GEMINI_MODEL`: Gemini model to use (default: `gemini-pro`)
+- `GROK_MODEL`: Grok model to use (default: `grok-1-base`)
+- `LOG_LEVEL`: Logging level (default: `INFO`)
+- `LOG_FILE`: Log file path (default: `eads.log`)
+
+### Example Configuration
+
+Example `.env`:
+```ini
+# API Keys
+GOOGLE_API_KEY=your-google-api-key
+XAI_API_KEY=xai-your-key-here
+
+# Model Configuration
+GEMINI_MODEL=gemini-pro
+GROK_MODEL=grok-1-base
+
+# Other Settings
+LOG_LEVEL=INFO
+LOG_FILE=eads.log
+```
+
+Example `~/.eads/config`:
+```ini
+# Personal API Keys
+GOOGLE_API_KEY=actual-google-key
+XAI_API_KEY=xai-actual-key
+
+# Override Models
+GEMINI_MODEL=gemini-pro-vision
+```
+
+### Security Best Practices
+
+When working with API keys and sensitive configuration:
+
+1. Never commit actual API keys to version control
+2. Use `.env.template` as a reference for required variables
+3. Keep personal API keys in `~/.eads/config`
+4. Use secure environment variable management in production
+5. Rotate API keys regularly
+6. In production, use a secure secrets management service
+
 ## Configuration
 
 The system uses environment variables. Copy `.env.example` to `.env` and adjust the values (`cp .env.example .env`).  Required settings include Neo4j ( `NEO4J_*` variables) and PostgreSQL (`POSTGRES_*` variables).

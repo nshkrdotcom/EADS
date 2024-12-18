@@ -4,7 +4,7 @@ deap>=1.4.1
 dvc>=3.38.1
 fastapi>=0.110.0
 flake8>=7.0.0
-httpx>=0.27.0  # Required for FastAPI TestClient
+httpx>=0.26.0  # Required for FastAPI TestClient
 isort>=5.13.0
 langchain>=0.1.0
 llama-index>=0.9.15
@@ -18,12 +18,12 @@ pygad>=3.2.0
 pytest>=7.4.0
 pytest-asyncio>=0.23.5  # For async tests
 pytest-cov>=4.1.0
-python-dotenv==1.0.0
+python-dotenv>=1.0.0
 ray>=2.9.0
 scikit-learn>=1.3.0
 sentence-transformers>=2.5.0
 sqlalchemy>=2.0.25
-structlog==24.1.0  # Added for structured logging
+structlog>=24.1.0  # Added for structured logging
 tensorflow>=2.15.0
 torch>=2.1.0
 tree-sitter>=0.20.4
