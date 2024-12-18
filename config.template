@@ -1,0 +1,12 @@
+# EADS Personal Configuration Template
+# Copy this file to ~/.eads/config to override project settings
+
+# Personal API Keys (override .env settings)
+#GOOGLE_API_KEY=your-google-api-key-here
+#XAI_API_KEY=your-xai-api-key-here
+
+# Model Configurations (optional overrides)
+#GEMINI_MODEL=gemini-pro
+#GROK_MODEL=grok-2-1212
+
+# Add any other personal overrides below

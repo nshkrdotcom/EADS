@@ -770,6 +770,78 @@ These examples demonstrate how the services are designed with message queue patt
 
 The system uses environment variables. Copy `.env.example` to `.env` and adjust the values (`cp .env.example .env`).  Required settings include Neo4j ( `NEO4J_*` variables) and PostgreSQL (`POSTGRES_*` variables).
 
+## Configuration Management
+
+This project uses a two-level configuration system:
+
+### 1. Project Configuration (.env)
+
+The `.env` file in the project root contains default settings and is used for:
+- Development environment setup
+- Docker configuration
+- CI/CD pipelines
+- Team-wide settings
+
+```bash
+# Copy the template
+cp .env.template .env
+
+# Edit with your settings
+vim .env  # or your preferred editor
+```
+
+### 2. Personal Configuration (~/.eads/config)
+
+The `~/.eads/config` file is for personal settings and overrides:
+- Personal API keys
+- User-specific configurations
+- Settings you don't want in the project directory
+
+```bash
+# Create personal config directory
+mkdir -p ~/.eads
+
+# Copy the template
+cp config.template ~/.eads/config
+
+# Edit with your personal settings
+vim ~/.eads/config  # or your preferred editor
+```
+
+### Configuration Priority
+
+Environment variables are loaded in this order:
+1. `~/.eads/config` (personal overrides)
+2. `.env` (project defaults)
+3. Existing environment variables
+
+This means:
+- Team settings go in `.env`
+- Personal overrides go in `~/.eads/config`
+- Either file is optional
+- Personal settings take precedence
+
+### API Keys
+
+For security:
+- Keep personal API keys in `~/.eads/config`
+- Never commit API keys to version control
+- Use placeholder values in templates
+
+Example `.env`:
+```env
+# Project-wide settings
+DATABASE_URL=postgresql://user:pass@localhost:5432/db
+REDIS_URL=redis://localhost:6379
+```
+
+Example `~/.eads/config`:
+```env
+# Personal API keys
+GOOGLE_API_KEY=your-actual-key
+XAI_API_KEY=your-actual-key
+```
+
 ## &#x1F063; System Architecture
 
 EADS uses a modular microservices architecture: GP Service (`gp_engine`), NLP Service (`nlp`), Knowledge Base (Neo4j), and Configuration Management (environment variables).
@@ -786,7 +858,7 @@ EADS uses a modular microservices architecture: GP Service (`gp_engine`), NLP Se
    - RESTful API endpoints for NLP operations
    - Configurable model selection
 
-3. **Knowledge Base:**
+3. **Knowledge Management:**
    - Neo4j Graph Database integration
    - Asynchronous database operations
    - Structured knowledge representation
@@ -866,33 +938,35 @@ sequenceDiagram
 
 ```mermaid
 graph TB
-    subgraph Docker Compose
-        subgraph Services
-            nlp[nlp_service<br>:8000]
-            gp[gp_engine<br>:8001]
-        end
-
-        subgraph Storage
-            neo4j[neo4j<br>:7474/:7687]
-            postgres[postgres<br>:5432]
-            weaviate[weaviate<br>:8080]
-        end
-
-        subgraph Volumes
-            neo4j_data[(neo4j_data)]
-            postgres_data[(postgres_data)]
-            weaviate_data[(weaviate_data)]
-        end
+    subgraph Docker["Docker Environment"]
+        NLP[NLP Service]
+        GP[GP Engine]
+        Neo4j[Neo4j Service]
+        Postgres[PostgreSQL]
+        Weaviate[Weaviate Service]
     end
 
-    nlp --> neo4j
-    nlp --> weaviate
-    gp --> neo4j
-    gp --> postgres
+    subgraph Network["Network Configuration"]
+        Internal[Internal Network]
+        External[External Network]
+    end
 
-    neo4j --> neo4j_data
-    postgres --> postgres_data
-    weaviate --> weaviate_data
+    subgraph Volumes["Persistent Storage"]
+        Neo4jData[Neo4j Data]
+        PostgresData[Postgres Data]
+        WeaviateData[Weaviate Data]
+    end
+
+    External --> NLP
+    External --> GP
+    NLP --> Internal
+    GP --> Internal
+    Internal --> Neo4j
+    Internal --> Postgres
+    Internal --> Weaviate
+    Neo4j --> Neo4jData
+    Postgres --> PostgresData
+    Weaviate --> WeaviateData
 ```
 
 ### Data Flow Architecture
@@ -1256,3 +1330,109 @@ graph TB
 - Add monitoring stack.
 - Implement proper logging.
 - Set up development environment automation.
+
+## LLM Integration
+
+This project integrates with multiple LLM providers including Google's Gemini and xAI's Grok.
+
+### Configuration Setup
+
+This project uses a centralized configuration file located in `~/.eads/config`.
+
+1. Create the configuration directory:
+```bash
+mkdir -p ~/.eads
+```
+
+2. Copy the template configuration:
+```bash
+cp config.template ~/.eads/config
+```
+
+3. Get your API keys:
+   - For Gemini: Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - For xAI: Access your key from [xAI Console](https://console.x.ai/api-keys)
+
+4. Update your configuration:
+```bash
+# Open with your preferred editor
+vim ~/.eads/config  # or nano, code, etc.
+```
+
+5. Configuration Structure:
+```env
+# API Keys
+GOOGLE_API_KEY=your-google-api-key-here
+XAI_API_KEY=your-xai-api-key-here
+
+# Model Configurations
+GEMINI_MODEL=gemini-pro
+GROK_MODEL=grok-2-1212
+```
+
+### Environment Management
+
+The project automatically loads configuration from `~/.eads/config`. You can also:
+
+1. Load configuration manually:
+```python
+from utils.env import load_env
+
+# Load from default location (~/.eads/config)
+load_env()
+
+# Or specify a custom path
+load_env("/path/to/custom/config")
+```
+
+2. Access configuration values:
+```python
+from utils.env import get_required_env
+
+# Get required values (raises ValueError if not set)
+api_key = get_required_env("GOOGLE_API_KEY")
+
+# Get optional values
+import os
+optional_value = os.getenv("OPTIONAL_VAR", "default_value")
+```
+
+### Available Models
+
+#### Gemini
+- Default model: `gemini-pro`
+- Configuration in `services/llm/gemini.py`
+- Uses LangChain for integration
+- Async support included
+
+#### Grok (xAI)
+- Available models:
+  - `grok-2-1212`: Latest text model
+  - `grok-2-vision-1212`: Image understanding model
+- Configuration in `services/llm/xai.py`
+- Direct API integration
+- Supports:
+  - Temperature control
+  - Stream mode
+  - System messages
+  - Stop sequences
+
+### Dagster Assets
+
+Both LLM integrations are available as Dagster assets:
+
+- Gemini assets in `orchestration/assets/llm_assets.py`:
+  - `gemini_service`: Creates and configures Gemini service instance
+  - `gemini_response`: Generates responses using Gemini
+
+- xAI assets in `orchestration/assets/xai_assets.py`:
+  - `grok_service`: Creates and configures Grok service instance
+  - `grok_response`: Generates responses using Grok
+
+### Security Notes
+
+- The `~/.eads` directory is created with user-only permissions
+- Never commit your actual configuration file
+- Use secure environment variable management in production environments
+- API keys should be kept confidential and rotated regularly
+- In production, use a secure secrets management service
