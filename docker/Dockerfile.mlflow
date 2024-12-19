@@ -1,0 +1,41 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements
+COPY requirements/base.txt /app/requirements/base.txt
+COPY docker/requirements.txt /app/requirements.txt
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements/base.txt
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir mlflow
+
+# Copy source code
+COPY src/tracking /app/tracking
+COPY src/config /app/config
+COPY src/utils /app/utils
+
+# Set environment variables
+ENV PYTHONPATH=/app
+ENV MLFLOW_TRACKING_URI=/app/mlflow
+ENV ENVIRONMENT=production
+
+# Create mlflow directory
+RUN mkdir -p /app/mlflow
+
+# Expose port
+EXPOSE 5000
+
+# Run MLflow server
+CMD ["mlflow", "server", \
+     "--backend-store-uri", "postgresql://eads:eadspass@postgres:5432/eads", \
+     "--default-artifact-root", "/app/mlflow", \
+     "--host", "0.0.0.0", \
+     "--port", "5000"]

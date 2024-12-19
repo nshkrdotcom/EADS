@@ -1,6 +1,23 @@
 version: '3.8'
 
 services:
+  core:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.core
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+      - ENVIRONMENT=development
+    volumes:
+      - ./src/core:/app/core
+      - ./src/config:/app/config
+      - ./src/utils:/app/utils
+    depends_on:
+      - postgres
+      - neo4j
+
   nlp:
     build:
       context: .
@@ -11,8 +28,8 @@ services:
       - PYTHONPATH=/app
       - ENVIRONMENT=development
     volumes:
-      - ./services/core/eads_core:/app/eads_core
-      - ./services/nlp/eads_nlp:/app/eads_nlp
+      - ./src/core:/app/core
+      - ./src/nlp:/app/nlp
     depends_on:
       - postgres
       - neo4j
@@ -28,8 +45,40 @@ services:
       - ENVIRONMENT=development
       - CUDA_VISIBLE_DEVICES=0
     volumes:
-      - ./services/core/eads_core:/app/eads_core
-      - ./services/gp/eads_gp:/app/eads_gp
+      - ./src/core:/app/core
+      - ./src/gp_engine:/app/gp_engine
+    depends_on:
+      - postgres
+
+  vector_store:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.vector_store
+    ports:
+      - "8003:8003"
+    environment:
+      - PYTHONPATH=/app
+      - ENVIRONMENT=development
+    volumes:
+      - ./src/vector_store:/app/vector_store
+      - ./src/config:/app/config
+      - ./src/utils:/app/utils
+    depends_on:
+      - postgres
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.mlflow
+    ports:
+      - "5000:5000"
+    environment:
+      - PYTHONPATH=/app
+      - ENVIRONMENT=development
+      - MLFLOW_TRACKING_URI=/app/mlflow
+    volumes:
+      - ./src/tracking:/app/tracking
+      - ./mlflow_data:/app/mlflow
     depends_on:
       - postgres
 
@@ -66,8 +115,8 @@ services:
       - DAGSTER_HOME=/opt/dagster/dagster_home
       - PYTHONPATH=/app
     volumes:
-      - ./orchestration:/opt/dagster/dagster_home
-      - ./services:/app/services
+      - ./src/orchestration:/opt/dagster/dagster_home
+      - ./src:/app/src
     command: ["dagster-daemon", "run"]
     depends_on:
       - postgres
@@ -83,8 +132,8 @@ services:
       - DAGSTER_HOME=/opt/dagster/dagster_home
       - PYTHONPATH=/app
     volumes:
-      - ./orchestration:/opt/dagster/dagster_home
-      - ./services:/app/services
+      - ./src/orchestration:/opt/dagster/dagster_home
+      - ./src:/app/src
     command: ["dagster-webserver", "-h", "0.0.0.0", "-p", "3000", "-w", "/opt/dagster/dagster_home/workspace.yaml", "--path-prefix=/dagster"]
     depends_on:
       - dagster-daemon
@@ -94,3 +143,4 @@ services:
 volumes:
   postgres_data:
   neo4j_data:
+  mlflow_data:
