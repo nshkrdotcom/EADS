@@ -40,148 +40,106 @@ EADS is an intelligent, self-improving system that learns, adapts, and generates
 - &#x1F680; Reduced human intervention
 - &#x1F30E; Scalable, cloud-native architecture
 
-## Technology Stack
+## &#x1F6E0;&#xFE0F; Technology Stack
 
-| Component                  | Technology              | Description                                                                                                 |
-|---------------------------|-------------------------|-------------------------------------------------------------------------------------------------------------|
-| **Core Framework**         |                         |                                                                                                             |
-| Core Framework            | FastAPI 0.110.0+        | High-performance async web framework                                                                        |
-| HTTP Client              | httpx 0.26.0/0.27.0     | Modern async HTTP client for service communication                                                          |
-| Fault Tolerance          | tenacity 8.2.3+         | Retrying library for Python (more Pythonic than resilience4j)                                               |
-| Cache Management         | cachetools 5.3.2+       | TTL caching for fallback responses                                                                          |
-| **Storage**               |                         |                                                                                                             |
-| Graph Database            | Neo4j 5.15.0+           | Knowledge graph storage                                                                                     |
-| Vector Database           | Weaviate 4.4.0+         | Vector embeddings storage                                                                                   |
-| Relational Database       | PostgreSQL 16+          | Metadata and experiment tracking                                                                            |
-| **Machine Learning**       |                         |                                                                                                             |
-| Deep Learning             | PyTorch 2.2.0+          | Neural network implementations                                                                              |
-| NLP Models                | sentence-transformers   | Code analysis and understanding                                                                             |
-| ML Pipeline               | scikit-learn 1.4.0+     | Feature processing and traditional ML                                                                       |
-| Experiment Tracking       | MLflow 2.10.0+          | ML experiment versioning and tracking                                                                       |
-| **Genetic Programming**    |                         |                                                                                                             |
-| Evolution Framework       | DEAP 1.4.1+             | Primary framework for evolutionary computation                                                              |
-| Alternative Framework     | PyGAD 3.2.0+            | Alternative genetic algorithm implementation                                                                |
-| **Development Tools**      |                         |                                                                                                             |
-| Code Quality              | black, ruff             | Code formatting and linting (ruff replaces flake8 & isort)                                                 |
-| Type Checking            | mypy 1.8.0+             | Static type checking                                                                                        |
-| Testing                  | pytest 8.0.0+           | Testing framework with fixture support                                                                      |
-| Async Testing            | pytest-asyncio 0.23.5+  | Async test support                                                                                         |
-| Coverage                 | pytest-cov 4.1.0+       | Test coverage reporting                                                                                     |
-| Dependency Management    | pip-tools 7.4.0+        | Dependency pinning and resolution                                                                          |
+### Core Components
+| Component               | Technology            | Purpose                                                                                                      |
+|------------------------|----------------------|--------------------------------------------------------------------------------------------------------------|
+| **AI/ML**               |                      |                                                                                                              |
+| LLM Integration        | LangChain 0.1.0+     | Framework for LLM application development                                                                    |
+| Vector Search          | LlamaIndex 0.9.15+   | Semantic search and document indexing                                                                        |
+| Vector Database        | Weaviate 4.4.0+      | Vector embeddings storage and search                                                                         |
+| NLP Models             | sentence-transformers | Code analysis and understanding                                                                              |
+| ML Pipeline            | scikit-learn 1.4.0+  | Feature processing and traditional ML                                                                        |
+| Neural Networks        | PyTorch 2.1.0+       | Deep learning models and training                                                                            |
+| Experiment Tracking    | MLflow 2.10.0+       | ML experiment versioning and tracking                                                                        |
+| **Genetic Programming**  |                      |                                                                                                              |
+| Evolution Framework    | DEAP 1.4.1+          | Primary framework for evolutionary computation                                                               |
+| Alternative Framework  | PyGAD 3.2.0+         | Alternative genetic algorithm implementation                                                                 |
+| **Orchestration**       |                      |                                                                                                              |
+| Workflow Engine        | Dagster 1.5.0+       | Data and ML pipeline orchestration                                                                           |
+| Distributed Computing  | Ray 2.9.0+           | Distributed ML training and inference                                                                        |
+| **Development**         |                      |                                                                                                              |
+| API Framework          | FastAPI 0.110.0+     | High-performance API development                                                                             |
+| HTTP Client           | httpx 0.26.0+        | Modern async HTTP client                                                                                     |
+| Version Control        | DVC 3.38.1+          | Data and model versioning                                                                                    |
+| Code Quality          | flake8, black, mypy  | Linting, formatting, and type checking                                                                       |
+| Testing               | pytest 7.4.0+        | Testing framework with async support                                                                         |
+| **Infrastructure**      |                      |                                                                                                              |
+| Database              | Neo4j 5.x            | Graph database for knowledge storage                                                                         |
+| Containerization      | Docker 24.x          | Application containerization                                                                                 |
+| **Utilities**          |                      |                                                                                                              |
+| Logging               | structlog 24.1.0+    | Structured logging                                                                                           |
+| Config Management     | python-dotenv 1.0.0+ | Environment configuration                                                                                    |
+| Code Analysis         | tree-sitter 0.20.4+  | AST parsing and code analysis                                                                               |
 
-## Python Version Management
-
-This project uses Python 3.11 throughout all environments due to ML library compatibility:
-
-### Development Environment
-- Uses Python 3.11 in virtual environment
-- ML libraries (TensorFlow, Ray, etc.) require Python < 3.12
-- Direct installation from `requirements/*.txt`
-
-### Production Services
-- Docker containers run Python 3.11
-- Uses locked dependencies via `requirements/*.lock`
-- Ensures reproducible builds
-
-### Lock File Generation
-Lock files are generated in an isolated Python 3.11 Docker container:
-```bash
-# Generate lock files for all requirements
-./requirements/generate_locks.sh
-```
-
-### Development Setup on WSL2/Ubuntu 24.04
-
-EADS requires Python 3.11 due to ML library compatibility. If you're on Ubuntu 24.04 (which comes with Python 3.12), follow these steps to set up your development environment:
-
-```bash
-# Install Python 3.11
-sudo apt update
-sudo apt install software-properties-common -y
-sudo add-apt-repository ppa:deadsnakes/ppa -y
-sudo apt update
-sudo apt install python3.11 python3.11-venv python3.11-dev -y
-
-# Create Python 3.11 virtual environment
-python3.11 -m venv .venv
-
-# Activate virtual environment
-source .venv/bin/activate
-
-# Install dependencies
-pip install -r requirements/dev.txt
-```
-
-### Testing Strategy
-```mermaid
-graph TB
-    subgraph Tests["Test Suite"]
-        Unit[Unit Tests]
-        Integration[Integration Tests]
-        E2E[End-to-End Tests]
-    end
-    subgraph Coverage["Test Coverage"]
-        Code[Code Coverage]
-        Branch[Branch Coverage]
-        Integration[Integration Points]
-    end
-    subgraph CI["Continuous Integration"]
-        Build[Build Pipeline]
-        Test[Test Pipeline]
-        Deploy[Deploy Pipeline]
-    end
-    Unit --> Code
-    Integration --> Branch
-    E2E --> Integration
-    Code --> Build
-    Branch --> Test
-    Integration --> Deploy
-```
-
-## &#x1F680; Quick Start
+## Getting Started
 
 ### Prerequisites
-- Python 3.8+
-- Docker and Docker Compose
-- Git
+- Python 3.11+
+- Docker and Docker Compose (optional, for production)
 
-### One-Line Setup (Linux/WSL)
-```bash
-curl -sSL https://raw.githubusercontent.com/nshkrdotcom/EADS/main/setup.sh | bash
-```
-
-### Manual Setup (All Platforms)
-1. Clone and setup:
+1. Clone the repository:
    ```bash
    git clone https://github.com/nshkrdotcom/EADS.git
    cd EADS
-   python3 -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   pip install -r requirements/dev.txt
+   ```
+
+2. Install Dependencies:
+   ```bash
+   # Install Poetry and project dependencies
+   ./install_requirements.sh
+   ```
+
+3. Development Setup:
+   ```bash
+   # Activate core environment
+   poetry shell
+   
+   # Install git hooks
    pre-commit install
    ```
 
-2. Start services:
+4. Run Services:
+   
+   Option A - Docker (Recommended):
    ```bash
-   docker-compose -f docker/docker-compose.yml up -d
+   # Start all services
+   docker-compose up --build -d
+   
+   # View logs
+   docker-compose logs -f
+   ```
+   
+   Option B - Local Development:
+   ```bash
+   # Run NLP service
+   cd services/nlp
+   poetry shell
+   python -m eads_nlp.main
+   
+   # Run GP service (in another terminal)
+   cd services/gp
+   poetry shell
+   python -m eads_gp.main
    ```
 
-3. Verify setup:
+5. Development Commands:
    ```bash
-   pytest
+   # Format and lint
+   poetry run black .
+   poetry run isort .
+   poetry run mypy .
+   
+   # Run tests
+   poetry run pytest
    ```
 
-### Development
-- Format code: `black . && isort .`
-- Run tests: `pytest`
-- Type check: `mypy .`
-- Lint: `flake8`
-- Run all checks: `pre-commit run --all-files`
-
-### Troubleshooting
-- Services not starting? Run `docker-compose -f docker/docker-compose.yml down -v && docker-compose -f docker/docker-compose.yml up -d`
-- Database issues? Wait 45 seconds after startup for Neo4j to initialize
-- Port conflicts? Check and stop services using ports 7474, 8000, 8001
+6. Access Services:
+   - Dagster UI: http://localhost:3000/dagster
+   - NLP API: http://localhost:8001
+   - GP API: http://localhost:8002
+   - Neo4j: http://localhost:7474
 
 ## &#x1F4AC; Vision
 
@@ -359,7 +317,7 @@ def analyze_code(code: str) -> dict:
             result = perform_analysis(code)
             ctx.update(num_findings=len(result["findings"]))
             return result
-        except Exception as e:
+        except TemporaryError as e:
             ctx.update(error=str(e))
             raise  # Log will include error and stack trace
 ```
@@ -800,7 +758,7 @@ Example `.env`:
 GOOGLE_API_KEY=your-google-api-key
 XAI_API_KEY=xai-your-key-here
 
-# Model Configuration
+# Model Configurations
 GEMINI_MODEL=gemini-pro
 GROK_MODEL=grok-1-base
 
@@ -925,7 +883,6 @@ EADS uses a modular microservices architecture: GP Service (`gp_engine`), NLP Se
 3. **Knowledge Management:**
    - Neo4j Graph Database integration
    - Asynchronous database operations
-   - Structured knowledge representation
    - Structured code pattern storage
    - Environment-based configuration
 
@@ -1431,7 +1388,7 @@ XAI_API_KEY=your-xai-api-key-here
 
 # Model Configurations
 GEMINI_MODEL=gemini-pro
-GROK_MODEL=grok-2-1212
+GROK_MODEL=grok-1-base
 ```
 
 ### Environment Management

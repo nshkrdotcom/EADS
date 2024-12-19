@@ -1,0 +1,23 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Create Dagster home directory
+RUN mkdir -p /opt/dagster/dagster_home
+
+# Copy Dagster configuration
+COPY orchestration/workspace.yaml /opt/dagster/dagster_home/
+COPY orchestration/dagster.yaml /opt/dagster/dagster_home/
+
+# Set working directory to Dagster home
+WORKDIR /opt/dagster/dagster_home

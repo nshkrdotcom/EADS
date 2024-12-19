@@ -1,93 +1,96 @@
-version: "3.9"
+version: '3.8'
 
 services:
-  neo4j:
-    image: neo4j:latest
+  nlp:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.nlp
     ports:
-      - "7474:7474"  # Browser access
-      - "7687:7687"  # Bolt protocol
-    volumes:
-      - neo4j_data:/data
+      - "8001:8001"
     environment:
-      NEO4J_AUTH: "neo4j/password"  # Fixed password for initial setup
-      NEO4J_dbms_memory_heap_max__size: 2G
-      NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
+      - PYTHONPATH=/app
+      - ENVIRONMENT=development
+    volumes:
+      - ./services/core/eads_core:/app/eads_core
+      - ./services/nlp/eads_nlp:/app/eads_nlp
+    depends_on:
+      - postgres
+      - neo4j
+
+  gp:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.gp
+    ports:
+      - "8002:8002"
+    environment:
+      - PYTHONPATH=/app
+      - ENVIRONMENT=development
+      - CUDA_VISIBLE_DEVICES=0
+    volumes:
+      - ./services/core/eads_core:/app/eads_core
+      - ./services/gp/eads_gp:/app/eads_gp
+    depends_on:
+      - postgres
 
   postgres:
-    image: postgres:latest
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.postgres
+    environment:
+      - POSTGRES_USER=eads
+      - POSTGRES_PASSWORD=eadspass
+      - POSTGRES_DB=eads
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
-      POSTGRES_DB: ${POSTGRES_DB:-eads}
 
-  nlp_service:
+  neo4j:
     build:
-      context: ..
-      dockerfile: docker/Dockerfile.nlp
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./nlp:/app
+      context: .
+      dockerfile: docker/Dockerfile.neo4j
     environment:
-      # Database connections
-      - NEO4J_URI=bolt://localhost:7687
-      - NEO4J_USER=neo4j
-      - NEO4J_PASSWORD=password
-      - WEAVIATE_HOST=weaviate
-      - WEAVIATE_PORT=8080
-      # Service configuration
-      - REQUEST_TIMEOUT=300  # 5 minutes - Configurable for long-running operations
-      - MAX_WORKERS=4  # Number of worker processes
-      - ASYNC_MODE=true  # Enable async processing for message queue readiness
-    depends_on:
-      - neo4j
-      - weaviate
+      - NEO4J_AUTH=neo4j/eadspass
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
 
-  gp_engine:
+  dagster-daemon:
     build:
-      context: ..
-      dockerfile: docker/Dockerfile.gp
-      cache_from:
-        - gp_engine:latest
-    ports:
-      - "8001:8001"
-    volumes:
-      - ./gp_engine:/app
-      - docker-cache:/root/.cache
+      context: .
+      dockerfile: docker/Dockerfile.dagster
     environment:
-      # Database connections
-      - NEO4J_URI=bolt://localhost:7687
-      - NEO4J_USER=neo4j
-      - NEO4J_PASSWORD=password
-      # Service configuration
-      - REQUEST_TIMEOUT=600  # 10 minutes - Configurable for evolution runs
-      - MAX_WORKERS=4  # Number of worker processes
-      - ASYNC_MODE=true  # Enable async processing for message queue readiness
+      - DAGSTER_HOME=/opt/dagster/dagster_home
+      - PYTHONPATH=/app
+    volumes:
+      - ./orchestration:/opt/dagster/dagster_home
+      - ./services:/app/services
+    command: ["dagster-daemon", "run"]
     depends_on:
-      - neo4j
       - postgres
+      - neo4j
 
-  weaviate:
-    image: semitechnologies/weaviate:1.24.1
+  dagster-webserver:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dagster
     ports:
-      - "8080:8080"
+      - "3000:3000"
     environment:
-      QUERY_DEFAULTS_LIMIT: 25
-      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
-      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
-      DEFAULT_VECTORIZER_MODULE: 'none'
-      ENABLE_MODULES: ''
-      CLUSTER_HOSTNAME: 'node1'
+      - DAGSTER_HOME=/opt/dagster/dagster_home
+      - PYTHONPATH=/app
     volumes:
-      - weaviate_data:/var/lib/weaviate
+      - ./orchestration:/opt/dagster/dagster_home
+      - ./services:/app/services
+    command: ["dagster-webserver", "-h", "0.0.0.0", "-p", "3000", "-w", "/opt/dagster/dagster_home/workspace.yaml", "--path-prefix=/dagster"]
+    depends_on:
+      - dagster-daemon
+      - postgres
+      - neo4j
 
 volumes:
-  neo4j_data:
   postgres_data:
-  weaviate_data:
-  docker-cache:
-    external: false
+  neo4j_data:

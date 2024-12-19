@@ -1,0 +1,4 @@
+Follow this format to run commands and change files, since Windsurf project is hosted in WSL2-Ubuntu VM on Windows 10 Host Desktop:
+
+C:\Windows
+> wsl ls -la /home/home/projects/github/nshkrdotcom/EADS
