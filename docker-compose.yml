@@ -1,0 +1,65 @@
+version: '3'
+
+services:
+  # Your existing services will go here
+  dagster-daemon:
+    image: python:3.11-slim
+    command: ["dagster-daemon", "run"]
+    working_dir: /app
+    volumes:
+      - .:/app
+    networks:
+      - eads_network
+
+  dagster-webserver:
+    image: python:3.11-slim
+    command: ["dagster-webserver", "-h", "0.0.0.0", "-p", "3000"]
+    ports:
+      - "3000:3000"
+    working_dir: /app
+    volumes:
+      - .:/app
+    networks:
+      - eads_network
+
+  # Logging Stack
+  loki:
+    image: grafana/loki:2.9.3
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./docker/logging/config/loki-local-config.yaml:/etc/loki/local-config.yaml
+    networks:
+      - eads_network
+
+  promtail:
+    image: grafana/promtail:2.9.3
+    volumes:
+      - ./docker/logging/config/promtail-local-config.yaml:/etc/promtail/config.yml
+      - /var/log:/var/log
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - eads_network
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3500:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    volumes:
+      - ./docker/logging/config/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+    depends_on:
+      - loki
+    networks:
+      - eads_network
+
+networks:
+  eads_network:
+    driver: bridge
