@@ -95,29 +95,29 @@ EADS is an intelligent, self-improving system that learns, adapts, and generates
    ```bash
    # Activate core environment
    poetry shell
-   
+
    # Install git hooks
    pre-commit install
    ```
 
 4. Run Services:
-   
+
    Option A - Docker (Recommended):
    ```bash
    # Start all services
    docker-compose up --build -d
-   
+
    # View logs
    docker-compose logs -f
    ```
-   
+
    Option B - Local Development:
    ```bash
    # Run NLP service
    cd services/nlp
    poetry shell
    python -m eads_nlp.main
-   
+
    # Run GP service (in another terminal)
    cd services/gp
    poetry shell
@@ -130,7 +130,7 @@ EADS is an intelligent, self-improving system that learns, adapts, and generates
    poetry run black .
    poetry run isort .
    poetry run mypy .
-   
+
    # Run tests
    poetry run pytest
    ```

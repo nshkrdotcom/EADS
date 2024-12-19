@@ -18,10 +18,10 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+from code_generation import generate_code
 from genetic_programming import run_genetic_programming
 from robustness_enhancements import enhance_robustness
 
-from code_generation import generate_code
 from deployment import prepare_deployment
 
 # Configure logging
