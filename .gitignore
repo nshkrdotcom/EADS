@@ -1,11 +1,9 @@
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
+*.class
 *.so
 .Python
-.venv/
-env/
 build/
 develop-eggs/
 dist/
@@ -22,68 +20,44 @@ wheels/
 .installed.cfg
 *.egg
 
-# Service-specific virtual environments
-venv-core/
-venv-nlp/
-venv-gp/
+# Virtual Environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
-# Service-specific Python artifacts
-services/*/dist/
-services/*/*.egg-info/
-services/*/__pycache__/
-services/*/src/__pycache__/
-services/*/tests/__pycache__/
-
-# Service-specific IDE files
-services/*/.idea/
-services/*/.vscode/
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
 
 # IDE
 .idea/
 .vscode/
 *.swp
 *.swo
-
-# Environment
-.env
-.env.local
-
-# Docker
-docker-compose.override.yml
-
-# Testing
-.coverage
-htmlcov/
-.pytest_cache/
-.tox/
+*~
 
 # Logs
 *.log
-logs/
 
-# Lock files
-*.lock
-!poetry.lock
-
-# Ensure we track lock files in services
-!services/core/requirements/*.lock
-!services/nlp/requirements/*.lock
-!services/gp/requirements/*.lock
-
-# Dagster
-orchestration/history/
-runs/
-tmp/
-storage/
-schedules/
-
-# Additional ignores
-.venv/
-__pycache__/
-*.pyc
-.pytest_cache/
+# Type checking
 .mypy_cache/
-.coverage
-htmlcov/
-*.log
-.env
+.dmypy.json
+dmypy.json
+.pyre/
+
+# Project specific
+config/env/*
+!config/env/.env.example
+docker/**/data/
